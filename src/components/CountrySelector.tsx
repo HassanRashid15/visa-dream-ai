@@ -1,50 +1,60 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { COUNTRY_INFO, type Country } from "@/lib/eligibility";
+import { ArrowRight } from "lucide-react";
 
-const CountryCard = ({ id, country }: { id: Country; country: typeof COUNTRY_INFO.canada }) => {
-  const navigate = useNavigate();
-  return (
-    <motion.button
-      onClick={() => navigate(`/check/${id}`)}
-      className="card-elevated flex flex-col items-center gap-4 rounded-xl bg-card p-8 text-card-foreground cursor-pointer border border-border"
-      whileHover={{ scale: 1.03 }}
-      whileTap={{ scale: 0.98 }}
-    >
-      <span className="text-6xl">{country.flag}</span>
-      <h3 className="text-xl font-semibold font-display">{country.name}</h3>
-      <p className="text-sm text-muted-foreground text-center">{country.description}</p>
-    </motion.button>
-  );
+const countryImages: Record<Country, string> = {
+  canada: "🇨🇦",
+  uk: "🇬🇧",
+  australia: "🇦🇺",
+};
+
+const countryColors: Record<Country, string> = {
+  canada: "from-red-500/10 to-red-500/5",
+  uk: "from-blue-500/10 to-blue-500/5",
+  australia: "from-yellow-500/10 to-yellow-500/5",
 };
 
 export default function CountrySelector() {
+  const navigate = useNavigate();
+
   return (
-    <section className="py-20 px-4">
-      <div className="container max-w-4xl mx-auto text-center">
-        <motion.h2
-          className="text-3xl md:text-4xl font-display font-bold mb-4"
+    <section id="countries" className="py-24 px-4">
+      <div className="container max-w-5xl mx-auto">
+        <motion.div
+          className="text-center mb-16"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          Choose Your Destination
-        </motion.h2>
-        <p className="text-muted-foreground mb-12 max-w-xl mx-auto">
-          Select the country you're interested in and get an instant eligibility assessment.
-        </p>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <span className="text-sm font-semibold text-accent uppercase tracking-wider">Destinations</span>
+          <h2 className="text-3xl md:text-4xl font-display font-bold mt-2">Choose Your Destination</h2>
+          <p className="text-muted-foreground mt-3 max-w-lg mx-auto">
+            Select the country you're interested in and get an instant eligibility assessment.
+          </p>
+        </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {(Object.entries(COUNTRY_INFO) as [Country, typeof COUNTRY_INFO.canada][]).map(
             ([id, info], i) => (
-              <motion.div
+              <motion.button
                 key={id}
+                onClick={() => navigate(`/check/${id}`)}
+                className={`group relative overflow-hidden rounded-2xl border border-border bg-gradient-to-b ${countryColors[id]} p-8 text-left card-elevated cursor-pointer`}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
+                transition={{ delay: i * 0.12 }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
               >
-                <CountryCard id={id} country={info} />
-              </motion.div>
+                <span className="text-7xl mb-6 block">{countryImages[id]}</span>
+                <h3 className="text-2xl font-display font-bold mb-2">{info.name}</h3>
+                <p className="text-sm text-muted-foreground mb-6">{info.description}</p>
+                <span className="inline-flex items-center gap-2 text-sm font-semibold text-primary group-hover:gap-3 transition-all">
+                  Check Eligibility <ArrowRight className="h-4 w-4" />
+                </span>
+              </motion.button>
             )
           )}
         </div>

@@ -39,7 +39,7 @@ export default function CountrySelector() {
             ([id, info], i) => (
               <motion.button
                 key={id}
-                onClick={() => navigate(`/check/${id}`)}
+                onClick={() => navigate(`/country/${id}`)}
                 className={`group relative overflow-hidden rounded-2xl border border-border bg-gradient-to-b ${countryColors[id]} p-8 text-left card-elevated cursor-pointer`}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -52,7 +52,7 @@ export default function CountrySelector() {
                 <h3 className="text-2xl font-display font-bold mb-2">{info.name}</h3>
                 <p className="text-sm text-muted-foreground mb-6">{info.description}</p>
                 <span className="inline-flex items-center gap-2 text-sm font-semibold text-primary group-hover:gap-3 transition-all">
-                  Check Eligibility <ArrowRight className="h-4 w-4" />
+                  Explore Options <ArrowRight className="h-4 w-4" />
                 </span>
               </motion.button>
             )

@@ -47,12 +47,12 @@ export default function HeroSection() {
             Free Eligibility Check — No Sign Up Required
           </span>
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-extrabold text-primary-foreground leading-[1.1] mb-6">
-            Check Your Visa
+            Your Immigration
             <br />
-            <span className="text-accent">Eligibility</span> in 60s
+            <span className="text-accent">Consultant</span> Online
           </h1>
           <p className="text-lg md:text-xl text-primary-foreground/75 mb-10 max-w-2xl mx-auto leading-relaxed">
-            Get a transparent, AI-powered assessment for Canada, UK, or Australia. No guesswork, no hidden fees, no false promises.
+            From eligibility checks to visa applications — we guide you through every step. Canada, UK, or Australia. All in one place.
           </p>
         </motion.div>
 
@@ -64,7 +64,7 @@ export default function HeroSection() {
         >
           <Button variant="hero" size="xl" asChild>
             <a href="#countries">
-              Get Started Free
+              Explore Countries
               <ArrowDown className="h-5 w-5" />
             </a>
           </Button>

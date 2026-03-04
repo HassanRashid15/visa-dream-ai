@@ -1,28 +1,34 @@
 import { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, User, GraduationCap, Briefcase, BookOpen, Wallet } from "lucide-react";
+import { ArrowLeft, User, GraduationCap, Briefcase, BookOpen, Wallet, Target } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { calculateEligibility, COUNTRY_INFO, type Country, type EligibilityInput } from "@/lib/eligibility";
+import { COUNTRY_DETAILS } from "@/lib/countryData";
 import ScoreResult from "@/components/ScoreResult";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
-const fields = [
-  { id: "age", label: "Age", icon: User, type: "number", placeholder: "e.g. 28", min: 16, max: 65 },
-  { id: "experience", label: "Work Experience (years)", icon: Briefcase, type: "number", placeholder: "e.g. 3", min: 0, max: 30 },
-  { id: "ieltsScore", label: "IELTS Overall Score", icon: BookOpen, type: "number", placeholder: "e.g. 7.0", min: 0, max: 9, step: 0.5 },
-  { id: "funds", label: "Available Funds (USD)", icon: Wallet, type: "number", placeholder: "e.g. 20000", min: 0 },
-];
+const VISA_LABELS: Record<string, string> = {
+  study: "Study Visa",
+  work: "Work Visa",
+  pr: "Permanent Residency",
+  tourist: "Tourist Visa",
+};
 
 export default function EligibilityCheckPage() {
   const { country } = useParams<{ country: string }>();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const countryId = country as Country;
   const countryInfo = COUNTRY_INFO[countryId];
+  const visaType = searchParams.get("visa") || "study";
+  const visaLabel = VISA_LABELS[visaType] || visaType;
+  const detail = country ? COUNTRY_DETAILS[country] : null;
+  const visaInfo = detail?.visaTypes.find(v => v.id === visaType);
 
   const [formData, setFormData] = useState({
     age: "",
@@ -62,8 +68,8 @@ export default function EligibilityCheckPage() {
       {/* Hero banner */}
       <div className="hero-gradient pt-28 pb-20 px-4">
         <div className="container max-w-2xl mx-auto">
-          <button onClick={() => navigate("/")} className="flex items-center gap-2 text-primary-foreground/60 hover:text-primary-foreground mb-6 transition-colors text-sm">
-            <ArrowLeft className="h-4 w-4" /> Back to Countries
+          <button onClick={() => navigate(`/country/${countryId}`)} className="flex items-center gap-2 text-primary-foreground/60 hover:text-primary-foreground mb-6 transition-colors text-sm">
+            <ArrowLeft className="h-4 w-4" /> Back to {countryInfo.name}
           </button>
           <div className="flex items-center gap-4 mb-3">
             <span className="text-5xl">{countryInfo.flag}</span>
@@ -71,7 +77,11 @@ export default function EligibilityCheckPage() {
               <h1 className="text-3xl md:text-4xl font-display font-bold text-primary-foreground">
                 {countryInfo.name}
               </h1>
-              <p className="text-primary-foreground/60 text-sm mt-1">{countryInfo.description}</p>
+              <div className="flex items-center gap-2 mt-1">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent/20 text-accent text-sm font-medium">
+                  <Target className="h-3.5 w-3.5" /> {visaLabel}
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -80,14 +90,31 @@ export default function EligibilityCheckPage() {
       {/* Form */}
       <div className="flex-1">
         <motion.div
-          className="container max-w-2xl mx-auto px-4 -mt-8 pb-16"
+          className="container max-w-2xl mx-auto px-4 -mt-8 pb-16 space-y-6"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
+          {/* Visa requirements hint */}
+          {visaInfo && (
+            <div className="rounded-xl border border-border bg-muted/50 p-5">
+              <h3 className="text-sm font-semibold mb-2 flex items-center gap-2">
+                <span className="text-xl">{visaInfo.icon}</span> {visaInfo.name} — Key Requirements
+              </h3>
+              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {visaInfo.requirements.slice(0, 4).map((req, i) => (
+                  <li key={i} className="text-xs text-muted-foreground flex items-start gap-1.5">
+                    <span className="h-1.5 w-1.5 rounded-full bg-accent mt-1.5 flex-shrink-0" />
+                    {req}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="rounded-2xl border border-border bg-card p-8 md:p-10 card-elevated space-y-8">
             <div>
               <h2 className="font-display text-xl font-semibold mb-1">Your Profile</h2>
-              <p className="text-sm text-muted-foreground">Fill in your details to get an eligibility assessment.</p>
+              <p className="text-sm text-muted-foreground">Fill in your details to get an eligibility assessment for {visaLabel}.</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

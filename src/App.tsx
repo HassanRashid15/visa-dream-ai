@@ -6,6 +6,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import CountryDetail from "./pages/CountryDetail";
 import EligibilityCheck from "./pages/EligibilityCheck";
+import ApplicationTracker from "./pages/ApplicationTracker";
+import ConsultationBooking from "./pages/ConsultationBooking";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -20,6 +22,8 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/country/:country" element={<CountryDetail />} />
           <Route path="/check/:country" element={<EligibilityCheck />} />
+          <Route path="/tracker" element={<ApplicationTracker />} />
+          <Route path="/consultation" element={<ConsultationBooking />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

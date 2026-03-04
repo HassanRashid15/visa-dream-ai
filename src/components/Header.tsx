@@ -28,9 +28,12 @@ export default function Header() {
           <a href="/#how-it-works" className={`text-sm font-medium transition-colors ${isHome ? "text-primary-foreground/70 hover:text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}>
             How It Works
           </a>
-          <a href="/#trust" className={`text-sm font-medium transition-colors ${isHome ? "text-primary-foreground/70 hover:text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}>
-            Trust & Safety
-          </a>
+          <Link to="/tracker" className={`text-sm font-medium transition-colors ${isHome ? "text-primary-foreground/70 hover:text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}>
+            My Application
+          </Link>
+          <Link to="/consultation" className={`text-sm font-medium transition-colors ${isHome ? "text-primary-foreground/70 hover:text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}>
+            Book Consultation
+          </Link>
         </nav>
 
         {/* Mobile toggle */}
@@ -54,7 +57,8 @@ export default function Header() {
         >
           <a href="/#countries" onClick={() => setMobileOpen(false)} className="block text-sm font-medium text-foreground py-2">Countries</a>
           <a href="/#how-it-works" onClick={() => setMobileOpen(false)} className="block text-sm font-medium text-foreground py-2">How It Works</a>
-          <a href="/#trust" onClick={() => setMobileOpen(false)} className="block text-sm font-medium text-foreground py-2">Trust & Safety</a>
+          <Link to="/tracker" onClick={() => setMobileOpen(false)} className="block text-sm font-medium text-foreground py-2">My Application</Link>
+          <Link to="/consultation" onClick={() => setMobileOpen(false)} className="block text-sm font-medium text-foreground py-2">Book Consultation</Link>
         </motion.div>
       )}
     </header>

@@ -1,12 +1,14 @@
 import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Globe, Menu, X } from "lucide-react";
+import { Globe, Menu, X, LogIn, LogOut, User } from "lucide-react";
 import { useState } from "react";
+import { useAuth } from "@/lib/authContext";
 
 export default function Header() {
   const location = useLocation();
   const isHome = location.pathname === "/";
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { isAuthenticated, user, logout } = useAuth();
 
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${isHome ? "bg-transparent" : "bg-card/80 backdrop-blur-md border-b border-border"}`}>
@@ -21,12 +23,9 @@ export default function Header() {
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden md:flex items-center gap-8">
+        <nav className="hidden md:flex items-center gap-6">
           <a href="/#countries" className={`text-sm font-medium transition-colors ${isHome ? "text-primary-foreground/70 hover:text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}>
             Countries
-          </a>
-          <a href="/#how-it-works" className={`text-sm font-medium transition-colors ${isHome ? "text-primary-foreground/70 hover:text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}>
-            How It Works
           </a>
           <Link to="/tracker" className={`text-sm font-medium transition-colors ${isHome ? "text-primary-foreground/70 hover:text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}>
             My Application
@@ -34,13 +33,24 @@ export default function Header() {
           <Link to="/consultation" className={`text-sm font-medium transition-colors ${isHome ? "text-primary-foreground/70 hover:text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}>
             Book Consultation
           </Link>
+
+          {isAuthenticated ? (
+            <div className="flex items-center gap-3">
+              <span className={`text-sm flex items-center gap-1.5 ${isHome ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
+                <User className="h-3.5 w-3.5" /> {user?.name}
+              </span>
+              <button onClick={logout} className={`text-sm font-medium flex items-center gap-1.5 transition-colors ${isHome ? "text-primary-foreground/70 hover:text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}>
+                <LogOut className="h-3.5 w-3.5" /> Sign Out
+              </button>
+            </div>
+          ) : (
+            <Link to="/auth" className={`text-sm font-medium flex items-center gap-1.5 transition-colors ${isHome ? "text-primary-foreground/70 hover:text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}>
+              <LogIn className="h-3.5 w-3.5" /> Sign In
+            </Link>
+          )}
         </nav>
 
-        {/* Mobile toggle */}
-        <button
-          className="md:hidden p-2"
-          onClick={() => setMobileOpen(!mobileOpen)}
-        >
+        <button className="md:hidden p-2" onClick={() => setMobileOpen(!mobileOpen)}>
           {mobileOpen
             ? <X className={`h-5 w-5 ${isHome ? "text-primary-foreground" : "text-foreground"}`} />
             : <Menu className={`h-5 w-5 ${isHome ? "text-primary-foreground" : "text-foreground"}`} />
@@ -48,7 +58,6 @@ export default function Header() {
         </button>
       </div>
 
-      {/* Mobile menu */}
       {mobileOpen && (
         <motion.div
           initial={{ opacity: 0, y: -10 }}
@@ -56,9 +65,18 @@ export default function Header() {
           className="md:hidden bg-card/95 backdrop-blur-md border-b border-border px-4 pb-4 pt-2 space-y-3"
         >
           <a href="/#countries" onClick={() => setMobileOpen(false)} className="block text-sm font-medium text-foreground py-2">Countries</a>
-          <a href="/#how-it-works" onClick={() => setMobileOpen(false)} className="block text-sm font-medium text-foreground py-2">How It Works</a>
           <Link to="/tracker" onClick={() => setMobileOpen(false)} className="block text-sm font-medium text-foreground py-2">My Application</Link>
           <Link to="/consultation" onClick={() => setMobileOpen(false)} className="block text-sm font-medium text-foreground py-2">Book Consultation</Link>
+          {isAuthenticated ? (
+            <>
+              <div className="text-sm text-muted-foreground py-2 flex items-center gap-1.5">
+                <User className="h-3.5 w-3.5" /> {user?.name}
+              </div>
+              <button onClick={() => { logout(); setMobileOpen(false); }} className="block text-sm font-medium text-foreground py-2">Sign Out</button>
+            </>
+          ) : (
+            <Link to="/auth" onClick={() => setMobileOpen(false)} className="block text-sm font-medium text-foreground py-2">Sign In</Link>
+          )}
         </motion.div>
       )}
     </header>

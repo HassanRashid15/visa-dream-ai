@@ -97,11 +97,29 @@ export default function ConsultationBooking() {
   const currentStepIndex = steps.findIndex(s => s.id === step);
 
   const handleConfirm = () => {
+    // Mock email notifications
     toast({
       title: "✅ Consultation Booked!",
       description: `Your ${callType} call with ${selectedAdvisor?.name} is scheduled for ${selectedDate ? format(selectedDate, "PPP") : ""} at ${selectedTime}.`,
     });
-    navigate("/tracker");
+
+    // Simulate email to user
+    setTimeout(() => {
+      toast({
+        title: "📧 Confirmation Email Sent",
+        description: `A confirmation email has been sent to ${formData.email} with your booking details.`,
+      });
+    }, 1500);
+
+    // Simulate email to advisor
+    setTimeout(() => {
+      toast({
+        title: "📧 Advisor Notified",
+        description: `${selectedAdvisor?.name} has been notified about your upcoming consultation.`,
+      });
+    }, 3000);
+
+    setTimeout(() => navigate("/tracker"), 4000);
   };
 
   return (

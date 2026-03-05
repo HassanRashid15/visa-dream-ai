@@ -74,7 +74,7 @@ function VisaCard({ visa, index, countryId }: { visa: VisaTypeInfo; index: numbe
         )}
 
         <Button
-          onClick={() => navigate(`/check/${countryId}?visa=${visa.id}`)}
+          onClick={() => navigate(`/pre-check/${countryId}?visa=${visa.id}`)}
           className="w-full gap-2"
           variant="default"
         >
@@ -265,7 +265,7 @@ export default function CountryDetail() {
               Check your eligibility now or explore visa options above. Our AI-powered assessment takes less than 60 seconds.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button variant="hero" size="xl" onClick={() => navigate(`/check/${detail.id}`)}>
+              <Button variant="hero" size="xl" onClick={() => navigate(`/pre-check/${detail.id}`)}>
                 Check My Eligibility <ArrowRight className="h-5 w-5" />
               </Button>
             </div>

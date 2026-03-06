@@ -466,4 +466,4 @@ export const COUNTRY_TEST_CONFIGS: Record<string, CountryTestConfig> = {
 export const IELTS_MODULES = UK_MODULES;
 export const IELTS_TEST_QUESTIONS = UK_QUESTIONS;
 
-export type { IELTSModule, IELTSLesson, IELTSQuestion };
+

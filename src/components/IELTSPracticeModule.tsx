@@ -1,9 +1,9 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, ArrowRight, BookOpen, Headphones, PenTool, Mic, Clock, CheckCircle, XCircle, Eye, EyeOff, Timer, Volume2, Send, ChevronDown, ChevronUp } from "lucide-react";
+import { ArrowLeft, ArrowRight, BookOpen, Headphones, PenTool, Mic, Clock, CheckCircle, XCircle, Eye, EyeOff, Timer, Volume2, Send, ChevronDown, ChevronUp, Play, Pause, SkipForward, AlertCircle, Info, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { GradientText, TiltCard, StaggerContainer, StaggerItem, ShimmerButton, SparkleBorder } from "@/components/ui/animated-bits";
+import { GradientText, TiltCard, StaggerContainer, StaggerItem, ShimmerButton, SparkleBorder, AnimatedCounter, PulseDot } from "@/components/ui/animated-bits";
 import {
   type ReadingPassage,
   type ListeningExercise,
@@ -21,9 +21,94 @@ interface Props {
   onBack: () => void;
 }
 
+// ─── SKILL GUIDES ───────────────────────────────────────────────────────────
+
+const SKILL_GUIDES: Record<PracticeType, {
+  title: string;
+  icon: React.ReactNode;
+  description: string;
+  steps: string[];
+  tips: string[];
+  realTestInfo: string;
+}> = {
+  reading: {
+    title: "Reading Practice Guide",
+    icon: <BookOpen className="h-8 w-8" />,
+    description: "In the IELTS Reading test, you'll read passages and answer questions. This practice simulates the real test environment.",
+    steps: [
+      "Read the passage carefully — you can toggle it on/off",
+      "Answer all questions (True/False/Not Given, MCQ, Fill-in-the-blank)",
+      "A 20-minute timer runs just like the real test",
+      "Submit when done to see your score and explanations",
+    ],
+    tips: [
+      "Skim the passage first, then read questions before re-reading in detail",
+      "For True/False/Not Given: 'Not Given' means the information isn't in the passage at all",
+      "Don't spend too long on one question — move on and come back",
+    ],
+    realTestInfo: "Real test: 3 passages, 40 questions, 60 minutes total.",
+  },
+  listening: {
+    title: "Listening Practice Guide",
+    icon: <Headphones className="h-8 w-8" />,
+    description: "In the IELTS Listening test, you hear audio ONCE and answer questions. This practice uses text-to-speech to read the transcript aloud — just like hearing it in the real test.",
+    steps: [
+      "Read the questions FIRST before playing audio",
+      "Click 'Play Audio' — the transcript will be read aloud using text-to-speech",
+      "The transcript appears while audio plays so you can follow along",
+      "After audio ends, you get 20 seconds to review — then the transcript closes",
+      "Answer the questions from memory, just like the real test",
+    ],
+    tips: [
+      "Always read the questions before listening — this is what top scorers do",
+      "Listen for keywords, numbers, names, and spelling",
+      "In the real test you hear audio only ONCE — don't rely on re-reading!",
+      "Use the 20-second review time wisely to note key details",
+    ],
+    realTestInfo: "Real test: 4 sections, 40 questions, ~30 minutes audio + 10 minutes transfer time.",
+  },
+  writing: {
+    title: "Writing Practice Guide",
+    icon: <PenTool className="h-8 w-8" />,
+    description: "The IELTS Writing test has two tasks. Practice writing under timed conditions and self-assess using official criteria.",
+    steps: [
+      "Read the prompt carefully before you start writing",
+      "The timer starts when you begin typing",
+      "Write at least the minimum word count shown",
+      "Submit to see the self-assessment checklist based on official IELTS criteria",
+    ],
+    tips: [
+      "Plan for 2-3 minutes before writing — structure matters!",
+      "Task 1: Describe the data objectively (150+ words, 20 mins)",
+      "Task 2: Present a clear argument with examples (250+ words, 40 mins)",
+      "Check your grammar and spelling in the last 2-3 minutes",
+    ],
+    realTestInfo: "Real test: Task 1 (150 words, 20 min) + Task 2 (250 words, 40 min) = 60 minutes total.",
+  },
+  speaking: {
+    title: "Speaking Practice Guide",
+    icon: <Mic className="h-8 w-8" />,
+    description: "The IELTS Speaking test is a face-to-face interview. Practice by speaking aloud — record yourself if possible!",
+    steps: [
+      "Part 1: Answer introductory questions (60 seconds each)",
+      "Part 2: You get 60 seconds prep time, then speak for 2 minutes on a topic",
+      "Part 3: Discuss abstract follow-up questions",
+      "Speak aloud — don't just read silently. Record yourself!",
+    ],
+    tips: [
+      "Extend your answers — give reasons, examples, and details",
+      "Use a range of vocabulary and grammar structures",
+      "Don't memorise answers — examiners can tell",
+      "Practice speaking for the full 2 minutes in Part 2",
+    ],
+    realTestInfo: "Real test: 11-14 minutes, 3 parts, face-to-face with examiner.",
+  },
+};
+
 export default function IELTSPracticeModule({ practiceData, countryName, onBack }: Props) {
   const [activeType, setActiveType] = useState<PracticeType | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [showGuide, setShowGuide] = useState(true);
 
   const tabs: { type: PracticeType; icon: React.ReactNode; label: string; count: number }[] = [
     { type: "reading", icon: <BookOpen className="h-5 w-5" />, label: "Reading", count: practiceData.readingPassages.length },
@@ -31,6 +116,12 @@ export default function IELTSPracticeModule({ practiceData, countryName, onBack 
     { type: "writing", icon: <PenTool className="h-5 w-5" />, label: "Writing", count: practiceData.writingTasks.length },
     { type: "speaking", icon: <Mic className="h-5 w-5" />, label: "Speaking", count: practiceData.speakingCards.length },
   ];
+
+  const handleSelectSkill = (type: PracticeType) => {
+    setActiveType(type);
+    setActiveIndex(0);
+    setShowGuide(true);
+  };
 
   if (!activeType) {
     return (
@@ -49,9 +140,9 @@ export default function IELTSPracticeModule({ practiceData, countryName, onBack 
         <StaggerContainer className="grid grid-cols-2 gap-4">
           {tabs.map((tab) => (
             <StaggerItem key={tab.type}>
-              <TiltCard className="cursor-pointer" >
+              <TiltCard className="cursor-pointer">
                 <button
-                  onClick={() => { setActiveType(tab.type); setActiveIndex(0); }}
+                  onClick={() => handleSelectSkill(tab.type)}
                   className="w-full rounded-xl border border-border bg-card p-6 card-elevated text-center space-y-3 hover:border-primary/40 transition-colors"
                 >
                   <div className="h-12 w-12 rounded-full bg-primary/10 mx-auto flex items-center justify-center text-primary">
@@ -64,6 +155,63 @@ export default function IELTSPracticeModule({ practiceData, countryName, onBack 
             </StaggerItem>
           ))}
         </StaggerContainer>
+      </motion.div>
+    );
+  }
+
+  // Show guide before practice
+  if (showGuide && activeType) {
+    const guide = SKILL_GUIDES[activeType];
+    return (
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+        <button onClick={() => setActiveType(null)} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+          <ArrowLeft className="h-3 w-3" /> Back to Practice Zone
+        </button>
+
+        <SparkleBorder>
+          <div className="p-6 space-y-5">
+            <div className="flex items-center gap-4">
+              <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
+                {guide.icon}
+              </div>
+              <div>
+                <h2 className="text-xl font-display font-bold">{guide.title}</h2>
+                <p className="text-xs text-muted-foreground mt-0.5">{guide.realTestInfo}</p>
+              </div>
+            </div>
+
+            <p className="text-sm text-foreground/80 leading-relaxed">{guide.description}</p>
+
+            {/* Steps */}
+            <div className="space-y-2">
+              <h4 className="text-xs font-semibold text-primary uppercase tracking-wider flex items-center gap-1.5">
+                <Info className="h-3.5 w-3.5" /> How this practice works
+              </h4>
+              {guide.steps.map((step, i) => (
+                <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-muted/40">
+                  <span className="h-6 w-6 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center flex-shrink-0 font-bold">{i + 1}</span>
+                  <p className="text-sm text-foreground/80">{step}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* Tips */}
+            <div className="rounded-xl bg-accent/10 border border-accent/20 p-4 space-y-2">
+              <h4 className="text-xs font-semibold text-accent flex items-center gap-1.5">
+                <Sparkles className="h-3.5 w-3.5" /> Pro Tips
+              </h4>
+              {guide.tips.map((tip, i) => (
+                <p key={i} className="text-xs text-foreground/70 flex items-start gap-2">
+                  <span className="h-1 w-1 rounded-full bg-accent mt-1.5 flex-shrink-0" /> {tip}
+                </p>
+              ))}
+            </div>
+          </div>
+        </SparkleBorder>
+
+        <ShimmerButton onClick={() => setShowGuide(false)} className="w-full">
+          <Play className="h-4 w-4" /> Start {guide.title.replace(" Guide", "")}
+        </ShimmerButton>
       </motion.div>
     );
   }
@@ -140,7 +288,6 @@ function ReadingPractice({ passages, index, onChangeIndex }: { passages: Reading
 
   return (
     <div className="space-y-4">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-lg font-display font-bold">{passage.title}</h2>
@@ -201,7 +348,6 @@ function ReadingPractice({ passages, index, onChangeIndex }: { passages: Reading
         ))}
       </div>
 
-      {/* Submit / Results */}
       {!showResults ? (
         <ShimmerButton onClick={handleSubmit} className="w-full">
           <CheckCircle className="h-4 w-4" /> Submit Answers ({Object.keys(answers).length}/{passage.questions.length})
@@ -224,33 +370,124 @@ function ReadingPractice({ passages, index, onChangeIndex }: { passages: Reading
 
 // ─── LISTENING PRACTICE ─────────────────────────────────────────────────────
 
+type ListeningPhase = "read-questions" | "playing" | "review" | "answer" | "results";
+
 function ListeningPractice({ exercises, index, onChangeIndex }: { exercises: ListeningExercise[]; index: number; onChangeIndex: (i: number) => void }) {
   const exercise = exercises[index];
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [showResults, setShowResults] = useState(false);
-  const [showTranscript, setShowTranscript] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [phase, setPhase] = useState<ListeningPhase>("read-questions");
+  const [reviewCountdown, setReviewCountdown] = useState(20);
+  const [speechProgress, setSpeechProgress] = useState(0);
+  const [speechSupported, setSpeechSupported] = useState(true);
+  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    if (!window.speechSynthesis) {
+      setSpeechSupported(false);
+    }
+  }, []);
+
+  // Cleanup speech on unmount
+  useEffect(() => {
+    return () => {
+      window.speechSynthesis?.cancel();
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, []);
+
+  // Review countdown
+  useEffect(() => {
+    if (phase !== "review") return;
+    if (reviewCountdown <= 0) {
+      setPhase("answer");
+      return;
+    }
+    const t = setInterval(() => setReviewCountdown((p) => p - 1), 1000);
+    return () => clearInterval(t);
+  }, [phase, reviewCountdown]);
+
+  const handlePlayAudio = useCallback(() => {
+    if (!window.speechSynthesis || !exercise) return;
+
+    // Cancel any previous
+    window.speechSynthesis.cancel();
+    setPhase("playing");
+    setSpeechProgress(0);
+
+    const utterance = new SpeechSynthesisUtterance(exercise.transcript);
+    utterance.rate = 0.9;
+    utterance.pitch = 1;
+    utterance.lang = "en-GB";
+
+    // Try to get a British voice
+    const voices = window.speechSynthesis.getVoices();
+    const britishVoice = voices.find(v => v.lang === "en-GB") || voices.find(v => v.lang.startsWith("en"));
+    if (britishVoice) utterance.voice = britishVoice;
+
+    // Estimate duration and track progress
+    const wordCount = exercise.transcript.split(/\s+/).length;
+    const estimatedDuration = (wordCount / 150) * 60 * 1000; // ~150 wpm at 0.9 rate
+    const startTime = Date.now();
+
+    intervalRef.current = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      setSpeechProgress(Math.min((elapsed / estimatedDuration) * 100, 99));
+    }, 200);
+
+    utterance.onend = () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      setSpeechProgress(100);
+      setPhase("review");
+      setReviewCountdown(20);
+    };
+
+    utterance.onerror = () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      setSpeechProgress(100);
+      setPhase("review");
+      setReviewCountdown(20);
+    };
+
+    utteranceRef.current = utterance;
+    window.speechSynthesis.speak(utterance);
+  }, [exercise]);
+
+  const handleStopAudio = () => {
+    window.speechSynthesis?.cancel();
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    setPhase("review");
+    setReviewCountdown(20);
+  };
+
+  const handleSkipReview = () => {
+    setPhase("answer");
+  };
+
+  const handleReset = () => {
+    window.speechSynthesis?.cancel();
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    setPhase("read-questions");
+    setAnswers({});
+    setShowResults(false);
+    setSpeechProgress(0);
+    setReviewCountdown(20);
+  };
 
   if (!exercise) return <p className="text-muted-foreground">No listening exercises available.</p>;
 
   const correctCount = exercise.questions.filter((q) => answers[q.id] === q.correctAnswer).length;
 
-  const handleSimulatePlay = () => {
-    setIsPlaying(true);
-    // Reveal transcript after a short delay to simulate "listening"
-    setTimeout(() => {
-      setShowTranscript(true);
-      setIsPlaying(false);
-    }, 2000);
-  };
-
   return (
     <div className="space-y-4">
-      <div>
-        <h2 className="text-lg font-display font-bold flex items-center gap-2">
-          <Headphones className="h-5 w-5 text-primary" /> {exercise.title}
-        </h2>
-        <p className="text-xs text-muted-foreground mt-1">{exercise.context}</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-lg font-display font-bold flex items-center gap-2">
+            <Headphones className="h-5 w-5 text-primary" /> {exercise.title}
+          </h2>
+          <p className="text-xs text-muted-foreground mt-1">{exercise.context}</p>
+        </div>
       </div>
 
       <div className="flex items-center gap-2">
@@ -258,75 +495,217 @@ function ListeningPractice({ exercises, index, onChangeIndex }: { exercises: Lis
           {exercise.difficulty.toUpperCase()}
         </span>
         <span className="text-xs text-muted-foreground">Section {exercise.section} • {exercise.questions.length} questions</span>
+        {exercises.length > 1 && (
+          <div className="flex gap-1 ml-auto">
+            {exercises.map((_, i) => (
+              <button key={i} onClick={() => { onChangeIndex(i); handleReset(); }}
+                className={`h-2 w-6 rounded-full transition-colors ${i === index ? "bg-primary" : "bg-muted"}`}
+              />
+            ))}
+          </div>
+        )}
       </div>
 
-      {/* Audio simulation */}
-      <div className="rounded-xl border border-border bg-card p-4 card-elevated">
-        <div className="flex items-center gap-4">
-          <button
-            onClick={handleSimulatePlay}
-            disabled={isPlaying || showTranscript}
-            className={`h-12 w-12 rounded-full flex items-center justify-center transition-all ${
-              isPlaying ? "bg-primary animate-pulse" : showTranscript ? "bg-muted" : "bg-primary hover:bg-primary/90"
-            } text-primary-foreground`}
-          >
-            <Volume2 className="h-5 w-5" />
-          </button>
-          <div className="flex-1">
-            <p className="text-sm font-medium">
-              {isPlaying ? "Playing audio..." : showTranscript ? "Transcript revealed — read and answer" : "Click play to begin listening exercise"}
-            </p>
+      {/* Phase indicator */}
+      <div className="flex items-center gap-1">
+        {(["read-questions", "playing", "review", "answer"] as ListeningPhase[]).map((p, i) => (
+          <div key={p} className="flex items-center gap-1 flex-1">
+            <div className={`h-1.5 rounded-full flex-1 transition-colors ${
+              (["read-questions", "playing", "review", "answer"].indexOf(phase) >= i || phase === "results") ? "bg-primary" : "bg-muted"
+            }`} />
+            {i < 3 && <ArrowRight className="h-3 w-3 text-muted-foreground flex-shrink-0" />}
+          </div>
+        ))}
+      </div>
+      <div className="flex justify-between text-[10px] text-muted-foreground">
+        <span>Read Questions</span>
+        <span>Listen</span>
+        <span>Review</span>
+        <span>Answer</span>
+      </div>
+
+      {/* PHASE: Read Questions First */}
+      {phase === "read-questions" && (
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
+          <div className="rounded-xl border-2 border-primary/30 bg-primary/5 p-5 space-y-3">
+            <div className="flex items-center gap-2">
+              <AlertCircle className="h-5 w-5 text-primary" />
+              <h3 className="font-display font-bold text-sm">Step 1: Read the questions FIRST</h3>
+            </div>
             <p className="text-xs text-muted-foreground">
-              {showTranscript ? "Read the transcript carefully, then answer the questions below" : "In a real test, you'd hear this audio once. Read questions first!"}
+              In the real IELTS test, you get time to read questions before the audio plays. 
+              Read all {exercise.questions.length} questions below, then click "Play Audio" when ready.
             </p>
           </div>
-        </div>
-        {isPlaying && <Progress value={50} className="h-1 mt-3 animate-pulse" />}
-      </div>
 
-      {/* Transcript */}
-      <AnimatePresence>
-        {showTranscript && (
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="rounded-xl border border-border bg-card card-elevated overflow-hidden">
-            <div className="p-4 bg-muted/30 border-b border-border flex items-center gap-2">
-              <Volume2 className="h-4 w-4 text-primary" />
-              <span className="text-sm font-medium">Audio Transcript</span>
+          {/* Preview questions (no answering yet) */}
+          <div className="space-y-3">
+            {exercise.questions.map((q, qi) => (
+              <div key={q.id} className="rounded-xl border border-border bg-card p-4">
+                <div className="flex items-start gap-2">
+                  <span className="h-6 w-6 rounded-full bg-primary/10 text-primary text-xs flex items-center justify-center flex-shrink-0 font-bold">{qi + 1}</span>
+                  <p className="text-sm font-medium">{q.question}</p>
+                </div>
+                {q.options && (
+                  <div className="ml-8 mt-2 space-y-1">
+                    {q.options.map((opt) => (
+                      <p key={opt} className="text-xs text-muted-foreground">• {opt}</p>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {!speechSupported ? (
+            <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-4">
+              <p className="text-xs text-destructive flex items-center gap-2">
+                <AlertCircle className="h-4 w-4" />
+                Your browser doesn't support text-to-speech. The transcript will be shown as text instead.
+              </p>
+              <Button onClick={() => setPhase("playing")} variant="outline" className="mt-3 w-full">
+                Show Transcript Instead
+              </Button>
             </div>
-            <div className="p-6 max-h-[400px] overflow-y-auto">
+          ) : (
+            <ShimmerButton onClick={handlePlayAudio} className="w-full">
+              <Volume2 className="h-4 w-4" /> Play Audio — Listen Carefully!
+            </ShimmerButton>
+          )}
+        </motion.div>
+      )}
+
+      {/* PHASE: Playing Audio */}
+      {phase === "playing" && (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
+          <div className="rounded-xl border-2 border-primary bg-card p-6 card-elevated space-y-4">
+            <div className="flex items-center gap-4">
+              <div className="h-14 w-14 rounded-full bg-primary flex items-center justify-center animate-pulse">
+                <Volume2 className="h-7 w-7 text-primary-foreground" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-display font-bold flex items-center gap-2">
+                  <PulseDot /> Audio Playing...
+                </h3>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Listen carefully — in the real test you only hear this ONCE
+                </p>
+              </div>
+            </div>
+            <Progress value={speechProgress} className="h-2" />
+            <p className="text-xs text-center text-muted-foreground">
+              {Math.round(speechProgress)}% complete
+            </p>
+          </div>
+
+          {/* Show transcript while playing (like following along) */}
+          <div className="rounded-xl border border-border bg-card card-elevated overflow-hidden">
+            <div className="p-3 bg-muted/30 border-b border-border flex items-center gap-2">
+              <Volume2 className="h-4 w-4 text-primary animate-pulse" />
+              <span className="text-xs font-medium">Live Transcript (follow along)</span>
+            </div>
+            <div className="p-4 max-h-[300px] overflow-y-auto">
               <p className="text-sm leading-relaxed whitespace-pre-line text-foreground/80">{exercise.transcript}</p>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </div>
 
-      {/* Questions — only show after transcript */}
-      {showTranscript && (
-        <div className="space-y-4">
-          {exercise.questions.map((q, qi) => (
-            <QuestionCard
-              key={q.id}
-              question={q}
-              index={qi}
-              userAnswer={answers[q.id]}
-              showResults={showResults}
-              onAnswer={(ans) => !showResults && setAnswers((p) => ({ ...p, [q.id]: ans }))}
-            />
-          ))}
+          <Button onClick={handleStopAudio} variant="outline" className="w-full gap-2">
+            <SkipForward className="h-4 w-4" /> Skip to Review Phase
+          </Button>
+        </motion.div>
+      )}
+
+      {/* PHASE: Review (20 second countdown) */}
+      {phase === "review" && (
+        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="space-y-4">
+          <div className="rounded-xl border-2 border-accent bg-accent/10 p-6 text-center space-y-3">
+            <div className="inline-flex items-center justify-center h-20 w-20 rounded-full bg-accent/20 mx-auto">
+              <span className="text-3xl font-display font-bold text-accent">
+                <AnimatedCounter value={reviewCountdown} duration={0.3} />
+              </span>
+            </div>
+            <h3 className="font-display font-bold">Review Time</h3>
+            <p className="text-xs text-muted-foreground">
+              You have {reviewCountdown} seconds to review the transcript before it closes. 
+              In the real test, you'd transfer your answers now.
+            </p>
+            <Progress value={(reviewCountdown / 20) * 100} className="h-1.5" />
+          </div>
+
+          {/* Transcript still visible during review */}
+          <div className="rounded-xl border border-border bg-card card-elevated overflow-hidden">
+            <div className="p-3 bg-muted/30 border-b border-border flex items-center gap-2">
+              <Timer className="h-4 w-4 text-accent" />
+              <span className="text-xs font-medium">Transcript — closing in {reviewCountdown}s</span>
+            </div>
+            <div className="p-4 max-h-[250px] overflow-y-auto">
+              <p className="text-sm leading-relaxed whitespace-pre-line text-foreground/80">{exercise.transcript}</p>
+            </div>
+          </div>
+
+          <Button onClick={handleSkipReview} variant="outline" className="w-full gap-2">
+            <ArrowRight className="h-4 w-4" /> Skip to Questions
+          </Button>
+        </motion.div>
+      )}
+
+      {/* PHASE: Answer Questions (transcript hidden — real test mode) */}
+      {(phase === "answer" || phase === "results") && (
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
+          {phase === "answer" && (
+            <div className="rounded-xl border border-primary/30 bg-primary/5 p-4 flex items-center gap-3">
+              <AlertCircle className="h-5 w-5 text-primary flex-shrink-0" />
+              <div>
+                <p className="text-sm font-semibold">Answer from memory!</p>
+                <p className="text-xs text-muted-foreground">The transcript is now closed — just like the real IELTS test. Answer based on what you heard.</p>
+              </div>
+            </div>
+          )}
+
+          <div className="space-y-4">
+            {exercise.questions.map((q, qi) => (
+              <QuestionCard
+                key={q.id}
+                question={q}
+                index={qi}
+                userAnswer={answers[q.id]}
+                showResults={showResults}
+                onAnswer={(ans) => !showResults && setAnswers((p) => ({ ...p, [q.id]: ans }))}
+              />
+            ))}
+          </div>
 
           {!showResults ? (
-            <ShimmerButton onClick={() => setShowResults(true)} className="w-full">
+            <ShimmerButton onClick={() => { setShowResults(true); setPhase("results"); }} className="w-full">
               <CheckCircle className="h-4 w-4" /> Submit Answers ({Object.keys(answers).length}/{exercise.questions.length})
             </ShimmerButton>
           ) : (
-            <SparkleBorder>
-              <div className="p-6 text-center space-y-2">
-                <h3 className="text-xl font-display font-bold">
-                  <GradientText>{correctCount}/{exercise.questions.length} Correct</GradientText>
-                </h3>
+            <div className="space-y-4">
+              <SparkleBorder>
+                <div className="p-6 text-center space-y-2">
+                  <h3 className="text-xl font-display font-bold">
+                    <GradientText>{correctCount}/{exercise.questions.length} Correct</GradientText>
+                  </h3>
+                </div>
+              </SparkleBorder>
+
+              {/* Show transcript for review after results */}
+              <div className="rounded-xl border border-border bg-card card-elevated overflow-hidden">
+                <div className="p-3 bg-muted/30 border-b border-border flex items-center gap-2">
+                  <Eye className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-xs font-medium">Transcript (for review)</span>
+                </div>
+                <div className="p-4 max-h-[300px] overflow-y-auto">
+                  <p className="text-sm leading-relaxed whitespace-pre-line text-foreground/80">{exercise.transcript}</p>
+                </div>
               </div>
-            </SparkleBorder>
+
+              <Button onClick={handleReset} variant="outline" className="w-full gap-2">
+                <ArrowLeft className="h-4 w-4" /> Try Again
+              </Button>
+            </div>
           )}
-        </div>
+        </motion.div>
       )}
     </div>
   );
@@ -415,7 +794,6 @@ function WritingPractice({ tasks, index, onChangeIndex }: { tasks: WritingTask[]
         </div>
       </div>
 
-      {/* Submit */}
       {!showSelfAssess ? (
         <ShimmerButton onClick={() => { setTimerActive(false); setShowSelfAssess(true); }} className="w-full">
           <Send className="h-4 w-4" /> Submit for Self-Assessment
@@ -453,7 +831,6 @@ function SpeakingPractice({ cards, index, onChangeIndex }: { cards: SpeakingCueC
   const card = cards[index];
   const [phase, setPhase] = useState<"prep" | "speaking" | "done">("prep");
   const [timeLeft, setTimeLeft] = useState(card?.part === 2 ? 60 : card?.timeLimit || 120);
-  const [speakingTime, setSpeakingTime] = useState(card?.timeLimit || 120);
   const [showIdeas, setShowIdeas] = useState(false);
 
   useEffect(() => {
@@ -461,7 +838,6 @@ function SpeakingPractice({ cards, index, onChangeIndex }: { cards: SpeakingCueC
     if (timeLeft <= 0) {
       if (phase === "prep") {
         setPhase("speaking");
-        setSpeakingTime(card?.timeLimit || 120);
         setTimeLeft(card?.timeLimit || 120);
       } else {
         setPhase("done");
@@ -545,7 +921,6 @@ function SpeakingPractice({ cards, index, onChangeIndex }: { cards: SpeakingCueC
         </Button>
       )}
 
-      {/* Follow-up questions & ideas (after done) */}
       {phase === "done" && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
           <div className="rounded-xl border border-border bg-card p-5 card-elevated space-y-3">

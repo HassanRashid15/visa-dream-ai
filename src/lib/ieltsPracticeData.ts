@@ -782,6 +782,82 @@ Bank Officer: My pleasure, Rajesh. Welcome to Australia!`,
       { id: "au-le1-q10", type: "fill-blank", question: "Where did the customer move from?", correctAnswer: "India", explanation: "From India.", difficulty: "easy" },
     ],
   },
+  {
+    id: "au-le2",
+    title: "Section 2: Orientation at a Melbourne Workplace",
+    section: 2,
+    context: "A new employee is receiving a workplace induction at an Australian company. Listen carefully.",
+    difficulty: "medium",
+    transcript: `HR Manager: G'day, welcome to Greenfield Engineering. I'm Karen Walsh, your HR manager. Congratulations on starting your new role as a design engineer.
+
+Before we get you to your team, there are a few housekeeping items. First, your work hours. Standard hours are Monday to Friday, 8 AM to 4:30 PM, with a 30-minute lunch break. We have flexible start times — you can arrive between 7 and 9 AM and finish accordingly, as long as you do your 8 hours.
+
+Your desk is on Level 3, Bay 12. You'll find your laptop, ID badge, and a welcome pack there. The Wi-Fi password for the office is "GreenField2024" — that's one word, capital G and F.
+
+Now, safety. This is an engineering firm, so if you visit the workshop on the ground floor, you must wear steel-cap boots, safety glasses, and a high-vis vest. These are provided free of charge — see Tony in the store room.
+
+Leave entitlements: you get 4 weeks annual leave per year, 10 days personal leave for sick days or carer's leave, and 2 days compassionate leave. After 10 years of continuous service, you'll also be eligible for long service leave — that's 8.67 weeks.
+
+Superannuation is paid at 11.5% to your nominated fund. If you haven't nominated one yet, please do so by the end of your first week — otherwise we'll use our default fund, which is AustralianSuper.
+
+Morning tea is at 10:30 in the kitchen on Level 2. It's a good way to meet the team. On Fridays, we do a team lunch — usually someone brings in a barbecue.
+
+Any questions at all, my door is always open. I'm on Level 4, Room 402.`,
+    questions: [
+      { id: "au-le2-q1", type: "fill-blank", question: "Standard work hours are ___ AM to ___ PM.", correctAnswer: "8 AM to 4:30 PM", explanation: "8 AM to 4:30 PM.", difficulty: "easy" },
+      { id: "au-le2-q2", type: "fill-blank", question: "The new employee's desk is on Level ___, Bay ___.", correctAnswer: "3, Bay 12", explanation: "Level 3, Bay 12.", difficulty: "easy" },
+      { id: "au-le2-q3", type: "fill-blank", question: "The Wi-Fi password is ___.", correctAnswer: "GreenField2024", explanation: "GreenField2024.", difficulty: "medium" },
+      { id: "au-le2-q4", type: "fill-blank", question: "Annual leave entitlement is ___ weeks per year.", correctAnswer: "4", explanation: "4 weeks annual leave.", difficulty: "easy" },
+      { id: "au-le2-q5", type: "fill-blank", question: "Personal leave is ___ days.", correctAnswer: "10", explanation: "10 days personal leave.", difficulty: "easy" },
+      { id: "au-le2-q6", type: "fill-blank", question: "Long service leave is ___ weeks after 10 years.", correctAnswer: "8.67", explanation: "8.67 weeks of long service leave.", difficulty: "medium" },
+      { id: "au-le2-q7", type: "fill-blank", question: "The default super fund is ___.", correctAnswer: "AustralianSuper", explanation: "Default fund is AustralianSuper.", difficulty: "easy" },
+      { id: "au-le2-q8", type: "fill-blank", question: "Morning tea is at ___ on Level ___.", correctAnswer: "10:30, Level 2", explanation: "10:30 in the kitchen on Level 2.", difficulty: "easy" },
+      { id: "au-le2-q9", type: "mcq", question: "Who provides safety equipment?", options: ["The employee buys them", "Tony in the store room", "The HR manager", "Online ordering"], correctAnswer: "Tony in the store room", explanation: "See Tony in the store room — provided free.", difficulty: "easy" },
+      { id: "au-le2-q10", type: "fill-blank", question: "Karen's office is on Level ___, Room ___.", correctAnswer: "4, Room 402", explanation: "Level 4, Room 402.", difficulty: "easy" },
+    ],
+  },
+  {
+    id: "au-le3",
+    title: "Section 3: Academic Discussion — Climate Change Research",
+    section: 3,
+    context: "Two university students in Sydney are discussing their group research project on climate change impacts in Australia.",
+    difficulty: "hard",
+    transcript: `Student 1: Right, so we need to finalise our research topic for Dr. Patterson's assignment. We agreed on climate change impacts in Australia, but we need to narrow it down.
+
+Student 2: Yeah. I was thinking we could focus on the Great Barrier Reef. There's loads of recent data — the 2024 mass bleaching event was the worst on record. Over 75% of reefs surveyed showed bleaching.
+
+Student 1: That's a strong angle. But I'm worried it might be too popular — half the class will probably do the reef.
+
+Student 2: Fair point. What about bushfire risk? The 2019-20 season — the Black Summer — burned over 18.6 million hectares. That's an area larger than England.
+
+Student 1: Now that's interesting. We could look at how climate change is increasing fire frequency and intensity. Plus there's the human impact — 33 people died, over 3,000 homes destroyed.
+
+Student 2: And the wildlife impact was devastating. An estimated 3 billion animals were killed or displaced. That figure made headlines worldwide.
+
+Student 1: Let's go with bushfires then. For the structure, Dr. Patterson wants four sections: background, causes, impacts, and policy responses.
+
+Student 2: I'll take background and causes. I found a CSIRO report from 2023 that shows Australia has warmed by 1.47 degrees since 1910. And rainfall patterns have shifted — southern Australia gets 10 to 20% less rain in autumn and winter.
+
+Student 1: Perfect. I'll handle impacts and policy. The Royal Commission into National Natural Disaster Arrangements made 80 recommendations. I can analyse which ones have been implemented.
+
+Student 2: We need 3,000 words minimum, right? And at least 15 academic references?
+
+Student 1: Yes, and it's due on the 22nd of October. Let's aim to have our first drafts by the 10th so we can review each other's work.
+
+Student 2: Sounds like a plan. Let's meet again on Thursday at 2 PM in the library.`,
+    questions: [
+      { id: "au-le3-q1", type: "fill-blank", question: "What percentage of reefs showed bleaching in 2024?", correctAnswer: "75", explanation: "Over 75% of reefs surveyed.", difficulty: "easy" },
+      { id: "au-le3-q2", type: "fill-blank", question: "The Black Summer burned over ___ million hectares.", correctAnswer: "18.6", explanation: "18.6 million hectares.", difficulty: "easy" },
+      { id: "au-le3-q3", type: "fill-blank", question: "An estimated ___ billion animals were killed or displaced.", correctAnswer: "3", explanation: "3 billion animals.", difficulty: "easy" },
+      { id: "au-le3-q4", type: "fill-blank", question: "Australia has warmed by ___ degrees since 1910.", correctAnswer: "1.47", explanation: "1.47 degrees since 1910.", difficulty: "medium" },
+      { id: "au-le3-q5", type: "fill-blank", question: "Southern Australia gets ___% less rain in autumn and winter.", correctAnswer: "10 to 20", explanation: "10 to 20% less rain.", difficulty: "medium" },
+      { id: "au-le3-q6", type: "fill-blank", question: "The Royal Commission made ___ recommendations.", correctAnswer: "80", explanation: "80 recommendations.", difficulty: "medium" },
+      { id: "au-le3-q7", type: "fill-blank", question: "The assignment requires ___ words minimum.", correctAnswer: "3,000", explanation: "3,000 words minimum.", difficulty: "easy" },
+      { id: "au-le3-q8", type: "fill-blank", question: "How many academic references are required?", correctAnswer: "15", explanation: "At least 15 academic references.", difficulty: "easy" },
+      { id: "au-le3-q9", type: "fill-blank", question: "The assignment is due on ___.", correctAnswer: "22nd of October", explanation: "Due on the 22nd of October.", difficulty: "easy" },
+      { id: "au-le3-q10", type: "fill-blank", question: "They plan to meet on Thursday at ___ PM.", correctAnswer: "2", explanation: "Thursday at 2 PM in the library.", difficulty: "easy" },
+    ],
+  },
 ];
 
 const AUSTRALIA_WRITING_TASKS: WritingTask[] = [

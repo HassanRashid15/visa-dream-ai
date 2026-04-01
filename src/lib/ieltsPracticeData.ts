@@ -529,6 +529,92 @@ Receptionist: You're welcome, Maria. Here's your registration number: VCH-8834. 
       { id: "ca-le1-q10", type: "fill-blank", question: "Maria's date of birth is ___.", correctAnswer: "April 12th, 1990", explanation: "April 12th, 1990.", difficulty: "easy" },
     ],
   },
+  {
+    id: "ca-le2",
+    title: "Section 2: Renting an Apartment in Toronto",
+    section: 2,
+    context: "A newcomer is discussing rental options with a property manager. Listen carefully to the conversation.",
+    difficulty: "medium",
+    transcript: `Property Manager: Hi there, welcome to Lakeview Apartments. You must be James.
+
+Tenant: Yes, that's me. James Okafor. I called yesterday about the two-bedroom unit.
+
+Property Manager: Right, the unit on the 7th floor. It's a great space — 850 square feet, two bedrooms, one bathroom. Let me take you up.
+
+Tenant: Thanks. What's the monthly rent?
+
+Property Manager: It's $1,850 per month, plus utilities. Hydro and water are separate — most tenants pay about $120 a month for those. Internet is up to you.
+
+Tenant: Is parking included?
+
+Property Manager: Unfortunately not. Underground parking is an extra $175 per month, or there's street parking with a city permit — that's about $45 a month.
+
+Tenant: I'll probably go with the street parking. What about laundry?
+
+Property Manager: There's a shared laundry room on the 3rd floor. Washers are $2.50 per load, dryers are $2.00.
+
+Tenant: Okay. And what do I need to apply?
+
+Property Manager: We'll need proof of employment — a letter from your employer or recent pay stubs. Also a credit check, which costs $25. And first and last month's rent as a deposit. That's standard in Ontario.
+
+Tenant: So $3,700 upfront?
+
+Property Manager: Exactly. We don't ask for anything beyond first and last — that's the law in Ontario. The lease is for 12 months initially, then it goes month-to-month.
+
+Tenant: When could I move in?
+
+Property Manager: The unit is available from the 1st of May. We'd need your application by April 15th at the latest.
+
+Tenant: That works for me. I'll submit everything this week.
+
+Property Manager: Great. My email is rentals@lakeviewapts.ca. Send everything there and I'll process it within 48 hours.`,
+    questions: [
+      { id: "ca-le2-q1", type: "fill-blank", question: "The apartment is on which floor?", correctAnswer: "7th", explanation: "The unit on the 7th floor.", difficulty: "easy" },
+      { id: "ca-le2-q2", type: "fill-blank", question: "The apartment is ___ square feet.", correctAnswer: "850", explanation: "850 square feet.", difficulty: "easy" },
+      { id: "ca-le2-q3", type: "fill-blank", question: "Monthly rent is $___.", correctAnswer: "1,850", explanation: "$1,850 per month.", difficulty: "easy" },
+      { id: "ca-le2-q4", type: "fill-blank", question: "Underground parking costs $___ per month.", correctAnswer: "175", explanation: "$175 per month for underground parking.", difficulty: "easy" },
+      { id: "ca-le2-q5", type: "mcq", question: "How much does a washer load cost?", options: ["$1.50", "$2.00", "$2.50", "$3.00"], correctAnswer: "$2.50", explanation: "Washers are $2.50 per load.", difficulty: "easy" },
+      { id: "ca-le2-q6", type: "fill-blank", question: "The credit check costs $___.", correctAnswer: "25", explanation: "$25 for a credit check.", difficulty: "easy" },
+      { id: "ca-le2-q7", type: "fill-blank", question: "The total upfront deposit is $___.", correctAnswer: "3,700", explanation: "First and last month: $3,700.", difficulty: "medium" },
+      { id: "ca-le2-q8", type: "fill-blank", question: "The lease initially runs for ___ months.", correctAnswer: "12", explanation: "12 months initially.", difficulty: "easy" },
+      { id: "ca-le2-q9", type: "fill-blank", question: "The application deadline is ___.", correctAnswer: "April 15th", explanation: "By April 15th at the latest.", difficulty: "medium" },
+      { id: "ca-le2-q10", type: "true-false-ng", question: "Landlords in Ontario can ask for more than first and last month's rent.", options: ["True", "False", "Not Given"], correctAnswer: "False", explanation: "That's the law in Ontario — only first and last.", difficulty: "medium" },
+    ],
+  },
+  {
+    id: "ca-le3",
+    title: "Section 3: University Orientation — Canadian Campus",
+    section: 3,
+    context: "A university advisor is explaining services to international students at a Canadian university.",
+    difficulty: "hard",
+    transcript: `Advisor: Welcome everyone to the University of British Columbia international student orientation. I'm Dr. Helen Chu, your international student advisor.
+
+Let me start by highlighting some key services. First, the International House — that's the blue building on West Mall — is your one-stop centre. We're open Monday through Friday, 8:30 AM to 4:30 PM. No appointment needed for general enquiries.
+
+Now, health insurance. All international students are automatically enrolled in the university health insurance plan — iMED. The cost is $300 per term, which is charged directly to your student account. This covers most medical services, dental check-ups, and prescription medications up to $500 per year.
+
+For academic support, we have the Writing Centre on the 2nd floor of the library. They offer free one-on-one tutoring sessions — 45 minutes each — which you can book online up to 2 weeks in advance. I strongly recommend this, especially for your first term papers.
+
+Work permits are another common question. As a full-time international student, you can work up to 20 hours per week during the academic term and full-time during scheduled breaks. You don't need a separate work permit — your study permit allows this. However, you must have a valid Social Insurance Number, or SIN, which you can get at any Service Canada office.
+
+One important deadline: if you're applying for co-op or internship programs, the application deadline is November 30th. These programs are competitive — last year we had 450 applicants for 120 positions.
+
+Finally, our Buddy Program pairs new international students with senior Canadian students. It's a fantastic way to practise English and learn about Canadian culture. Sign up at the International House front desk by September 15th.
+
+Any questions? My email is helen.chu@ubc.ca, and my office is Room 218 in International House.`,
+    questions: [
+      { id: "ca-le3-q1", type: "fill-blank", question: "International House is located on ___.", correctAnswer: "West Mall", explanation: "The blue building on West Mall.", difficulty: "easy" },
+      { id: "ca-le3-q2", type: "fill-blank", question: "Health insurance costs $___ per term.", correctAnswer: "300", explanation: "$300 per term.", difficulty: "easy" },
+      { id: "ca-le3-q3", type: "fill-blank", question: "Prescription medication coverage is up to $___ per year.", correctAnswer: "500", explanation: "Up to $500 per year.", difficulty: "medium" },
+      { id: "ca-le3-q4", type: "fill-blank", question: "Writing Centre tutoring sessions are ___ minutes each.", correctAnswer: "45", explanation: "45 minutes each.", difficulty: "easy" },
+      { id: "ca-le3-q5", type: "fill-blank", question: "International students can work up to ___ hours per week during term.", correctAnswer: "20", explanation: "Up to 20 hours per week.", difficulty: "easy" },
+      { id: "ca-le3-q6", type: "fill-blank", question: "The co-op application deadline is ___.", correctAnswer: "November 30th", explanation: "November 30th.", difficulty: "medium" },
+      { id: "ca-le3-q7", type: "fill-blank", question: "Last year, there were ___ co-op applicants.", correctAnswer: "450", explanation: "450 applicants for 120 positions.", difficulty: "medium" },
+      { id: "ca-le3-q8", type: "fill-blank", question: "The Buddy Program signup deadline is ___.", correctAnswer: "September 15th", explanation: "By September 15th.", difficulty: "medium" },
+      { id: "ca-le3-q9", type: "fill-blank", question: "Dr. Chu's office is Room ___.", correctAnswer: "218", explanation: "Room 218 in International House.", difficulty: "easy" },
+      { id: "ca-le3-q10", type: "true-false-ng", question: "International students need a separate work permit to work on campus.", options: ["True", "False", "Not Given"], correctAnswer: "False", explanation: "Your study permit allows this — no separate work permit needed.", difficulty: "medium" },
+    ],
+  },
 ];
 
 const CANADA_WRITING_TASKS: WritingTask[] = [

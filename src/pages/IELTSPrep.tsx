@@ -185,6 +185,7 @@ export default function IELTSPrepPage() {
             <IELTSPracticeModule
               practiceData={practiceData}
               countryName={config.councilName}
+              countryCode={redirectCountry}
               onBack={() => setView("dashboard")}
             />
           )}

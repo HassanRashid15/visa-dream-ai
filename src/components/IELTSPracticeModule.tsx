@@ -426,6 +426,8 @@ function ListeningPractice({ exercises, index, onChangeIndex, countryCode }: { e
   const [currentWordIndex, setCurrentWordIndex] = useState(-1);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const fallbackHighlightRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const boundarySeenRef = useRef(false);
   const transcriptRef = useRef<HTMLDivElement>(null);
 
   // Shuffle questions
@@ -445,6 +447,7 @@ function ListeningPractice({ exercises, index, onChangeIndex, countryCode }: { e
     return () => {
       window.speechSynthesis?.cancel();
       if (intervalRef.current) clearInterval(intervalRef.current);
+      if (fallbackHighlightRef.current) clearInterval(fallbackHighlightRef.current);
     };
   }, []);
 
@@ -472,9 +475,12 @@ function ListeningPractice({ exercises, index, onChangeIndex, countryCode }: { e
     if (!window.speechSynthesis || !exercise) return;
 
     window.speechSynthesis.cancel();
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    if (fallbackHighlightRef.current) clearInterval(fallbackHighlightRef.current);
     setPhase("playing");
     setSpeechProgress(0);
     setCurrentWordIndex(-1);
+    boundarySeenRef.current = false;
 
     const utterance = new SpeechSynthesisUtterance(exercise.transcript);
     utterance.rate = 0.9;
@@ -496,6 +502,7 @@ function ListeningPractice({ exercises, index, onChangeIndex, countryCode }: { e
     // Track word boundaries for highlighting
     utterance.onboundary = (event) => {
       if (typeof event.charIndex !== "number") return;
+      boundarySeenRef.current = true;
 
       const targetChar = Math.max(0, event.charIndex);
       const tokenIndex = transcriptTokens.findIndex(
@@ -511,14 +518,29 @@ function ListeningPractice({ exercises, index, onChangeIndex, countryCode }: { e
     const wordCount = exercise.transcript.split(/\s+/).length;
     const estimatedDuration = (wordCount / 150) * 60 * 1000;
     const startTime = Date.now();
+    const wordTokens = transcriptTokens.filter((token) => token.isWord);
 
     intervalRef.current = setInterval(() => {
       const elapsed = Date.now() - startTime;
       setSpeechProgress(Math.min((elapsed / estimatedDuration) * 100, 99));
     }, 200);
 
+    fallbackHighlightRef.current = setInterval(() => {
+      if (boundarySeenRef.current || wordTokens.length === 0) return;
+      const elapsed = Date.now() - startTime;
+      const estimatedWordIndex = Math.min(
+        wordTokens.length - 1,
+        Math.floor((elapsed / Math.max(estimatedDuration, 1)) * wordTokens.length),
+      );
+      const nextTokenIndex = transcriptTokens.findIndex((token, index) => token.isWord && wordTokens[estimatedWordIndex] === token && index >= 0);
+      if (nextTokenIndex >= 0) {
+        setCurrentWordIndex(nextTokenIndex);
+      }
+    }, 90);
+
     utterance.onend = () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
+      if (fallbackHighlightRef.current) clearInterval(fallbackHighlightRef.current);
       setSpeechProgress(100);
       setCurrentWordIndex(-1);
       setPhase("review");
@@ -527,6 +549,7 @@ function ListeningPractice({ exercises, index, onChangeIndex, countryCode }: { e
 
     utterance.onerror = () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
+      if (fallbackHighlightRef.current) clearInterval(fallbackHighlightRef.current);
       setSpeechProgress(100);
       setCurrentWordIndex(-1);
       setPhase("review");
@@ -540,6 +563,7 @@ function ListeningPractice({ exercises, index, onChangeIndex, countryCode }: { e
   const handleStopAudio = () => {
     window.speechSynthesis?.cancel();
     if (intervalRef.current) clearInterval(intervalRef.current);
+    if (fallbackHighlightRef.current) clearInterval(fallbackHighlightRef.current);
     setCurrentWordIndex(-1);
     setPhase("review");
     setReviewCountdown(20);
@@ -550,6 +574,7 @@ function ListeningPractice({ exercises, index, onChangeIndex, countryCode }: { e
   const handleReset = () => {
     window.speechSynthesis?.cancel();
     if (intervalRef.current) clearInterval(intervalRef.current);
+    if (fallbackHighlightRef.current) clearInterval(fallbackHighlightRef.current);
     setPhase("read-questions");
     setAnswers({});
     setShowResults(false);

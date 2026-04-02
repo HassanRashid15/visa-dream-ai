@@ -3,13 +3,21 @@ import { BarChart3, TrendingUp, Target, Award, Calendar, BookOpen } from "lucide
 import { AnimatedCounter, GradientText, TiltCard, StaggerContainer, StaggerItem, SparkleBorder } from "@/components/ui/animated-bits";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
+import IELTSFeedbackPanels from "@/components/IELTSFeedbackPanels";
 import {
   getTestAttempts,
   getCountryProgress,
   estimateCLBLevel,
   estimateDHAPoints,
-  type TestAttempt,
 } from "@/lib/ieltsPracticeData";
+import {
+  buildLatestBandBreakdown,
+  buildStudyPlanner,
+  getOverallBand,
+  getPointsMapping,
+  getLatestSkillMax,
+  skillLabels,
+} from "@/lib/ieltsDashboard";
 
 interface Props {
   country: string;
@@ -21,7 +29,7 @@ export default function IELTSDashboard({ country, onStartPractice, onStartTest }
   const attempts = getTestAttempts().filter((a) => a.country === country);
   const progress = getCountryProgress(country);
   const latestAttempt = attempts[attempts.length - 1];
-  const latestSkillMax = latestAttempt ? Math.max(1, Math.ceil(latestAttempt.totalQuestions / 4)) : 0;
+  const latestSkillMax = getLatestSkillMax(latestAttempt);
 
   const avgScore =
     attempts.length > 0
@@ -33,77 +41,10 @@ export default function IELTSDashboard({ country, onStartPractice, onStartTest }
       ? Math.max(...attempts.map((a) => a.scores.overall))
       : 0;
 
-  const skillLabels = ["listening", "reading", "writing", "speaking"] as const;
-
-  const estimateBandScore = (score: number, total: number) => {
-    const pct = total > 0 ? score / total : 0;
-    if (pct >= 0.95) return 9;
-    if (pct >= 0.9) return 8.5;
-    if (pct >= 0.82) return 8;
-    if (pct >= 0.75) return 7.5;
-    if (pct >= 0.68) return 7;
-    if (pct >= 0.6) return 6.5;
-    if (pct >= 0.52) return 6;
-    if (pct >= 0.44) return 5.5;
-    if (pct >= 0.36) return 5;
-    if (pct >= 0.28) return 4.5;
-    return 4;
-  };
-
-  const latestBandBreakdown = latestAttempt
-    ? skillLabels.map((skill) => ({
-        skill,
-        raw: latestAttempt.scores[skill],
-        band: estimateBandScore(latestAttempt.scores[skill], latestSkillMax),
-      }))
-    : [];
-
-  const overallBand = latestBandBreakdown.length
-    ? Math.round((latestBandBreakdown.reduce((sum, item) => sum + item.band, 0) / latestBandBreakdown.length) * 2) / 2
-    : null;
-
-  const pointsMapping = (() => {
-    if (overallBand === null) return null;
-    if (country === "canada") {
-      if (overallBand >= 8) return { title: "Canada mapping", value: "CLB 9+ range", detail: "Strong language profile with high CRS potential in this mock estimate." };
-      if (overallBand >= 7) return { title: "Canada mapping", value: "CLB 7–8 range", detail: "Usually meets core skilled migration language thresholds with moderate CRS value." };
-      return { title: "Canada mapping", value: "Below CLB 7 range", detail: "Improve weakest skills to reach stronger immigration language eligibility." };
-    }
-    if (country === "australia") {
-      if (overallBand >= 8) return { title: "Australia mapping", value: "Superior English", detail: "Mock estimate aligns with the top language points tier when skills are consistently high." };
-      if (overallBand >= 7) return { title: "Australia mapping", value: "Proficient English", detail: "Good migration profile with likely bonus points if all skills stay in range." };
-      return { title: "Australia mapping", value: "Competent / below", detail: "Good baseline, but higher scores improve competitiveness for points-tested visas." };
-    }
-    if (overallBand >= 6.5) {
-      return { title: "UK mapping", value: "Typical study-ready range", detail: "Often aligns with many university offer thresholds, depending on course and provider." };
-    }
-    return { title: "UK mapping", value: "Needs improvement", detail: "Improve before relying on this score for stricter university or visa language expectations." };
-  })();
-
-  const studyPlanner = attempts.length > 0
-    ? skillLabels
-        .map((skill) => {
-          const averageRatio = attempts.reduce((sum, attempt) => {
-            const skillTotal = Math.max(1, Math.ceil(attempt.totalQuestions / 4));
-            return sum + attempt.scores[skill] / skillTotal;
-          }, 0) / attempts.length;
-
-          const advice = {
-            listening: "Repeat listening drills with note-taking, numbers, names, and one-play recall.",
-            reading: "Do more passage scanning, True/False/Not Given practice, and timed comprehension sets.",
-            writing: "Focus on structure, task response, and timed essays with self-review against band criteria.",
-            speaking: "Record more answers, extend responses naturally, and review fluency and pronunciation.",
-          }[skill];
-
-          return {
-            skill,
-            ratio: averageRatio,
-            label: averageRatio < 0.55 ? "High priority" : averageRatio < 0.72 ? "Focus next" : "Maintain strength",
-            advice,
-          };
-        })
-        .sort((a, b) => a.ratio - b.ratio)
-    : [];
+  const latestBandBreakdown = buildLatestBandBreakdown(latestAttempt);
+  const overallBand = getOverallBand(latestBandBreakdown);
+  const pointsMapping = getPointsMapping(country, overallBand);
+  const studyPlanner = buildStudyPlanner(attempts);
 
   const latestSkillScores = latestAttempt
     ? skillLabels.map((s) => ({
@@ -268,6 +209,8 @@ export default function IELTSDashboard({ country, onStartPractice, onStartTest }
           </div>
         </div>
       )}
+
+      <IELTSFeedbackPanels attempts={attempts} insights={latestBandBreakdown} />
 
       {/* Score History */}
       {attempts.length > 0 && (

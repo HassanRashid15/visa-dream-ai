@@ -42,6 +42,30 @@ function shuffleQuestions(questions: PracticeQuestion[]): PracticeQuestion[] {
   });
 }
 
+type TranscriptToken = {
+  text: string;
+  isWord: boolean;
+  start: number;
+  end: number;
+};
+
+function tokenizeTranscript(transcript: string): TranscriptToken[] {
+  const parts = transcript.match(/\S+|\s+/g) ?? [];
+  let cursor = 0;
+
+  return parts.map((text) => {
+    const start = cursor;
+    cursor += text.length;
+
+    return {
+      text,
+      isWord: /\S/.test(text),
+      start,
+      end: cursor,
+    };
+  });
+}
+
 // ─── VOICE HELPERS ──────────────────────────────────────────────────────────
 
 function getVoiceLang(countryCode?: string): string {
@@ -408,9 +432,9 @@ function ListeningPractice({ exercises, index, onChangeIndex, countryCode }: { e
   const questions = useMemo(() => shuffleQuestions(exercise?.questions || []), [exercise?.id]);
 
   // Split transcript into words for highlighting
-  const transcriptWords = useMemo(() => {
+  const transcriptTokens = useMemo(() => {
     if (!exercise) return [];
-    return exercise.transcript.split(/(\s+)/); // Keep whitespace as separate tokens
+    return tokenizeTranscript(exercise.transcript);
   }, [exercise?.id]);
 
   useEffect(() => {
@@ -470,19 +494,16 @@ function ListeningPractice({ exercises, index, onChangeIndex, countryCode }: { e
     }
 
     // Track word boundaries for highlighting
-    let charIndex = 0;
     utterance.onboundary = (event) => {
-      if (event.name === "word") {
-        // Map character index to word index in our split array
-        const targetChar = event.charIndex;
-        let cumulative = 0;
-        for (let i = 0; i < transcriptWords.length; i++) {
-          if (cumulative >= targetChar && transcriptWords[i].trim().length > 0) {
-            setCurrentWordIndex(i);
-            break;
-          }
-          cumulative += transcriptWords[i].length;
-        }
+      if (typeof event.charIndex !== "number") return;
+
+      const targetChar = Math.max(0, event.charIndex);
+      const tokenIndex = transcriptTokens.findIndex(
+        (token) => token.isWord && targetChar >= token.start && targetChar < token.end,
+      );
+
+      if (tokenIndex >= 0) {
+        setCurrentWordIndex(tokenIndex);
       }
     };
 
@@ -514,7 +535,7 @@ function ListeningPractice({ exercises, index, onChangeIndex, countryCode }: { e
 
     utteranceRef.current = utterance;
     window.speechSynthesis.speak(utterance);
-  }, [exercise, countryCode, transcriptWords]);
+  }, [exercise, countryCode, transcriptTokens]);
 
   const handleStopAudio = () => {
     window.speechSynthesis?.cancel();
@@ -662,11 +683,11 @@ function ListeningPractice({ exercises, index, onChangeIndex, countryCode }: { e
             </div>
             <div ref={transcriptRef} className="p-4 max-h-[300px] overflow-y-auto">
               <p className="text-sm leading-relaxed">
-                {transcriptWords.map((word, i) => {
+                {transcriptTokens.map((token, i) => {
                   const isHighlighted = i === currentWordIndex;
                   const isPast = i < currentWordIndex;
-                  if (word.trim().length === 0) {
-                    return <span key={i}>{word}</span>;
+                  if (!token.isWord) {
+                    return <span key={i}>{token.text}</span>;
                   }
                   return (
                     <span
@@ -680,7 +701,7 @@ function ListeningPractice({ exercises, index, onChangeIndex, countryCode }: { e
                           : "text-foreground/40"
                       }`}
                     >
-                      {word}
+                      {token.text}
                     </span>
                   );
                 })}

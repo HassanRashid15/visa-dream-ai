@@ -480,7 +480,7 @@ function ListeningPractice({ exercises, index, onChangeIndex, countryCode }: { e
     setPhase("playing");
     setSpeechProgress(0);
     setCurrentWordIndex(-1);
-    boundarySeenRef.current = false;
+    boundarySeenRef.current = 0;
 
     const utterance = new SpeechSynthesisUtterance(exercise.transcript);
     utterance.rate = 0.9;

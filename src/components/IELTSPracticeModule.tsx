@@ -427,7 +427,7 @@ function ListeningPractice({ exercises, index, onChangeIndex, countryCode }: { e
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const fallbackHighlightRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const boundarySeenRef = useRef(false);
+  const boundarySeenRef = useRef(0);
   const transcriptRef = useRef<HTMLDivElement>(null);
 
   // Shuffle questions
@@ -480,7 +480,7 @@ function ListeningPractice({ exercises, index, onChangeIndex, countryCode }: { e
     setPhase("playing");
     setSpeechProgress(0);
     setCurrentWordIndex(-1);
-    boundarySeenRef.current = false;
+    boundarySeenRef.current = 0;
 
     const utterance = new SpeechSynthesisUtterance(exercise.transcript);
     utterance.rate = 0.9;
@@ -499,10 +499,10 @@ function ListeningPractice({ exercises, index, onChangeIndex, countryCode }: { e
       window.speechSynthesis.onvoiceschanged = trySetVoice;
     }
 
-    // Track word boundaries for highlighting
+    // Track word boundaries for highlighting — use onboundary to improve accuracy
     utterance.onboundary = (event) => {
       if (typeof event.charIndex !== "number") return;
-      boundarySeenRef.current = true;
+      boundarySeenRef.current += 1;
 
       const targetChar = Math.max(0, event.charIndex);
       const tokenIndex = transcriptTokens.findIndex(
@@ -525,16 +525,24 @@ function ListeningPractice({ exercises, index, onChangeIndex, countryCode }: { e
       setSpeechProgress(Math.min((elapsed / estimatedDuration) * 100, 99));
     }, 200);
 
+    // Time-based highlight fallback — always runs, onboundary overrides when available
     fallbackHighlightRef.current = setInterval(() => {
-      if (boundarySeenRef.current || wordTokens.length === 0) return;
+      if (boundarySeenRef.current > 3 || wordTokens.length === 0) return;
       const elapsed = Date.now() - startTime;
-      const estimatedWordIndex = Math.min(
+      const estimatedWordIdx = Math.min(
         wordTokens.length - 1,
         Math.floor((elapsed / Math.max(estimatedDuration, 1)) * wordTokens.length),
       );
-      const nextTokenIndex = transcriptTokens.findIndex((token, index) => token.isWord && wordTokens[estimatedWordIndex] === token && index >= 0);
-      if (nextTokenIndex >= 0) {
-        setCurrentWordIndex(nextTokenIndex);
+      // Map word-only index back to full token index
+      let wordsSeen = 0;
+      for (let ti = 0; ti < transcriptTokens.length; ti++) {
+        if (transcriptTokens[ti].isWord) {
+          if (wordsSeen === estimatedWordIdx) {
+            setCurrentWordIndex(ti);
+            break;
+          }
+          wordsSeen++;
+        }
       }
     }, 90);
 

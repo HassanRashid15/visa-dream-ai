@@ -66,6 +66,25 @@ function tokenizeTranscript(transcript: string): TranscriptToken[] {
   });
 }
 
+function getTokenIndexForChar(tokens: TranscriptToken[], charIndex: number) {
+  const safeCharIndex = Math.max(0, charIndex);
+
+  for (let i = 0; i < tokens.length; i++) {
+    const token = tokens[i];
+    if (!token.isWord) continue;
+
+    if (safeCharIndex < token.end) {
+      return i;
+    }
+  }
+
+  for (let i = tokens.length - 1; i >= 0; i--) {
+    if (tokens[i].isWord) return i;
+  }
+
+  return -1;
+}
+
 // ─── VOICE HELPERS ──────────────────────────────────────────────────────────
 
 function getVoiceLang(countryCode?: string): string {
@@ -467,7 +486,7 @@ function ListeningPractice({ exercises, index, onChangeIndex, countryCode }: { e
     if (currentWordIndex < 0 || !transcriptRef.current) return;
     const highlighted = transcriptRef.current.querySelector('[data-highlighted="true"]');
     if (highlighted) {
-      highlighted.scrollIntoView({ behavior: "smooth", block: "center" });
+      highlighted.scrollIntoView({ block: "nearest", inline: "nearest" });
     }
   }, [currentWordIndex]);
 
@@ -499,18 +518,21 @@ function ListeningPractice({ exercises, index, onChangeIndex, countryCode }: { e
       window.speechSynthesis.onvoiceschanged = trySetVoice;
     }
 
-    // Track word boundaries for highlighting — use onboundary to improve accuracy
+    // Track word boundaries for highlighting using real speech events first
     utterance.onboundary = (event) => {
+      if (typeof event.name === "string" && event.name.length > 0 && event.name !== "word") return;
       if (typeof event.charIndex !== "number") return;
+
       boundarySeenRef.current += 1;
 
-      const targetChar = Math.max(0, event.charIndex);
-      const tokenIndex = transcriptTokens.findIndex(
-        (token) => token.isWord && targetChar >= token.start && targetChar < token.end,
-      );
+      const tokenIndex = getTokenIndexForChar(transcriptTokens, event.charIndex);
 
       if (tokenIndex >= 0) {
-        setCurrentWordIndex(tokenIndex);
+        setCurrentWordIndex((prev) => (tokenIndex > prev ? tokenIndex : prev));
+      }
+
+      if (exercise.transcript.length > 0) {
+        setSpeechProgress(Math.min((event.charIndex / exercise.transcript.length) * 100, 99));
       }
     };
 
@@ -525,9 +547,9 @@ function ListeningPractice({ exercises, index, onChangeIndex, countryCode }: { e
       setSpeechProgress(Math.min((elapsed / estimatedDuration) * 100, 99));
     }, 200);
 
-    // Time-based highlight fallback — always runs, onboundary overrides when available
+    // Fallback only until the browser gives us real usable boundary events
     fallbackHighlightRef.current = setInterval(() => {
-      if (boundarySeenRef.current > 3 || wordTokens.length === 0) return;
+      if (boundarySeenRef.current > 0 || wordTokens.length === 0) return;
       const elapsed = Date.now() - startTime;
       const estimatedWordIdx = Math.min(
         wordTokens.length - 1,

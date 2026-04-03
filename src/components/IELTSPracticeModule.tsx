@@ -427,7 +427,7 @@ function ListeningPractice({ exercises, index, onChangeIndex, countryCode }: { e
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const fallbackHighlightRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const boundarySeenRef = useRef(false);
+  const boundarySeenRef = useRef(0);
   const transcriptRef = useRef<HTMLDivElement>(null);
 
   // Shuffle questions

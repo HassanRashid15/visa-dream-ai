@@ -502,7 +502,7 @@ function ListeningPractice({ exercises, index, onChangeIndex, countryCode }: { e
     // Track word boundaries for highlighting — use onboundary to improve accuracy
     utterance.onboundary = (event) => {
       if (typeof event.charIndex !== "number") return;
-      boundarySeenRef.current = true;
+      boundarySeenRef.current += 1;
 
       const targetChar = Math.max(0, event.charIndex);
       const tokenIndex = transcriptTokens.findIndex(

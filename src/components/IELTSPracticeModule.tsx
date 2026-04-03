@@ -527,7 +527,7 @@ function ListeningPractice({ exercises, index, onChangeIndex, countryCode }: { e
 
     // Time-based highlight fallback — always runs, onboundary overrides when available
     fallbackHighlightRef.current = setInterval(() => {
-      if (boundarySeenRef.current || wordTokens.length === 0) return;
+      if (boundarySeenRef.current > 3 || wordTokens.length === 0) return;
       const elapsed = Date.now() - startTime;
       const estimatedWordIdx = Math.min(
         wordTokens.length - 1,

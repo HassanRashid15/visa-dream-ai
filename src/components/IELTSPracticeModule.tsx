@@ -864,7 +864,7 @@ function WritingPractice({ tasks, index, onChangeIndex }: { tasks: WritingTask[]
       </div>
 
       {!bandResult ? (
-        <ShimmerButton onClick={handleSubmit} disabled={isScoring || wordCount < 20} className="w-full">
+        <ShimmerButton onClick={handleSubmit} className={`w-full ${(isScoring || wordCount < 20) ? "opacity-50 pointer-events-none" : ""}`}>
           {isScoring ? (
             <><Sparkles className="h-4 w-4 animate-spin" /> Analysing your essay...</>
           ) : (

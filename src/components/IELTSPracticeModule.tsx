@@ -445,9 +445,8 @@ function ListeningPractice({ exercises, index, onChangeIndex, countryCode }: { e
   const [currentWordIndex, setCurrentWordIndex] = useState(-1);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const fallbackHighlightRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const boundarySeenRef = useRef(0);
   const transcriptRef = useRef<HTMLDivElement>(null);
+  const [boundarySupported, setBoundarySupported] = useState(true);
 
   // Shuffle questions
   const questions = useMemo(() => shuffleQuestions(exercise?.questions || []), [exercise?.id]);

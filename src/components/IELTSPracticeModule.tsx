@@ -465,7 +465,6 @@ function ListeningPractice({ exercises, index, onChangeIndex, countryCode }: { e
     return () => {
       window.speechSynthesis?.cancel();
       if (intervalRef.current) clearInterval(intervalRef.current);
-      if (fallbackHighlightRef.current) clearInterval(fallbackHighlightRef.current);
     };
   }, []);
 
@@ -494,11 +493,10 @@ function ListeningPractice({ exercises, index, onChangeIndex, countryCode }: { e
 
     window.speechSynthesis.cancel();
     if (intervalRef.current) clearInterval(intervalRef.current);
-    if (fallbackHighlightRef.current) clearInterval(fallbackHighlightRef.current);
     setPhase("playing");
     setSpeechProgress(0);
     setCurrentWordIndex(-1);
-    boundarySeenRef.current = 0;
+    setBoundarySupported(true);
 
     const utterance = new SpeechSynthesisUtterance(exercise.transcript);
     utterance.rate = 0.9;
@@ -507,7 +505,6 @@ function ListeningPractice({ exercises, index, onChangeIndex, countryCode }: { e
     const lang = getVoiceLang(countryCode);
     utterance.lang = lang;
 
-    // Load voices and pick best match
     const trySetVoice = () => {
       const voice = getBestVoice(lang);
       if (voice) utterance.voice = voice;
@@ -517,59 +514,45 @@ function ListeningPractice({ exercises, index, onChangeIndex, countryCode }: { e
       window.speechSynthesis.onvoiceschanged = trySetVoice;
     }
 
-    // Track word boundaries for highlighting using real speech events first
+    let boundaryCount = 0;
+
+    // ONLY use real boundary events for word highlighting — no fallback timer
     utterance.onboundary = (event) => {
       if (typeof event.name === "string" && event.name.length > 0 && event.name !== "word") return;
       if (typeof event.charIndex !== "number") return;
 
-      boundarySeenRef.current += 1;
-
+      boundaryCount += 1;
       const tokenIndex = getTokenIndexForChar(transcriptTokens, event.charIndex);
-
       if (tokenIndex >= 0) {
-        setCurrentWordIndex((prev) => (tokenIndex > prev ? tokenIndex : prev));
+        setCurrentWordIndex(tokenIndex);
       }
-
       if (exercise.transcript.length > 0) {
         setSpeechProgress(Math.min((event.charIndex / exercise.transcript.length) * 100, 99));
       }
     };
 
-    // Track progress
+    // After 3 seconds of speech, if no boundary events fired, mark as unsupported
+    setTimeout(() => {
+      if (boundaryCount === 0) {
+        setBoundarySupported(false);
+      }
+    }, 3000);
+
+    // Simple progress bar fallback (just for the progress bar, NOT for word highlighting)
     const wordCount = exercise.transcript.split(/\s+/).length;
-    const estimatedDuration = (wordCount / 150) * 60 * 1000;
+    const estimatedDuration = (wordCount / 135) * 60 * 1000; // 135 wpm at 0.9 rate
     const startTime = Date.now();
-    const wordTokens = transcriptTokens.filter((token) => token.isWord);
 
     intervalRef.current = setInterval(() => {
       const elapsed = Date.now() - startTime;
-      setSpeechProgress(Math.min((elapsed / estimatedDuration) * 100, 99));
-    }, 200);
-
-    // Fallback only until the browser gives us real usable boundary events
-    fallbackHighlightRef.current = setInterval(() => {
-      if (boundarySeenRef.current > 0 || wordTokens.length === 0) return;
-      const elapsed = Date.now() - startTime;
-      const estimatedWordIdx = Math.min(
-        wordTokens.length - 1,
-        Math.floor((elapsed / Math.max(estimatedDuration, 1)) * wordTokens.length),
-      );
-      // Map word-only index back to full token index
-      let wordsSeen = 0;
-      for (let ti = 0; ti < transcriptTokens.length; ti++) {
-        if (transcriptTokens[ti].isWord) {
-          if (wordsSeen === estimatedWordIdx) {
-            setCurrentWordIndex(ti);
-            break;
-          }
-          wordsSeen++;
-        }
+      // Only update progress bar if boundary events aren't handling it
+      if (boundaryCount === 0) {
+        setSpeechProgress(Math.min((elapsed / estimatedDuration) * 100, 99));
       }
-    }, 90);
+    }, 500);
 
     utterance.onend = () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
-      if (fallbackHighlightRef.current) clearInterval(fallbackHighlightRef.current);
       setSpeechProgress(100);
       setCurrentWordIndex(-1);
       setPhase("review");
@@ -578,7 +561,6 @@ function ListeningPractice({ exercises, index, onChangeIndex, countryCode }: { e
 
     utterance.onerror = () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
-      if (fallbackHighlightRef.current) clearInterval(fallbackHighlightRef.current);
       setSpeechProgress(100);
       setCurrentWordIndex(-1);
       setPhase("review");
@@ -592,7 +574,6 @@ function ListeningPractice({ exercises, index, onChangeIndex, countryCode }: { e
   const handleStopAudio = () => {
     window.speechSynthesis?.cancel();
     if (intervalRef.current) clearInterval(intervalRef.current);
-    if (fallbackHighlightRef.current) clearInterval(fallbackHighlightRef.current);
     setCurrentWordIndex(-1);
     setPhase("review");
     setReviewCountdown(20);
@@ -603,13 +584,13 @@ function ListeningPractice({ exercises, index, onChangeIndex, countryCode }: { e
   const handleReset = () => {
     window.speechSynthesis?.cancel();
     if (intervalRef.current) clearInterval(intervalRef.current);
-    if (fallbackHighlightRef.current) clearInterval(fallbackHighlightRef.current);
     setPhase("read-questions");
     setAnswers({});
     setShowResults(false);
     setSpeechProgress(0);
     setReviewCountdown(20);
     setCurrentWordIndex(-1);
+    setBoundarySupported(true);
   };
 
   if (!exercise) return <p className="text-muted-foreground">No listening exercises available.</p>;

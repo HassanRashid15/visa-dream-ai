@@ -44,49 +44,6 @@ function shuffleQuestions(questions: PracticeQuestion[]): PracticeQuestion[] {
   });
 }
 
-type TranscriptToken = {
-  text: string;
-  isWord: boolean;
-  start: number;
-  end: number;
-};
-
-function tokenizeTranscript(transcript: string): TranscriptToken[] {
-  const parts = transcript.match(/\S+|\s+/g) ?? [];
-  let cursor = 0;
-
-  return parts.map((text) => {
-    const start = cursor;
-    cursor += text.length;
-
-    return {
-      text,
-      isWord: /\S/.test(text),
-      start,
-      end: cursor,
-    };
-  });
-}
-
-function getTokenIndexForChar(tokens: TranscriptToken[], charIndex: number) {
-  const safeCharIndex = Math.max(0, charIndex);
-
-  for (let i = 0; i < tokens.length; i++) {
-    const token = tokens[i];
-    if (!token.isWord) continue;
-
-    if (safeCharIndex < token.end) {
-      return i;
-    }
-  }
-
-  for (let i = tokens.length - 1; i >= 0; i--) {
-    if (tokens[i].isWord) return i;
-  }
-
-  return -1;
-}
-
 // ─── VOICE HELPERS ──────────────────────────────────────────────────────────
 
 function getVoiceLang(countryCode?: string): string {

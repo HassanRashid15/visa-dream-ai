@@ -776,15 +776,27 @@ function ListeningPractice({ exercises, index, onChangeIndex, countryCode }: { e
 function WritingPractice({ tasks, index, onChangeIndex }: { tasks: WritingTask[]; index: number; onChangeIndex: (i: number) => void }) {
   const task = tasks[index];
   const [essay, setEssay] = useState("");
-  const [showSelfAssess, setShowSelfAssess] = useState(false);
+  const [bandResult, setBandResult] = useState<BandScore | null>(null);
   const [timeLeft, setTimeLeft] = useState((task?.timeLimit || 40) * 60);
   const [timerActive, setTimerActive] = useState(false);
+  const [isScoring, setIsScoring] = useState(false);
 
   useEffect(() => {
     if (!timerActive || timeLeft <= 0) return;
     const t = setInterval(() => setTimeLeft((p) => p - 1), 1000);
     return () => clearInterval(t);
   }, [timerActive, timeLeft]);
+
+  const handleSubmit = () => {
+    setTimerActive(false);
+    setIsScoring(true);
+    // Simulate brief processing delay for UX
+    setTimeout(() => {
+      const result = scoreEssay(essay, task.taskNumber, task.wordLimit);
+      setBandResult(result);
+      setIsScoring(false);
+    }, 800);
+  };
 
   if (!task) return <p className="text-muted-foreground">No writing tasks available.</p>;
 
@@ -814,7 +826,7 @@ function WritingPractice({ tasks, index, onChangeIndex }: { tasks: WritingTask[]
         {tasks.length > 1 && (
           <div className="flex gap-1 ml-auto">
             {tasks.map((_, i) => (
-              <button key={i} onClick={() => { onChangeIndex(i); setEssay(""); setShowSelfAssess(false); setTimeLeft((tasks[i]?.timeLimit || 40) * 60); setTimerActive(false); }}
+              <button key={i} onClick={() => { onChangeIndex(i); setEssay(""); setBandResult(null); setTimeLeft((tasks[i]?.timeLimit || 40) * 60); setTimerActive(false); }}
                 className={`h-2 w-6 rounded-full transition-colors ${i === index ? "bg-primary" : "bg-muted"}`}
               />
             ))}
@@ -851,27 +863,73 @@ function WritingPractice({ tasks, index, onChangeIndex }: { tasks: WritingTask[]
         </div>
       </div>
 
-      {!showSelfAssess ? (
-        <ShimmerButton onClick={() => { setTimerActive(false); setShowSelfAssess(true); }} className="w-full">
-          <Send className="h-4 w-4" /> Submit for Self-Assessment
+      {!bandResult ? (
+        <ShimmerButton onClick={handleSubmit} disabled={isScoring || wordCount < 20} className="w-full">
+          {isScoring ? (
+            <><Sparkles className="h-4 w-4 animate-spin" /> Analysing your essay...</>
+          ) : (
+            <><Star className="h-4 w-4" /> Get AI Band Score</>
+          )}
         </ShimmerButton>
       ) : (
-        <SparkleBorder>
-          <div className="p-6 space-y-4">
-            <h3 className="font-display font-bold text-center">
-              <GradientText>Self-Assessment Checklist</GradientText>
-            </h3>
-            <p className="text-xs text-muted-foreground text-center">Rate yourself honestly on each criterion</p>
-            <div className="space-y-3">
-              {task.criteria.map((c, i) => (
-                <div key={i} className="p-3 rounded-lg bg-muted/30 border border-border">
-                  <p className="text-sm font-semibold">{c.name}</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">{c.description}</p>
-                </div>
-              ))}
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
+          {/* Overall Band Score */}
+          <SparkleBorder>
+            <div className="p-6 text-center space-y-3">
+              <p className="text-xs text-muted-foreground uppercase tracking-wider">Estimated IELTS Writing Band</p>
+              <h3 className="text-4xl font-display font-bold">
+                <GradientText>{bandResult.overall.toFixed(1)}</GradientText>
+              </h3>
+              <div className="flex justify-center gap-4 text-xs">
+                <span>TA: {bandResult.taskAchievement.toFixed(1)}</span>
+                <span>CC: {bandResult.coherenceCohesion.toFixed(1)}</span>
+                <span>LR: {bandResult.lexicalResource.toFixed(1)}</span>
+                <span>GRA: {bandResult.grammaticalRange.toFixed(1)}</span>
+              </div>
             </div>
+          </SparkleBorder>
+
+          {/* Detailed Feedback per Criterion */}
+          <div className="space-y-3">
+            {bandResult.feedback.map((fb, i) => (
+              <div key={i} className="rounded-xl border border-border bg-card p-4 card-elevated space-y-3">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-sm font-display font-bold">{fb.criterion}</h4>
+                  <span className="px-2.5 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold">
+                    Band {fb.band.toFixed(1)}
+                  </span>
+                </div>
+                <p className="text-xs text-muted-foreground italic leading-relaxed">{fb.descriptor}</p>
+
+                {fb.strengths.length > 0 && (
+                  <div className="space-y-1">
+                    <p className="text-[10px] uppercase tracking-wider text-green-600 font-semibold flex items-center gap-1">
+                      <CheckCircle className="h-3 w-3" /> Strengths
+                    </p>
+                    {fb.strengths.map((s, j) => (
+                      <p key={j} className="text-xs text-foreground/70 pl-4">• {s}</p>
+                    ))}
+                  </div>
+                )}
+
+                {fb.improvements.length > 0 && (
+                  <div className="space-y-1">
+                    <p className="text-[10px] uppercase tracking-wider text-amber-600 font-semibold flex items-center gap-1">
+                      <TrendingUp className="h-3 w-3" /> To Improve
+                    </p>
+                    {fb.improvements.map((s, j) => (
+                      <p key={j} className="text-xs text-foreground/70 pl-4">• {s}</p>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
-        </SparkleBorder>
+
+          <Button onClick={() => { setEssay(""); setBandResult(null); setTimeLeft((task.timeLimit || 40) * 60); setTimerActive(false); }} variant="outline" className="w-full gap-2">
+            <ArrowLeft className="h-4 w-4" /> Write Another Essay
+          </Button>
+        </motion.div>
       )}
     </div>
   );

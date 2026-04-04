@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, ArrowRight, BookOpen, Headphones, PenTool, Mic, Clock, CheckCircle, XCircle, Eye, EyeOff, Timer, Volume2, Send, ChevronDown, ChevronUp, Play, Pause, SkipForward, AlertCircle, Info, Sparkles, Square, CircleDot, Trash2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, BookOpen, Headphones, PenTool, Mic, Clock, CheckCircle, XCircle, Eye, EyeOff, Timer, Volume2, Send, ChevronDown, ChevronUp, Play, Pause, SkipForward, AlertCircle, Info, Sparkles, Square, CircleDot, Trash2, Star, TrendingUp } from "lucide-react";
+import { generateTimestamps, getActiveSegmentIndex, getTotalDuration, type TranscriptSegment } from "@/lib/audioTimestamps";
+import { scoreEssay, type BandScore } from "@/lib/essayScoring";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { GradientText, TiltCard, StaggerContainer, StaggerItem, ShimmerButton, SparkleBorder, AnimatedCounter, PulseDot } from "@/components/ui/animated-bits";

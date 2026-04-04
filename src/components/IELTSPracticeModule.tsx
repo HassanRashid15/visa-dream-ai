@@ -714,33 +714,39 @@ function ListeningPractice({ exercises, index, onChangeIndex, countryCode }: { e
           <div className="rounded-xl border border-border bg-card card-elevated overflow-hidden">
             <div className="p-3 bg-muted/30 border-b border-border flex items-center gap-2">
               <Volume2 className="h-4 w-4 text-primary animate-pulse" />
-              <span className="text-xs font-medium">Live Transcript — words highlight as spoken</span>
+              <span className="text-xs font-medium">
+                {boundarySupported ? "Live Transcript — words highlight as spoken" : "Live Transcript — listening..."}
+              </span>
             </div>
             <div ref={transcriptRef} className="p-4 max-h-[300px] overflow-y-auto">
-              <p className="text-sm leading-relaxed">
-                {transcriptTokens.map((token, i) => {
-                  const isHighlighted = i === currentWordIndex;
-                  const isPast = i < currentWordIndex;
-                  if (!token.isWord) {
-                    return <span key={i}>{token.text}</span>;
-                  }
-                  return (
-                    <span
-                      key={i}
-                      data-highlighted={isHighlighted ? "true" : "false"}
-                      className={`transition-all duration-150 ${
-                        isHighlighted
-                          ? "bg-primary text-primary-foreground px-0.5 rounded font-semibold"
-                          : isPast
-                          ? "text-foreground/90"
-                          : "text-foreground/40"
-                      }`}
-                    >
-                      {token.text}
-                    </span>
-                  );
-                })}
-              </p>
+              {boundarySupported ? (
+                <p className="text-sm leading-relaxed">
+                  {transcriptTokens.map((token, i) => {
+                    const isHighlighted = i === currentWordIndex;
+                    const isPast = i < currentWordIndex;
+                    if (!token.isWord) {
+                      return <span key={i}>{token.text}</span>;
+                    }
+                    return (
+                      <span
+                        key={i}
+                        data-highlighted={isHighlighted ? "true" : "false"}
+                        className={`transition-colors duration-100 ${
+                          isHighlighted
+                            ? "bg-primary text-primary-foreground px-0.5 rounded font-semibold"
+                            : isPast
+                            ? "text-foreground/90"
+                            : "text-foreground/40"
+                        }`}
+                      >
+                        {token.text}
+                      </span>
+                    );
+                  })}
+                </p>
+              ) : (
+                <p className="text-sm leading-relaxed whitespace-pre-line text-foreground/80">{exercise.transcript}</p>
+              )}
             </div>
           </div>
 

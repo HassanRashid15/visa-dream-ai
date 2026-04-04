@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, ArrowRight, BookOpen, Headphones, PenTool, Mic, Clock, CheckCircle, XCircle, Eye, EyeOff, Timer, Volume2, Send, ChevronDown, ChevronUp, Play, Pause, SkipForward, AlertCircle, Info, Sparkles, Square, CircleDot, Trash2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, BookOpen, Headphones, PenTool, Mic, Clock, CheckCircle, XCircle, Eye, EyeOff, Timer, Volume2, Send, ChevronDown, ChevronUp, Play, Pause, SkipForward, AlertCircle, Info, Sparkles, Square, CircleDot, Trash2, Star, TrendingUp } from "lucide-react";
+import { generateTimestamps, getActiveSegmentIndex, getTotalDuration, type TranscriptSegment } from "@/lib/audioTimestamps";
+import { scoreEssay, type BandScore } from "@/lib/essayScoring";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { GradientText, TiltCard, StaggerContainer, StaggerItem, ShimmerButton, SparkleBorder, AnimatedCounter, PulseDot } from "@/components/ui/animated-bits";
@@ -40,49 +42,6 @@ function shuffleQuestions(questions: PracticeQuestion[]): PracticeQuestion[] {
     }
     return q;
   });
-}
-
-type TranscriptToken = {
-  text: string;
-  isWord: boolean;
-  start: number;
-  end: number;
-};
-
-function tokenizeTranscript(transcript: string): TranscriptToken[] {
-  const parts = transcript.match(/\S+|\s+/g) ?? [];
-  let cursor = 0;
-
-  return parts.map((text) => {
-    const start = cursor;
-    cursor += text.length;
-
-    return {
-      text,
-      isWord: /\S/.test(text),
-      start,
-      end: cursor,
-    };
-  });
-}
-
-function getTokenIndexForChar(tokens: TranscriptToken[], charIndex: number) {
-  const safeCharIndex = Math.max(0, charIndex);
-
-  for (let i = 0; i < tokens.length; i++) {
-    const token = tokens[i];
-    if (!token.isWord) continue;
-
-    if (safeCharIndex < token.end) {
-      return i;
-    }
-  }
-
-  for (let i = tokens.length - 1; i >= 0; i--) {
-    if (tokens[i].isWord) return i;
-  }
-
-  return -1;
 }
 
 // ─── VOICE HELPERS ──────────────────────────────────────────────────────────
@@ -442,20 +401,21 @@ function ListeningPractice({ exercises, index, onChangeIndex, countryCode }: { e
   const [reviewCountdown, setReviewCountdown] = useState(20);
   const [speechProgress, setSpeechProgress] = useState(0);
   const [speechSupported, setSpeechSupported] = useState(true);
-  const [currentWordIndex, setCurrentWordIndex] = useState(-1);
-  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [currentSegmentIndex, setCurrentSegmentIndex] = useState(-1);
   const transcriptRef = useRef<HTMLDivElement>(null);
-  const [boundarySupported, setBoundarySupported] = useState(true);
+  const rafRef = useRef<number | null>(null);
+  const speechStartTimeRef = useRef<number>(0);
+  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
 
-  // Shuffle questions
   const questions = useMemo(() => shuffleQuestions(exercise?.questions || []), [exercise?.id]);
 
-  // Split transcript into words for highlighting
-  const transcriptTokens = useMemo(() => {
+  // Generate timestamp segments from transcript
+  const segments = useMemo(() => {
     if (!exercise) return [];
-    return tokenizeTranscript(exercise.transcript);
+    return generateTimestamps(exercise.transcript);
   }, [exercise?.id]);
+
+  const totalDuration = useMemo(() => getTotalDuration(segments), [segments]);
 
   useEffect(() => {
     if (!window.speechSynthesis) setSpeechSupported(false);
@@ -464,39 +424,48 @@ function ListeningPractice({ exercises, index, onChangeIndex, countryCode }: { e
   useEffect(() => {
     return () => {
       window.speechSynthesis?.cancel();
-      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
   }, []);
 
   // Review countdown
   useEffect(() => {
     if (phase !== "review") return;
-    if (reviewCountdown <= 0) {
-      setPhase("answer");
-      return;
-    }
+    if (reviewCountdown <= 0) { setPhase("answer"); return; }
     const t = setInterval(() => setReviewCountdown((p) => p - 1), 1000);
     return () => clearInterval(t);
   }, [phase, reviewCountdown]);
 
   // Auto-scroll to highlighted word
   useEffect(() => {
-    if (currentWordIndex < 0 || !transcriptRef.current) return;
-    const highlighted = transcriptRef.current.querySelector('[data-highlighted="true"]');
-    if (highlighted) {
-      highlighted.scrollIntoView({ block: "nearest", inline: "nearest" });
-    }
-  }, [currentWordIndex]);
+    if (currentSegmentIndex < 0 || !transcriptRef.current) return;
+    const el = transcriptRef.current.querySelector('[data-highlighted="true"]');
+    if (el) el.scrollIntoView({ block: "nearest", inline: "nearest" });
+  }, [currentSegmentIndex]);
+
+  // Animation loop: track elapsed time and highlight correct segment
+  const startHighlightLoop = useCallback(() => {
+    speechStartTimeRef.current = performance.now();
+
+    const tick = () => {
+      const elapsed = (performance.now() - speechStartTimeRef.current) / 1000;
+      const activeIdx = getActiveSegmentIndex(segments, elapsed);
+      setCurrentSegmentIndex(activeIdx);
+      setSpeechProgress(Math.min((elapsed / totalDuration) * 100, 99));
+      rafRef.current = requestAnimationFrame(tick);
+    };
+
+    rafRef.current = requestAnimationFrame(tick);
+  }, [segments, totalDuration]);
 
   const handlePlayAudio = useCallback(() => {
     if (!window.speechSynthesis || !exercise) return;
 
     window.speechSynthesis.cancel();
-    if (intervalRef.current) clearInterval(intervalRef.current);
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
     setPhase("playing");
     setSpeechProgress(0);
-    setCurrentWordIndex(-1);
-    setBoundarySupported(true);
+    setCurrentSegmentIndex(-1);
 
     const utterance = new SpeechSynthesisUtterance(exercise.transcript);
     utterance.rate = 0.9;
@@ -514,67 +483,34 @@ function ListeningPractice({ exercises, index, onChangeIndex, countryCode }: { e
       window.speechSynthesis.onvoiceschanged = trySetVoice;
     }
 
-    let boundaryCount = 0;
-
-    // ONLY use real boundary events for word highlighting — no fallback timer
-    utterance.onboundary = (event) => {
-      if (typeof event.name === "string" && event.name.length > 0 && event.name !== "word") return;
-      if (typeof event.charIndex !== "number") return;
-
-      boundaryCount += 1;
-      const tokenIndex = getTokenIndexForChar(transcriptTokens, event.charIndex);
-      if (tokenIndex >= 0) {
-        setCurrentWordIndex(tokenIndex);
-      }
-      if (exercise.transcript.length > 0) {
-        setSpeechProgress(Math.min((event.charIndex / exercise.transcript.length) * 100, 99));
-      }
+    utterance.onstart = () => {
+      startHighlightLoop();
     };
 
-    // After 3 seconds of speech, if no boundary events fired, mark as unsupported
-    setTimeout(() => {
-      if (boundaryCount === 0) {
-        setBoundarySupported(false);
-      }
-    }, 3000);
-
-    // Simple progress bar fallback (just for the progress bar, NOT for word highlighting)
-    const wordCount = exercise.transcript.split(/\s+/).length;
-    const estimatedDuration = (wordCount / 135) * 60 * 1000; // 135 wpm at 0.9 rate
-    const startTime = Date.now();
-
-    intervalRef.current = setInterval(() => {
-      const elapsed = Date.now() - startTime;
-      // Only update progress bar if boundary events aren't handling it
-      if (boundaryCount === 0) {
-        setSpeechProgress(Math.min((elapsed / estimatedDuration) * 100, 99));
-      }
-    }, 500);
-
     utterance.onend = () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
       setSpeechProgress(100);
-      setCurrentWordIndex(-1);
+      setCurrentSegmentIndex(-1);
       setPhase("review");
       setReviewCountdown(20);
     };
 
     utterance.onerror = () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
       setSpeechProgress(100);
-      setCurrentWordIndex(-1);
+      setCurrentSegmentIndex(-1);
       setPhase("review");
       setReviewCountdown(20);
     };
 
     utteranceRef.current = utterance;
     window.speechSynthesis.speak(utterance);
-  }, [exercise, countryCode, transcriptTokens]);
+  }, [exercise, countryCode, startHighlightLoop]);
 
   const handleStopAudio = () => {
     window.speechSynthesis?.cancel();
-    if (intervalRef.current) clearInterval(intervalRef.current);
-    setCurrentWordIndex(-1);
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    setCurrentSegmentIndex(-1);
     setPhase("review");
     setReviewCountdown(20);
   };
@@ -583,14 +519,13 @@ function ListeningPractice({ exercises, index, onChangeIndex, countryCode }: { e
 
   const handleReset = () => {
     window.speechSynthesis?.cancel();
-    if (intervalRef.current) clearInterval(intervalRef.current);
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
     setPhase("read-questions");
     setAnswers({});
     setShowResults(false);
     setSpeechProgress(0);
     setReviewCountdown(20);
-    setCurrentWordIndex(-1);
-    setBoundarySupported(true);
+    setCurrentSegmentIndex(-1);
   };
 
   if (!exercise) return <p className="text-muted-foreground">No listening exercises available.</p>;
@@ -691,7 +626,7 @@ function ListeningPractice({ exercises, index, onChangeIndex, countryCode }: { e
         </motion.div>
       )}
 
-      {/* PHASE: Playing Audio with Word Highlighting */}
+      {/* PHASE: Playing Audio with Timestamp-Synced Highlighting */}
       {phase === "playing" && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
           <div className="rounded-xl border-2 border-primary bg-card p-6 card-elevated space-y-4">
@@ -710,43 +645,37 @@ function ListeningPractice({ exercises, index, onChangeIndex, countryCode }: { e
             <p className="text-xs text-center text-muted-foreground">{Math.round(speechProgress)}% complete</p>
           </div>
 
-          {/* Transcript with word highlighting */}
+          {/* Transcript with timestamp-based highlighting */}
           <div className="rounded-xl border border-border bg-card card-elevated overflow-hidden">
             <div className="p-3 bg-muted/30 border-b border-border flex items-center gap-2">
               <Volume2 className="h-4 w-4 text-primary animate-pulse" />
-              <span className="text-xs font-medium">
-                {boundarySupported ? "Live Transcript — words highlight as spoken" : "Live Transcript — listening..."}
-              </span>
+              <span className="text-xs font-medium">Live Transcript — words highlight as spoken</span>
             </div>
             <div ref={transcriptRef} className="p-4 max-h-[300px] overflow-y-auto">
-              {boundarySupported ? (
-                <p className="text-sm leading-relaxed">
-                  {transcriptTokens.map((token, i) => {
-                    const isHighlighted = i === currentWordIndex;
-                    const isPast = i < currentWordIndex;
-                    if (!token.isWord) {
-                      return <span key={i}>{token.text}</span>;
-                    }
-                    return (
-                      <span
-                        key={i}
-                        data-highlighted={isHighlighted ? "true" : "false"}
-                        className={`transition-colors duration-100 ${
-                          isHighlighted
-                            ? "bg-primary text-primary-foreground px-0.5 rounded font-semibold"
-                            : isPast
-                            ? "text-foreground/90"
-                            : "text-foreground/40"
-                        }`}
-                      >
-                        {token.text}
-                      </span>
-                    );
-                  })}
-                </p>
-              ) : (
-                <p className="text-sm leading-relaxed whitespace-pre-line text-foreground/80">{exercise.transcript}</p>
-              )}
+              <p className="text-sm leading-relaxed">
+                {segments.map((seg, i) => {
+                  const isHighlighted = i === currentSegmentIndex;
+                  const isPast = currentSegmentIndex >= 0 && i < currentSegmentIndex;
+                  if (!seg.isWord) {
+                    return <span key={i}>{seg.text}</span>;
+                  }
+                  return (
+                    <span
+                      key={i}
+                      data-highlighted={isHighlighted ? "true" : "false"}
+                      className={`transition-colors duration-75 ${
+                        isHighlighted
+                          ? "bg-primary text-primary-foreground px-0.5 rounded font-semibold"
+                          : isPast
+                          ? "text-foreground/90"
+                          : "text-foreground/40"
+                      }`}
+                    >
+                      {seg.text}
+                    </span>
+                  );
+                })}
+              </p>
             </div>
           </div>
 
@@ -847,15 +776,27 @@ function ListeningPractice({ exercises, index, onChangeIndex, countryCode }: { e
 function WritingPractice({ tasks, index, onChangeIndex }: { tasks: WritingTask[]; index: number; onChangeIndex: (i: number) => void }) {
   const task = tasks[index];
   const [essay, setEssay] = useState("");
-  const [showSelfAssess, setShowSelfAssess] = useState(false);
+  const [bandResult, setBandResult] = useState<BandScore | null>(null);
   const [timeLeft, setTimeLeft] = useState((task?.timeLimit || 40) * 60);
   const [timerActive, setTimerActive] = useState(false);
+  const [isScoring, setIsScoring] = useState(false);
 
   useEffect(() => {
     if (!timerActive || timeLeft <= 0) return;
     const t = setInterval(() => setTimeLeft((p) => p - 1), 1000);
     return () => clearInterval(t);
   }, [timerActive, timeLeft]);
+
+  const handleSubmit = () => {
+    setTimerActive(false);
+    setIsScoring(true);
+    // Simulate brief processing delay for UX
+    setTimeout(() => {
+      const result = scoreEssay(essay, task.taskNumber, task.wordLimit);
+      setBandResult(result);
+      setIsScoring(false);
+    }, 800);
+  };
 
   if (!task) return <p className="text-muted-foreground">No writing tasks available.</p>;
 
@@ -885,7 +826,7 @@ function WritingPractice({ tasks, index, onChangeIndex }: { tasks: WritingTask[]
         {tasks.length > 1 && (
           <div className="flex gap-1 ml-auto">
             {tasks.map((_, i) => (
-              <button key={i} onClick={() => { onChangeIndex(i); setEssay(""); setShowSelfAssess(false); setTimeLeft((tasks[i]?.timeLimit || 40) * 60); setTimerActive(false); }}
+              <button key={i} onClick={() => { onChangeIndex(i); setEssay(""); setBandResult(null); setTimeLeft((tasks[i]?.timeLimit || 40) * 60); setTimerActive(false); }}
                 className={`h-2 w-6 rounded-full transition-colors ${i === index ? "bg-primary" : "bg-muted"}`}
               />
             ))}
@@ -922,27 +863,73 @@ function WritingPractice({ tasks, index, onChangeIndex }: { tasks: WritingTask[]
         </div>
       </div>
 
-      {!showSelfAssess ? (
-        <ShimmerButton onClick={() => { setTimerActive(false); setShowSelfAssess(true); }} className="w-full">
-          <Send className="h-4 w-4" /> Submit for Self-Assessment
+      {!bandResult ? (
+        <ShimmerButton onClick={handleSubmit} className={`w-full ${(isScoring || wordCount < 20) ? "opacity-50 pointer-events-none" : ""}`}>
+          {isScoring ? (
+            <><Sparkles className="h-4 w-4 animate-spin" /> Analysing your essay...</>
+          ) : (
+            <><Star className="h-4 w-4" /> Get AI Band Score</>
+          )}
         </ShimmerButton>
       ) : (
-        <SparkleBorder>
-          <div className="p-6 space-y-4">
-            <h3 className="font-display font-bold text-center">
-              <GradientText>Self-Assessment Checklist</GradientText>
-            </h3>
-            <p className="text-xs text-muted-foreground text-center">Rate yourself honestly on each criterion</p>
-            <div className="space-y-3">
-              {task.criteria.map((c, i) => (
-                <div key={i} className="p-3 rounded-lg bg-muted/30 border border-border">
-                  <p className="text-sm font-semibold">{c.name}</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">{c.description}</p>
-                </div>
-              ))}
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
+          {/* Overall Band Score */}
+          <SparkleBorder>
+            <div className="p-6 text-center space-y-3">
+              <p className="text-xs text-muted-foreground uppercase tracking-wider">Estimated IELTS Writing Band</p>
+              <h3 className="text-4xl font-display font-bold">
+                <GradientText>{bandResult.overall.toFixed(1)}</GradientText>
+              </h3>
+              <div className="flex justify-center gap-4 text-xs">
+                <span>TA: {bandResult.taskAchievement.toFixed(1)}</span>
+                <span>CC: {bandResult.coherenceCohesion.toFixed(1)}</span>
+                <span>LR: {bandResult.lexicalResource.toFixed(1)}</span>
+                <span>GRA: {bandResult.grammaticalRange.toFixed(1)}</span>
+              </div>
             </div>
+          </SparkleBorder>
+
+          {/* Detailed Feedback per Criterion */}
+          <div className="space-y-3">
+            {bandResult.feedback.map((fb, i) => (
+              <div key={i} className="rounded-xl border border-border bg-card p-4 card-elevated space-y-3">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-sm font-display font-bold">{fb.criterion}</h4>
+                  <span className="px-2.5 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold">
+                    Band {fb.band.toFixed(1)}
+                  </span>
+                </div>
+                <p className="text-xs text-muted-foreground italic leading-relaxed">{fb.descriptor}</p>
+
+                {fb.strengths.length > 0 && (
+                  <div className="space-y-1">
+                    <p className="text-[10px] uppercase tracking-wider text-green-600 font-semibold flex items-center gap-1">
+                      <CheckCircle className="h-3 w-3" /> Strengths
+                    </p>
+                    {fb.strengths.map((s, j) => (
+                      <p key={j} className="text-xs text-foreground/70 pl-4">• {s}</p>
+                    ))}
+                  </div>
+                )}
+
+                {fb.improvements.length > 0 && (
+                  <div className="space-y-1">
+                    <p className="text-[10px] uppercase tracking-wider text-amber-600 font-semibold flex items-center gap-1">
+                      <TrendingUp className="h-3 w-3" /> To Improve
+                    </p>
+                    {fb.improvements.map((s, j) => (
+                      <p key={j} className="text-xs text-foreground/70 pl-4">• {s}</p>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
-        </SparkleBorder>
+
+          <Button onClick={() => { setEssay(""); setBandResult(null); setTimeLeft((task.timeLimit || 40) * 60); setTimerActive(false); }} variant="outline" className="w-full gap-2">
+            <ArrowLeft className="h-4 w-4" /> Write Another Essay
+          </Button>
+        </motion.div>
       )}
     </div>
   );

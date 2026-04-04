@@ -401,20 +401,21 @@ function ListeningPractice({ exercises, index, onChangeIndex, countryCode }: { e
   const [reviewCountdown, setReviewCountdown] = useState(20);
   const [speechProgress, setSpeechProgress] = useState(0);
   const [speechSupported, setSpeechSupported] = useState(true);
-  const [currentWordIndex, setCurrentWordIndex] = useState(-1);
-  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [currentSegmentIndex, setCurrentSegmentIndex] = useState(-1);
   const transcriptRef = useRef<HTMLDivElement>(null);
-  const [boundarySupported, setBoundarySupported] = useState(true);
+  const rafRef = useRef<number | null>(null);
+  const speechStartTimeRef = useRef<number>(0);
+  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
 
-  // Shuffle questions
   const questions = useMemo(() => shuffleQuestions(exercise?.questions || []), [exercise?.id]);
 
-  // Split transcript into words for highlighting
-  const transcriptTokens = useMemo(() => {
+  // Generate timestamp segments from transcript
+  const segments = useMemo(() => {
     if (!exercise) return [];
-    return tokenizeTranscript(exercise.transcript);
+    return generateTimestamps(exercise.transcript);
   }, [exercise?.id]);
+
+  const totalDuration = useMemo(() => getTotalDuration(segments), [segments]);
 
   useEffect(() => {
     if (!window.speechSynthesis) setSpeechSupported(false);
@@ -423,39 +424,48 @@ function ListeningPractice({ exercises, index, onChangeIndex, countryCode }: { e
   useEffect(() => {
     return () => {
       window.speechSynthesis?.cancel();
-      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
   }, []);
 
   // Review countdown
   useEffect(() => {
     if (phase !== "review") return;
-    if (reviewCountdown <= 0) {
-      setPhase("answer");
-      return;
-    }
+    if (reviewCountdown <= 0) { setPhase("answer"); return; }
     const t = setInterval(() => setReviewCountdown((p) => p - 1), 1000);
     return () => clearInterval(t);
   }, [phase, reviewCountdown]);
 
   // Auto-scroll to highlighted word
   useEffect(() => {
-    if (currentWordIndex < 0 || !transcriptRef.current) return;
-    const highlighted = transcriptRef.current.querySelector('[data-highlighted="true"]');
-    if (highlighted) {
-      highlighted.scrollIntoView({ block: "nearest", inline: "nearest" });
-    }
-  }, [currentWordIndex]);
+    if (currentSegmentIndex < 0 || !transcriptRef.current) return;
+    const el = transcriptRef.current.querySelector('[data-highlighted="true"]');
+    if (el) el.scrollIntoView({ block: "nearest", inline: "nearest" });
+  }, [currentSegmentIndex]);
+
+  // Animation loop: track elapsed time and highlight correct segment
+  const startHighlightLoop = useCallback(() => {
+    speechStartTimeRef.current = performance.now();
+
+    const tick = () => {
+      const elapsed = (performance.now() - speechStartTimeRef.current) / 1000;
+      const activeIdx = getActiveSegmentIndex(segments, elapsed);
+      setCurrentSegmentIndex(activeIdx);
+      setSpeechProgress(Math.min((elapsed / totalDuration) * 100, 99));
+      rafRef.current = requestAnimationFrame(tick);
+    };
+
+    rafRef.current = requestAnimationFrame(tick);
+  }, [segments, totalDuration]);
 
   const handlePlayAudio = useCallback(() => {
     if (!window.speechSynthesis || !exercise) return;
 
     window.speechSynthesis.cancel();
-    if (intervalRef.current) clearInterval(intervalRef.current);
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
     setPhase("playing");
     setSpeechProgress(0);
-    setCurrentWordIndex(-1);
-    setBoundarySupported(true);
+    setCurrentSegmentIndex(-1);
 
     const utterance = new SpeechSynthesisUtterance(exercise.transcript);
     utterance.rate = 0.9;
@@ -473,67 +483,34 @@ function ListeningPractice({ exercises, index, onChangeIndex, countryCode }: { e
       window.speechSynthesis.onvoiceschanged = trySetVoice;
     }
 
-    let boundaryCount = 0;
-
-    // ONLY use real boundary events for word highlighting — no fallback timer
-    utterance.onboundary = (event) => {
-      if (typeof event.name === "string" && event.name.length > 0 && event.name !== "word") return;
-      if (typeof event.charIndex !== "number") return;
-
-      boundaryCount += 1;
-      const tokenIndex = getTokenIndexForChar(transcriptTokens, event.charIndex);
-      if (tokenIndex >= 0) {
-        setCurrentWordIndex(tokenIndex);
-      }
-      if (exercise.transcript.length > 0) {
-        setSpeechProgress(Math.min((event.charIndex / exercise.transcript.length) * 100, 99));
-      }
+    utterance.onstart = () => {
+      startHighlightLoop();
     };
 
-    // After 3 seconds of speech, if no boundary events fired, mark as unsupported
-    setTimeout(() => {
-      if (boundaryCount === 0) {
-        setBoundarySupported(false);
-      }
-    }, 3000);
-
-    // Simple progress bar fallback (just for the progress bar, NOT for word highlighting)
-    const wordCount = exercise.transcript.split(/\s+/).length;
-    const estimatedDuration = (wordCount / 135) * 60 * 1000; // 135 wpm at 0.9 rate
-    const startTime = Date.now();
-
-    intervalRef.current = setInterval(() => {
-      const elapsed = Date.now() - startTime;
-      // Only update progress bar if boundary events aren't handling it
-      if (boundaryCount === 0) {
-        setSpeechProgress(Math.min((elapsed / estimatedDuration) * 100, 99));
-      }
-    }, 500);
-
     utterance.onend = () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
       setSpeechProgress(100);
-      setCurrentWordIndex(-1);
+      setCurrentSegmentIndex(-1);
       setPhase("review");
       setReviewCountdown(20);
     };
 
     utterance.onerror = () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
       setSpeechProgress(100);
-      setCurrentWordIndex(-1);
+      setCurrentSegmentIndex(-1);
       setPhase("review");
       setReviewCountdown(20);
     };
 
     utteranceRef.current = utterance;
     window.speechSynthesis.speak(utterance);
-  }, [exercise, countryCode, transcriptTokens]);
+  }, [exercise, countryCode, startHighlightLoop]);
 
   const handleStopAudio = () => {
     window.speechSynthesis?.cancel();
-    if (intervalRef.current) clearInterval(intervalRef.current);
-    setCurrentWordIndex(-1);
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    setCurrentSegmentIndex(-1);
     setPhase("review");
     setReviewCountdown(20);
   };
@@ -542,14 +519,13 @@ function ListeningPractice({ exercises, index, onChangeIndex, countryCode }: { e
 
   const handleReset = () => {
     window.speechSynthesis?.cancel();
-    if (intervalRef.current) clearInterval(intervalRef.current);
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
     setPhase("read-questions");
     setAnswers({});
     setShowResults(false);
     setSpeechProgress(0);
     setReviewCountdown(20);
-    setCurrentWordIndex(-1);
-    setBoundarySupported(true);
+    setCurrentSegmentIndex(-1);
   };
 
   if (!exercise) return <p className="text-muted-foreground">No listening exercises available.</p>;
@@ -650,7 +626,7 @@ function ListeningPractice({ exercises, index, onChangeIndex, countryCode }: { e
         </motion.div>
       )}
 
-      {/* PHASE: Playing Audio with Word Highlighting */}
+      {/* PHASE: Playing Audio with Timestamp-Synced Highlighting */}
       {phase === "playing" && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
           <div className="rounded-xl border-2 border-primary bg-card p-6 card-elevated space-y-4">
@@ -669,43 +645,37 @@ function ListeningPractice({ exercises, index, onChangeIndex, countryCode }: { e
             <p className="text-xs text-center text-muted-foreground">{Math.round(speechProgress)}% complete</p>
           </div>
 
-          {/* Transcript with word highlighting */}
+          {/* Transcript with timestamp-based highlighting */}
           <div className="rounded-xl border border-border bg-card card-elevated overflow-hidden">
             <div className="p-3 bg-muted/30 border-b border-border flex items-center gap-2">
               <Volume2 className="h-4 w-4 text-primary animate-pulse" />
-              <span className="text-xs font-medium">
-                {boundarySupported ? "Live Transcript — words highlight as spoken" : "Live Transcript — listening..."}
-              </span>
+              <span className="text-xs font-medium">Live Transcript — words highlight as spoken</span>
             </div>
             <div ref={transcriptRef} className="p-4 max-h-[300px] overflow-y-auto">
-              {boundarySupported ? (
-                <p className="text-sm leading-relaxed">
-                  {transcriptTokens.map((token, i) => {
-                    const isHighlighted = i === currentWordIndex;
-                    const isPast = i < currentWordIndex;
-                    if (!token.isWord) {
-                      return <span key={i}>{token.text}</span>;
-                    }
-                    return (
-                      <span
-                        key={i}
-                        data-highlighted={isHighlighted ? "true" : "false"}
-                        className={`transition-colors duration-100 ${
-                          isHighlighted
-                            ? "bg-primary text-primary-foreground px-0.5 rounded font-semibold"
-                            : isPast
-                            ? "text-foreground/90"
-                            : "text-foreground/40"
-                        }`}
-                      >
-                        {token.text}
-                      </span>
-                    );
-                  })}
-                </p>
-              ) : (
-                <p className="text-sm leading-relaxed whitespace-pre-line text-foreground/80">{exercise.transcript}</p>
-              )}
+              <p className="text-sm leading-relaxed">
+                {segments.map((seg, i) => {
+                  const isHighlighted = i === currentSegmentIndex;
+                  const isPast = currentSegmentIndex >= 0 && i < currentSegmentIndex;
+                  if (!seg.isWord) {
+                    return <span key={i}>{seg.text}</span>;
+                  }
+                  return (
+                    <span
+                      key={i}
+                      data-highlighted={isHighlighted ? "true" : "false"}
+                      className={`transition-colors duration-75 ${
+                        isHighlighted
+                          ? "bg-primary text-primary-foreground px-0.5 rounded font-semibold"
+                          : isPast
+                          ? "text-foreground/90"
+                          : "text-foreground/40"
+                      }`}
+                    >
+                      {seg.text}
+                    </span>
+                  );
+                })}
+              </p>
             </div>
           </div>
 

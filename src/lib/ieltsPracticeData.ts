@@ -697,6 +697,40 @@ Any questions? My email is helen.chu@ubc.ca, and my office is Room 218 in Intern
       { id: "ca-le3-q10", type: "true-false-ng", question: "International students need a separate work permit to work on campus.", options: ["True", "False", "Not Given"], correctAnswer: "False", explanation: "Your study permit allows this — no separate work permit needed.", difficulty: "medium" },
     ],
   },
+  {
+    id: "ca-le4",
+    title: "Section 4: Lecture — Climate Change and Arctic Ecosystems",
+    section: 4,
+    context: "You will hear a university lecture on the effects of climate change on Canada's Arctic ecosystems and Indigenous communities.",
+    difficulty: "hard",
+    transcript: `Today I'd like to examine the impact of climate change on Canada's Arctic regions, focusing specifically on how rising temperatures are reshaping both ecosystems and the livelihoods of Indigenous communities who have called these lands home for thousands of years.
+
+Canada's Arctic is warming at approximately three times the global average rate. Since 1948, average annual temperatures in the Canadian North have increased by 2.3 degrees Celsius, compared to a global average increase of 0.8 degrees over the same period. This accelerated warming has triggered a cascade of environmental changes that are fundamentally altering the Arctic landscape.
+
+Permafrost — the permanently frozen ground that underlies much of the Canadian North — is thawing at an unprecedented rate. The Geological Survey of Canada estimates that approximately 50% of Canada's landmass is underlain by permafrost, but projections suggest that by 2050, the southern boundary of continuous permafrost could shift northward by up to 200 kilometres. This thawing destabilises infrastructure — roads, buildings, and pipelines — causing an estimated $3.6 billion in damage over the next two decades.
+
+Perhaps more significantly, thawing permafrost releases methane, a greenhouse gas that is 84 times more potent than carbon dioxide over a 20-year period. Scientists at the University of Alberta have measured methane emissions from thawing permafrost bogs that are 78% higher than previous models predicted. This creates what climatologists call a positive feedback loop — warming causes permafrost thaw, which releases methane, which causes further warming.
+
+For the Inuit communities of Nunavut, these changes are not abstract scientific data — they are lived reality. Sea ice, which Inuit hunters have relied upon for millennia as a platform for hunting seals and polar bears, is forming later in autumn and breaking up earlier in spring. The sea ice season has shortened by approximately six weeks over the past 30 years. Elder hunters report that traditional knowledge about ice conditions, passed down through generations, is becoming unreliable as weather patterns shift in unprecedented ways.
+
+The caribou herds that many northern communities depend on for food have also been affected. The Bathurst caribou herd, which numbered approximately 450,000 in the 1990s, has declined to fewer than 8,200 animals — a decrease of over 98%. While overhunting and industrial development have contributed, scientists identify climate-related changes in vegetation and increased insect harassment as significant factors.
+
+However, adaptation efforts are underway. The Government of Canada allocated $56 million in its 2022 Arctic and Northern Policy Framework specifically for Indigenous-led climate monitoring programs. These programs combine traditional ecological knowledge with Western scientific methods — an approach known as "Two-Eyed Seeing" — to develop more comprehensive understanding of environmental changes.
+
+For your assignment next week, I'd like you to evaluate whether current federal adaptation funding is proportionate to the scale of the challenges facing Arctic communities. Your analysis should be between 2,000 and 2,500 words.`,
+    questions: [
+      { id: "ca-le4-q1", type: "fill-blank", question: "Canada's Arctic is warming at approximately how many times the global average?", correctAnswer: "three", explanation: "The lecture states 'approximately three times the global average rate.'", difficulty: "medium" },
+      { id: "ca-le4-q2", type: "fill-blank", question: "Since 1948, Arctic temperatures have risen by how many degrees Celsius?", correctAnswer: "2.3", explanation: "Average annual temperatures have increased by 2.3 degrees Celsius.", difficulty: "medium" },
+      { id: "ca-le4-q3", type: "fill-blank", question: "What percentage of Canada's landmass is underlain by permafrost?", correctAnswer: "50%", explanation: "Approximately 50% of Canada's landmass is underlain by permafrost.", difficulty: "medium" },
+      { id: "ca-le4-q4", type: "mcq", question: "Methane is how many times more potent than CO2 over a 20-year period?", options: ["28 times", "56 times", "72 times", "84 times"], correctAnswer: "84 times", explanation: "Methane is '84 times more potent than carbon dioxide over a 20-year period.'", difficulty: "hard" },
+      { id: "ca-le4-q5", type: "fill-blank", question: "The sea ice season has shortened by approximately how many weeks?", correctAnswer: "six", explanation: "The sea ice season has shortened by approximately six weeks.", difficulty: "medium" },
+      { id: "ca-le4-q6", type: "fill-blank", question: "The Bathurst caribou herd has declined to fewer than ___ animals.", correctAnswer: "8,200", explanation: "The herd 'has declined to fewer than 8,200 animals.'", difficulty: "hard" },
+      { id: "ca-le4-q7", type: "fill-blank", question: "How much did Canada allocate for Indigenous-led climate monitoring?", correctAnswer: "$56 million", explanation: "The Government allocated '$56 million.'", difficulty: "hard" },
+      { id: "ca-le4-q8", type: "mcq", question: "What is the approach combining traditional and Western knowledge called?", options: ["Dual Vision", "Two-Eyed Seeing", "Integrated Knowledge", "Cross-Cultural Science"], correctAnswer: "Two-Eyed Seeing", explanation: "It's called 'Two-Eyed Seeing.'", difficulty: "hard" },
+      { id: "ca-le4-q9", type: "true-false-ng", question: "Permafrost methane emissions matched previous scientific predictions.", options: ["True", "False", "Not Given"], correctAnswer: "False", explanation: "Emissions are '78% higher than previous models predicted.'", difficulty: "hard" },
+      { id: "ca-le4-q10", type: "fill-blank", question: "The assignment should be between ___ and 2,500 words.", correctAnswer: "2,000", explanation: "The lecturer says 'between 2,000 and 2,500 words.'", difficulty: "easy" },
+    ],
+  },
 ];
 
 const CANADA_WRITING_TASKS: WritingTask[] = [

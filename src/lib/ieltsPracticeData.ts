@@ -230,6 +230,88 @@ Any questions? No? Excellent. Let's walk over to the Student Union building now.
       { id: "uk-le2-q12", type: "fill-blank", question: "The STC contains how many laboratories?", correctAnswer: "14", explanation: "It contains '14 laboratories.'", difficulty: "easy" },
     ],
   },
+  {
+    id: "uk-le3",
+    title: "Section 3: Academic Discussion — Renewable Energy",
+    section: 3,
+    context: "You will hear a discussion between two university students and their tutor about a group project on renewable energy sources.",
+    difficulty: "hard",
+    transcript: `Tutor: Right, so Emma and James, let's discuss your progress on the renewable energy project. You were looking at wind and solar, correct?
+
+Emma: Yes, Professor Blake. We've been comparing the efficiency rates of onshore wind turbines versus photovoltaic solar panels in the UK climate. What we found was quite surprising, actually.
+
+James: The data shows that wind turbines in Scotland produce energy at roughly 35% capacity factor, compared to about 11% for solar panels in the south of England. But the installation costs tell a different story.
+
+Tutor: Go on — that's an interesting distinction.
+
+Emma: Well, a single onshore wind turbine capable of generating 2.5 megawatts costs approximately £2.6 million to install. Solar panels for an equivalent output — around 10,000 panels — cost about £1.8 million. So solar is cheaper per megawatt of capacity, but wind generates more consistently.
+
+James: We also looked at the environmental objections. Local opposition to wind farms has blocked 67% of proposed onshore projects in England since 2015. The main complaints are visual impact, noise pollution, and effects on bird migration patterns.
+
+Tutor: Have you considered offshore wind as a comparison point?
+
+Emma: We have. Offshore wind farms achieve capacity factors of around 40 to 45%, which is significantly higher than onshore. The Hornsea Two project in the North Sea, for example, has 165 turbines and can power 1.4 million homes. But installation costs are roughly three times higher than onshore — around £7.8 million per turbine.
+
+Tutor: And what about energy storage? That's often the critical limitation.
+
+James: That's actually the weakest part of our research so far. We know that lithium-ion battery storage costs have fallen by 89% since 2010, from around $1,100 per kilowatt-hour to approximately $120. But we haven't been able to find reliable data on grid-scale storage efficiency in the UK specifically.
+
+Tutor: I'd suggest looking at the Dinorwig pumped storage facility in Wales — it's been operating since 1984 and can generate 1,728 megawatts within 12 seconds of demand. It's an excellent case study for your project.
+
+Emma: That's really helpful. We'll include that in our analysis. Our deadline is the 14th of November, so we still have three weeks.
+
+Tutor: Good. I'd also recommend including a cost-benefit analysis over a 25-year lifecycle. Wind turbines typically have a 20 to 25-year operational lifespan, while solar panels can last 30 years or more with minimal maintenance.
+
+James: That's a good point. We'll restructure the conclusion to include lifecycle comparisons.`,
+    questions: [
+      { id: "uk-le3-q1", type: "fill-blank", question: "What is the capacity factor for onshore wind turbines in Scotland?", correctAnswer: "35%", explanation: "James states 'wind turbines in Scotland produce energy at roughly 35% capacity factor.'", difficulty: "medium" },
+      { id: "uk-le3-q2", type: "fill-blank", question: "How much does a single onshore wind turbine cost to install?", correctAnswer: "£2.6 million", explanation: "Emma says it costs 'approximately £2.6 million.'", difficulty: "medium" },
+      { id: "uk-le3-q3", type: "mcq", question: "What percentage of proposed onshore wind projects in England have been blocked since 2015?", options: ["45%", "55%", "67%", "78%"], correctAnswer: "67%", explanation: "James says 'Local opposition has blocked 67% of proposed onshore projects.'", difficulty: "hard" },
+      { id: "uk-le3-q4", type: "fill-blank", question: "How many turbines does the Hornsea Two project have?", correctAnswer: "165", explanation: "Emma mentions 'the Hornsea Two project has 165 turbines.'", difficulty: "medium" },
+      { id: "uk-le3-q5", type: "fill-blank", question: "By how much have lithium-ion battery storage costs fallen since 2010?", correctAnswer: "89%", explanation: "James states costs 'have fallen by 89% since 2010.'", difficulty: "hard" },
+      { id: "uk-le3-q6", type: "fill-blank", question: "The Dinorwig facility can generate power within how many seconds?", correctAnswer: "12", explanation: "The tutor says it 'can generate 1,728 megawatts within 12 seconds.'", difficulty: "hard" },
+      { id: "uk-le3-q7", type: "mcq", question: "What is the typical operational lifespan of wind turbines?", options: ["10-15 years", "15-20 years", "20-25 years", "30-35 years"], correctAnswer: "20-25 years", explanation: "The tutor says 'Wind turbines typically have a 20 to 25-year operational lifespan.'", difficulty: "medium" },
+      { id: "uk-le3-q8", type: "fill-blank", question: "When is the project deadline?", correctAnswer: "14th of November", explanation: "Emma says 'Our deadline is the 14th of November.'", difficulty: "easy" },
+      { id: "uk-le3-q9", type: "true-false-ng", question: "Solar panels require more maintenance than wind turbines.", options: ["True", "False", "Not Given"], correctAnswer: "False", explanation: "The tutor says solar panels can last 30 years 'with minimal maintenance', implying less maintenance.", difficulty: "hard" },
+      { id: "uk-le3-q10", type: "fill-blank", question: "Offshore wind installation costs are roughly how many times higher than onshore?", correctAnswer: "three", explanation: "Emma says 'installation costs are roughly three times higher than onshore.'", difficulty: "medium" },
+    ],
+  },
+  {
+    id: "uk-le4",
+    title: "Section 4: Lecture — The Psychology of Decision Making",
+    section: 4,
+    context: "You will hear part of a university lecture on cognitive biases and how they affect everyday decision making.",
+    difficulty: "hard",
+    transcript: `Good morning, everyone. Today's lecture focuses on cognitive biases — systematic errors in thinking that affect the decisions and judgements we make every day. By the end of this session, you should be able to identify at least five major biases and understand their real-world implications.
+
+Let's start with what psychologists call the anchoring effect. This occurs when people rely too heavily on the first piece of information they encounter. A classic demonstration was conducted by Tversky and Kahneman in 1974. They asked participants to estimate the percentage of African countries in the United Nations. Before answering, participants spun a rigged wheel that landed on either 10 or 65. Those who saw the number 10 estimated an average of 25%, while those who saw 65 estimated 45%. The initial number — which was completely random — significantly influenced their answers.
+
+The anchoring effect has profound implications for negotiations. Research shows that in salary negotiations, the first number mentioned typically determines the final outcome. Job candidates who start with a higher initial request receive, on average, 9% more in their final offer than those who allow the employer to name the first figure.
+
+Next, let's discuss confirmation bias — our tendency to search for, interpret, and remember information that confirms our pre-existing beliefs. A 2019 study by Stanford University found that people spend 36% more time reading articles that align with their political views compared to opposing perspectives. Social media algorithms amplify this effect by creating what Eli Pariser famously called "filter bubbles" — personalised information ecosystems that reinforce existing beliefs.
+
+The third bias I want to cover is the sunk cost fallacy. This is the tendency to continue investing in something because of previously invested resources — time, money, or effort — rather than evaluating the current value. The Concorde aircraft is perhaps the most famous example. Despite mounting evidence that the project would never be commercially viable, the British and French governments continued investing because they had already spent over £1.3 billion. This is sometimes called the Concorde fallacy.
+
+In everyday life, the sunk cost fallacy explains why people sit through terrible films they've paid for, or continue eating a meal they don't enjoy simply because they've paid for it. The rational approach would be to evaluate only future costs and benefits, but our brains are wired to consider past investments.
+
+The fourth bias is the availability heuristic. We tend to overestimate the probability of events that are easily recalled — typically because they are recent, dramatic, or emotionally charged. This is why people often overestimate the risk of shark attacks or plane crashes while underestimating the risk of heart disease, which kills approximately 17.9 million people globally each year.
+
+Finally, let's touch on the Dunning-Kruger effect, named after psychologists David Dunning and Justin Kruger, who published their findings in 1999. This bias describes how people with limited competence in a particular area tend to overestimate their own ability, while genuine experts tend to underestimate theirs. In their original study, participants who scored in the bottom quartile on tests of logic, grammar, and humour estimated that they had performed in the 62nd percentile — dramatically overestimating their actual performance.
+
+For next week's tutorial, I'd like you to keep a decision diary. Record at least five decisions you make and identify which, if any, cognitive biases may have influenced them.`,
+    questions: [
+      { id: "uk-le4-q1", type: "fill-blank", question: "In what year did Tversky and Kahneman conduct their anchoring experiment?", correctAnswer: "1974", explanation: "The lecture states it was 'conducted by Tversky and Kahneman in 1974.'", difficulty: "medium" },
+      { id: "uk-le4-q2", type: "fill-blank", question: "Job candidates who name the first salary figure receive on average how much more?", correctAnswer: "9%", explanation: "They 'receive, on average, 9% more in their final offer.'", difficulty: "hard" },
+      { id: "uk-le4-q3", type: "fill-blank", question: "People spend what percentage more time reading articles that confirm their views?", correctAnswer: "36%", explanation: "People spend '36% more time reading articles that align with their political views.'", difficulty: "hard" },
+      { id: "uk-le4-q4", type: "mcq", question: "Who coined the term 'filter bubbles'?", options: ["Tversky", "Kahneman", "Eli Pariser", "David Dunning"], correctAnswer: "Eli Pariser", explanation: "The lecturer attributes the term to 'Eli Pariser.'", difficulty: "medium" },
+      { id: "uk-le4-q5", type: "fill-blank", question: "How much had the British and French governments invested in Concorde?", correctAnswer: "£1.3 billion", explanation: "They had 'already spent over £1.3 billion.'", difficulty: "hard" },
+      { id: "uk-le4-q6", type: "fill-blank", question: "Heart disease kills approximately how many people globally each year?", correctAnswer: "17.9 million", explanation: "Heart disease 'kills approximately 17.9 million people globally each year.'", difficulty: "hard" },
+      { id: "uk-le4-q7", type: "fill-blank", question: "When did Dunning and Kruger publish their findings?", correctAnswer: "1999", explanation: "They 'published their findings in 1999.'", difficulty: "medium" },
+      { id: "uk-le4-q8", type: "mcq", question: "Bottom-quartile participants estimated they performed at which percentile?", options: ["42nd", "52nd", "62nd", "72nd"], correctAnswer: "62nd", explanation: "They 'estimated that they had performed in the 62nd percentile.'", difficulty: "hard" },
+      { id: "uk-le4-q9", type: "fill-blank", question: "How many decisions should students record in their decision diary?", correctAnswer: "five", explanation: "The lecturer asks them to 'record at least five decisions.'", difficulty: "easy" },
+      { id: "uk-le4-q10", type: "true-false-ng", question: "The Dunning-Kruger effect suggests experts overestimate their ability.", options: ["True", "False", "Not Given"], correctAnswer: "False", explanation: "The lecture says 'genuine experts tend to underestimate theirs.'", difficulty: "hard" },
+    ],
+  },
 ];
 
 // ─── UK WRITING TASKS ───────────────────────────────────────────────────────
@@ -615,6 +697,40 @@ Any questions? My email is helen.chu@ubc.ca, and my office is Room 218 in Intern
       { id: "ca-le3-q10", type: "true-false-ng", question: "International students need a separate work permit to work on campus.", options: ["True", "False", "Not Given"], correctAnswer: "False", explanation: "Your study permit allows this — no separate work permit needed.", difficulty: "medium" },
     ],
   },
+  {
+    id: "ca-le4",
+    title: "Section 4: Lecture — Climate Change and Arctic Ecosystems",
+    section: 4,
+    context: "You will hear a university lecture on the effects of climate change on Canada's Arctic ecosystems and Indigenous communities.",
+    difficulty: "hard",
+    transcript: `Today I'd like to examine the impact of climate change on Canada's Arctic regions, focusing specifically on how rising temperatures are reshaping both ecosystems and the livelihoods of Indigenous communities who have called these lands home for thousands of years.
+
+Canada's Arctic is warming at approximately three times the global average rate. Since 1948, average annual temperatures in the Canadian North have increased by 2.3 degrees Celsius, compared to a global average increase of 0.8 degrees over the same period. This accelerated warming has triggered a cascade of environmental changes that are fundamentally altering the Arctic landscape.
+
+Permafrost — the permanently frozen ground that underlies much of the Canadian North — is thawing at an unprecedented rate. The Geological Survey of Canada estimates that approximately 50% of Canada's landmass is underlain by permafrost, but projections suggest that by 2050, the southern boundary of continuous permafrost could shift northward by up to 200 kilometres. This thawing destabilises infrastructure — roads, buildings, and pipelines — causing an estimated $3.6 billion in damage over the next two decades.
+
+Perhaps more significantly, thawing permafrost releases methane, a greenhouse gas that is 84 times more potent than carbon dioxide over a 20-year period. Scientists at the University of Alberta have measured methane emissions from thawing permafrost bogs that are 78% higher than previous models predicted. This creates what climatologists call a positive feedback loop — warming causes permafrost thaw, which releases methane, which causes further warming.
+
+For the Inuit communities of Nunavut, these changes are not abstract scientific data — they are lived reality. Sea ice, which Inuit hunters have relied upon for millennia as a platform for hunting seals and polar bears, is forming later in autumn and breaking up earlier in spring. The sea ice season has shortened by approximately six weeks over the past 30 years. Elder hunters report that traditional knowledge about ice conditions, passed down through generations, is becoming unreliable as weather patterns shift in unprecedented ways.
+
+The caribou herds that many northern communities depend on for food have also been affected. The Bathurst caribou herd, which numbered approximately 450,000 in the 1990s, has declined to fewer than 8,200 animals — a decrease of over 98%. While overhunting and industrial development have contributed, scientists identify climate-related changes in vegetation and increased insect harassment as significant factors.
+
+However, adaptation efforts are underway. The Government of Canada allocated $56 million in its 2022 Arctic and Northern Policy Framework specifically for Indigenous-led climate monitoring programs. These programs combine traditional ecological knowledge with Western scientific methods — an approach known as "Two-Eyed Seeing" — to develop more comprehensive understanding of environmental changes.
+
+For your assignment next week, I'd like you to evaluate whether current federal adaptation funding is proportionate to the scale of the challenges facing Arctic communities. Your analysis should be between 2,000 and 2,500 words.`,
+    questions: [
+      { id: "ca-le4-q1", type: "fill-blank", question: "Canada's Arctic is warming at approximately how many times the global average?", correctAnswer: "three", explanation: "The lecture states 'approximately three times the global average rate.'", difficulty: "medium" },
+      { id: "ca-le4-q2", type: "fill-blank", question: "Since 1948, Arctic temperatures have risen by how many degrees Celsius?", correctAnswer: "2.3", explanation: "Average annual temperatures have increased by 2.3 degrees Celsius.", difficulty: "medium" },
+      { id: "ca-le4-q3", type: "fill-blank", question: "What percentage of Canada's landmass is underlain by permafrost?", correctAnswer: "50%", explanation: "Approximately 50% of Canada's landmass is underlain by permafrost.", difficulty: "medium" },
+      { id: "ca-le4-q4", type: "mcq", question: "Methane is how many times more potent than CO2 over a 20-year period?", options: ["28 times", "56 times", "72 times", "84 times"], correctAnswer: "84 times", explanation: "Methane is '84 times more potent than carbon dioxide over a 20-year period.'", difficulty: "hard" },
+      { id: "ca-le4-q5", type: "fill-blank", question: "The sea ice season has shortened by approximately how many weeks?", correctAnswer: "six", explanation: "The sea ice season has shortened by approximately six weeks.", difficulty: "medium" },
+      { id: "ca-le4-q6", type: "fill-blank", question: "The Bathurst caribou herd has declined to fewer than ___ animals.", correctAnswer: "8,200", explanation: "The herd 'has declined to fewer than 8,200 animals.'", difficulty: "hard" },
+      { id: "ca-le4-q7", type: "fill-blank", question: "How much did Canada allocate for Indigenous-led climate monitoring?", correctAnswer: "$56 million", explanation: "The Government allocated '$56 million.'", difficulty: "hard" },
+      { id: "ca-le4-q8", type: "mcq", question: "What is the approach combining traditional and Western knowledge called?", options: ["Dual Vision", "Two-Eyed Seeing", "Integrated Knowledge", "Cross-Cultural Science"], correctAnswer: "Two-Eyed Seeing", explanation: "It's called 'Two-Eyed Seeing.'", difficulty: "hard" },
+      { id: "ca-le4-q9", type: "true-false-ng", question: "Permafrost methane emissions matched previous scientific predictions.", options: ["True", "False", "Not Given"], correctAnswer: "False", explanation: "Emissions are '78% higher than previous models predicted.'", difficulty: "hard" },
+      { id: "ca-le4-q10", type: "fill-blank", question: "The assignment should be between ___ and 2,500 words.", correctAnswer: "2,000", explanation: "The lecturer says 'between 2,000 and 2,500 words.'", difficulty: "easy" },
+    ],
+  },
 ];
 
 const CANADA_WRITING_TASKS: WritingTask[] = [
@@ -856,6 +972,44 @@ Student 2: Sounds like a plan. Let's meet again on Thursday at 2 PM in the libra
       { id: "au-le3-q8", type: "fill-blank", question: "How many academic references are required?", correctAnswer: "15", explanation: "At least 15 academic references.", difficulty: "easy" },
       { id: "au-le3-q9", type: "fill-blank", question: "The assignment is due on ___.", correctAnswer: "22nd of October", explanation: "Due on the 22nd of October.", difficulty: "easy" },
       { id: "au-le3-q10", type: "fill-blank", question: "They plan to meet on Thursday at ___ PM.", correctAnswer: "2", explanation: "Thursday at 2 PM in the library.", difficulty: "easy" },
+    ],
+  },
+  {
+    id: "au-le4",
+    title: "Section 4: Lecture — The Great Barrier Reef and Marine Conservation",
+    section: 4,
+    context: "You will hear a university lecture about the current state of Australia's Great Barrier Reef and efforts to protect it.",
+    difficulty: "hard",
+    transcript: `Good afternoon. Today we're examining what many scientists consider the most pressing environmental crisis in the Southern Hemisphere — the decline of Australia's Great Barrier Reef. As marine biologists, understanding this ecosystem is fundamental to your studies, so please pay close attention.
+
+The Great Barrier Reef is the world's largest coral reef system, stretching over 2,300 kilometres along the Queensland coast. It comprises approximately 2,900 individual reef systems and 900 islands. The reef supports an estimated 1,500 species of fish, 400 types of coral, and 4,000 species of mollusc. In economic terms, it generates approximately $6.4 billion annually for the Australian economy, primarily through tourism and fishing.
+
+However, the reef has experienced six mass bleaching events since 1998, with the most severe occurring in 2016, 2017, 2020, 2022, 2024, and most recently in early 2025. Mass bleaching occurs when sea surface temperatures exceed the summer maximum by just 1 degree Celsius for a sustained period — typically four weeks or more. During bleaching, corals expel the symbiotic algae called zooxanthellae that live within their tissues. These algae provide corals with up to 90% of their energy through photosynthesis, as well as their characteristic colours.
+
+Professor Terry Hughes of James Cook University, who has led aerial surveys of the reef since 2016, documented that in the 2016 event alone, 29% of shallow-water corals died. Cumulatively, the reef has lost approximately 50% of its coral cover since 1995. The northern third of the reef has been most severely affected, losing up to 67% of its shallow coral in the 2016 bleaching event alone.
+
+What makes this particularly alarming is the recovery timeline. Under optimal conditions, a severely bleached reef takes between 10 and 15 years to fully recover. But with bleaching events now occurring every two to three years, the reef simply doesn't have sufficient time between disturbances to regenerate.
+
+Beyond bleaching, the reef faces additional threats. Crown-of-thorns starfish, which feed on coral polyps, have undergone population explosions linked to agricultural runoff from Queensland farms. Nitrogen and phosphorus from fertilisers wash into coastal waters during the wet season, creating nutrient-rich conditions that accelerate starfish larval development. A single adult crown-of-thorns can consume up to 10 square metres of coral per year.
+
+The Australian government's Reef 2050 Long-Term Sustainability Plan, updated in 2021, allocated $1.2 billion for reef protection measures. These include water quality improvement programs, crown-of-thorns starfish control — which involves injecting individual starfish with bile salts — and research into heat-resistant coral varieties. Scientists at the Australian Institute of Marine Science are currently developing coral species through selective breeding that can withstand temperatures 2 to 3 degrees higher than current species.
+
+One innovative approach involves what's called "coral IVF." Researchers collect coral spawn during the annual mass spawning event in November, grow the larvae in floating pools on the reef surface, and then settle them onto damaged reef areas. Professor Peter Harrison of Southern Cross University, who pioneered this technique, has demonstrated survival rates of up to 85% for larvae settled onto prepared substrates.
+
+The question for your generation of marine biologists is whether these interventions can outpace the damage being caused by rising ocean temperatures. Current projections suggest that if global warming reaches 2 degrees above pre-industrial levels, between 70 and 90% of the world's coral reefs will be lost. At 1.5 degrees, the figure is still between 10 and 30%. We are currently at approximately 1.2 degrees of warming.
+
+For next week's practical, you'll be analysing water quality samples from three reef sites. Please ensure you've completed the laboratory safety module before attending.`,
+    questions: [
+      { id: "au-le4-q1", type: "fill-blank", question: "The Great Barrier Reef stretches over ___ kilometres.", correctAnswer: "2,300", explanation: "It stretches 'over 2,300 kilometres along the Queensland coast.'", difficulty: "medium" },
+      { id: "au-le4-q2", type: "fill-blank", question: "The reef generates approximately $___ billion annually.", correctAnswer: "6.4", explanation: "It generates 'approximately $6.4 billion annually.'", difficulty: "medium" },
+      { id: "au-le4-q3", type: "fill-blank", question: "How many mass bleaching events have occurred since 1998?", correctAnswer: "six", explanation: "The reef has experienced 'six mass bleaching events since 1998.'", difficulty: "medium" },
+      { id: "au-le4-q4", type: "fill-blank", question: "Zooxanthellae provide corals with up to ___% of their energy.", correctAnswer: "90", explanation: "These algae 'provide corals with up to 90% of their energy.'", difficulty: "hard" },
+      { id: "au-le4-q5", type: "fill-blank", question: "The reef has lost approximately ___% of its coral cover since 1995.", correctAnswer: "50", explanation: "The reef 'has lost approximately 50% of its coral cover since 1995.'", difficulty: "hard" },
+      { id: "au-le4-q6", type: "mcq", question: "How long does a severely bleached reef take to recover under optimal conditions?", options: ["3-5 years", "5-8 years", "10-15 years", "20-25 years"], correctAnswer: "10-15 years", explanation: "Recovery takes 'between 10 and 15 years.'", difficulty: "medium" },
+      { id: "au-le4-q7", type: "fill-blank", question: "A single crown-of-thorns starfish can consume up to ___ square metres of coral per year.", correctAnswer: "10", explanation: "A single adult can consume 'up to 10 square metres of coral per year.'", difficulty: "hard" },
+      { id: "au-le4-q8", type: "fill-blank", question: "The Reef 2050 Plan allocated $___ billion for protection.", correctAnswer: "1.2", explanation: "The plan allocated '$1.2 billion for reef protection measures.'", difficulty: "hard" },
+      { id: "au-le4-q9", type: "mcq", question: "What survival rate has coral IVF demonstrated?", options: ["55%", "65%", "75%", "85%"], correctAnswer: "85%", explanation: "Survival rates of 'up to 85% for larvae settled onto prepared substrates.'", difficulty: "hard" },
+      { id: "au-le4-q10", type: "fill-blank", question: "If warming reaches 2 degrees, between ___% and 90% of coral reefs will be lost.", correctAnswer: "70", explanation: "Between '70 and 90% of the world's coral reefs will be lost.'", difficulty: "hard" },
     ],
   },
 ];

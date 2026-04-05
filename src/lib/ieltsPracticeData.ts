@@ -230,6 +230,88 @@ Any questions? No? Excellent. Let's walk over to the Student Union building now.
       { id: "uk-le2-q12", type: "fill-blank", question: "The STC contains how many laboratories?", correctAnswer: "14", explanation: "It contains '14 laboratories.'", difficulty: "easy" },
     ],
   },
+  {
+    id: "uk-le3",
+    title: "Section 3: Academic Discussion — Renewable Energy",
+    section: 3,
+    context: "You will hear a discussion between two university students and their tutor about a group project on renewable energy sources.",
+    difficulty: "hard",
+    transcript: `Tutor: Right, so Emma and James, let's discuss your progress on the renewable energy project. You were looking at wind and solar, correct?
+
+Emma: Yes, Professor Blake. We've been comparing the efficiency rates of onshore wind turbines versus photovoltaic solar panels in the UK climate. What we found was quite surprising, actually.
+
+James: The data shows that wind turbines in Scotland produce energy at roughly 35% capacity factor, compared to about 11% for solar panels in the south of England. But the installation costs tell a different story.
+
+Tutor: Go on — that's an interesting distinction.
+
+Emma: Well, a single onshore wind turbine capable of generating 2.5 megawatts costs approximately £2.6 million to install. Solar panels for an equivalent output — around 10,000 panels — cost about £1.8 million. So solar is cheaper per megawatt of capacity, but wind generates more consistently.
+
+James: We also looked at the environmental objections. Local opposition to wind farms has blocked 67% of proposed onshore projects in England since 2015. The main complaints are visual impact, noise pollution, and effects on bird migration patterns.
+
+Tutor: Have you considered offshore wind as a comparison point?
+
+Emma: We have. Offshore wind farms achieve capacity factors of around 40 to 45%, which is significantly higher than onshore. The Hornsea Two project in the North Sea, for example, has 165 turbines and can power 1.4 million homes. But installation costs are roughly three times higher than onshore — around £7.8 million per turbine.
+
+Tutor: And what about energy storage? That's often the critical limitation.
+
+James: That's actually the weakest part of our research so far. We know that lithium-ion battery storage costs have fallen by 89% since 2010, from around $1,100 per kilowatt-hour to approximately $120. But we haven't been able to find reliable data on grid-scale storage efficiency in the UK specifically.
+
+Tutor: I'd suggest looking at the Dinorwig pumped storage facility in Wales — it's been operating since 1984 and can generate 1,728 megawatts within 12 seconds of demand. It's an excellent case study for your project.
+
+Emma: That's really helpful. We'll include that in our analysis. Our deadline is the 14th of November, so we still have three weeks.
+
+Tutor: Good. I'd also recommend including a cost-benefit analysis over a 25-year lifecycle. Wind turbines typically have a 20 to 25-year operational lifespan, while solar panels can last 30 years or more with minimal maintenance.
+
+James: That's a good point. We'll restructure the conclusion to include lifecycle comparisons.`,
+    questions: [
+      { id: "uk-le3-q1", type: "fill-blank", question: "What is the capacity factor for onshore wind turbines in Scotland?", correctAnswer: "35%", explanation: "James states 'wind turbines in Scotland produce energy at roughly 35% capacity factor.'", difficulty: "medium" },
+      { id: "uk-le3-q2", type: "fill-blank", question: "How much does a single onshore wind turbine cost to install?", correctAnswer: "£2.6 million", explanation: "Emma says it costs 'approximately £2.6 million.'", difficulty: "medium" },
+      { id: "uk-le3-q3", type: "mcq", question: "What percentage of proposed onshore wind projects in England have been blocked since 2015?", options: ["45%", "55%", "67%", "78%"], correctAnswer: "67%", explanation: "James says 'Local opposition has blocked 67% of proposed onshore projects.'", difficulty: "hard" },
+      { id: "uk-le3-q4", type: "fill-blank", question: "How many turbines does the Hornsea Two project have?", correctAnswer: "165", explanation: "Emma mentions 'the Hornsea Two project has 165 turbines.'", difficulty: "medium" },
+      { id: "uk-le3-q5", type: "fill-blank", question: "By how much have lithium-ion battery storage costs fallen since 2010?", correctAnswer: "89%", explanation: "James states costs 'have fallen by 89% since 2010.'", difficulty: "hard" },
+      { id: "uk-le3-q6", type: "fill-blank", question: "The Dinorwig facility can generate power within how many seconds?", correctAnswer: "12", explanation: "The tutor says it 'can generate 1,728 megawatts within 12 seconds.'", difficulty: "hard" },
+      { id: "uk-le3-q7", type: "mcq", question: "What is the typical operational lifespan of wind turbines?", options: ["10-15 years", "15-20 years", "20-25 years", "30-35 years"], correctAnswer: "20-25 years", explanation: "The tutor says 'Wind turbines typically have a 20 to 25-year operational lifespan.'", difficulty: "medium" },
+      { id: "uk-le3-q8", type: "fill-blank", question: "When is the project deadline?", correctAnswer: "14th of November", explanation: "Emma says 'Our deadline is the 14th of November.'", difficulty: "easy" },
+      { id: "uk-le3-q9", type: "true-false-ng", question: "Solar panels require more maintenance than wind turbines.", options: ["True", "False", "Not Given"], correctAnswer: "False", explanation: "The tutor says solar panels can last 30 years 'with minimal maintenance', implying less maintenance.", difficulty: "hard" },
+      { id: "uk-le3-q10", type: "fill-blank", question: "Offshore wind installation costs are roughly how many times higher than onshore?", correctAnswer: "three", explanation: "Emma says 'installation costs are roughly three times higher than onshore.'", difficulty: "medium" },
+    ],
+  },
+  {
+    id: "uk-le4",
+    title: "Section 4: Lecture — The Psychology of Decision Making",
+    section: 4,
+    context: "You will hear part of a university lecture on cognitive biases and how they affect everyday decision making.",
+    difficulty: "hard",
+    transcript: `Good morning, everyone. Today's lecture focuses on cognitive biases — systematic errors in thinking that affect the decisions and judgements we make every day. By the end of this session, you should be able to identify at least five major biases and understand their real-world implications.
+
+Let's start with what psychologists call the anchoring effect. This occurs when people rely too heavily on the first piece of information they encounter. A classic demonstration was conducted by Tversky and Kahneman in 1974. They asked participants to estimate the percentage of African countries in the United Nations. Before answering, participants spun a rigged wheel that landed on either 10 or 65. Those who saw the number 10 estimated an average of 25%, while those who saw 65 estimated 45%. The initial number — which was completely random — significantly influenced their answers.
+
+The anchoring effect has profound implications for negotiations. Research shows that in salary negotiations, the first number mentioned typically determines the final outcome. Job candidates who start with a higher initial request receive, on average, 9% more in their final offer than those who allow the employer to name the first figure.
+
+Next, let's discuss confirmation bias — our tendency to search for, interpret, and remember information that confirms our pre-existing beliefs. A 2019 study by Stanford University found that people spend 36% more time reading articles that align with their political views compared to opposing perspectives. Social media algorithms amplify this effect by creating what Eli Pariser famously called "filter bubbles" — personalised information ecosystems that reinforce existing beliefs.
+
+The third bias I want to cover is the sunk cost fallacy. This is the tendency to continue investing in something because of previously invested resources — time, money, or effort — rather than evaluating the current value. The Concorde aircraft is perhaps the most famous example. Despite mounting evidence that the project would never be commercially viable, the British and French governments continued investing because they had already spent over £1.3 billion. This is sometimes called the Concorde fallacy.
+
+In everyday life, the sunk cost fallacy explains why people sit through terrible films they've paid for, or continue eating a meal they don't enjoy simply because they've paid for it. The rational approach would be to evaluate only future costs and benefits, but our brains are wired to consider past investments.
+
+The fourth bias is the availability heuristic. We tend to overestimate the probability of events that are easily recalled — typically because they are recent, dramatic, or emotionally charged. This is why people often overestimate the risk of shark attacks or plane crashes while underestimating the risk of heart disease, which kills approximately 17.9 million people globally each year.
+
+Finally, let's touch on the Dunning-Kruger effect, named after psychologists David Dunning and Justin Kruger, who published their findings in 1999. This bias describes how people with limited competence in a particular area tend to overestimate their own ability, while genuine experts tend to underestimate theirs. In their original study, participants who scored in the bottom quartile on tests of logic, grammar, and humour estimated that they had performed in the 62nd percentile — dramatically overestimating their actual performance.
+
+For next week's tutorial, I'd like you to keep a decision diary. Record at least five decisions you make and identify which, if any, cognitive biases may have influenced them.`,
+    questions: [
+      { id: "uk-le4-q1", type: "fill-blank", question: "In what year did Tversky and Kahneman conduct their anchoring experiment?", correctAnswer: "1974", explanation: "The lecture states it was 'conducted by Tversky and Kahneman in 1974.'", difficulty: "medium" },
+      { id: "uk-le4-q2", type: "fill-blank", question: "Job candidates who name the first salary figure receive on average how much more?", correctAnswer: "9%", explanation: "They 'receive, on average, 9% more in their final offer.'", difficulty: "hard" },
+      { id: "uk-le4-q3", type: "fill-blank", question: "People spend what percentage more time reading articles that confirm their views?", correctAnswer: "36%", explanation: "People spend '36% more time reading articles that align with their political views.'", difficulty: "hard" },
+      { id: "uk-le4-q4", type: "mcq", question: "Who coined the term 'filter bubbles'?", options: ["Tversky", "Kahneman", "Eli Pariser", "David Dunning"], correctAnswer: "Eli Pariser", explanation: "The lecturer attributes the term to 'Eli Pariser.'", difficulty: "medium" },
+      { id: "uk-le4-q5", type: "fill-blank", question: "How much had the British and French governments invested in Concorde?", correctAnswer: "£1.3 billion", explanation: "They had 'already spent over £1.3 billion.'", difficulty: "hard" },
+      { id: "uk-le4-q6", type: "fill-blank", question: "Heart disease kills approximately how many people globally each year?", correctAnswer: "17.9 million", explanation: "Heart disease 'kills approximately 17.9 million people globally each year.'", difficulty: "hard" },
+      { id: "uk-le4-q7", type: "fill-blank", question: "When did Dunning and Kruger publish their findings?", correctAnswer: "1999", explanation: "They 'published their findings in 1999.'", difficulty: "medium" },
+      { id: "uk-le4-q8", type: "mcq", question: "Bottom-quartile participants estimated they performed at which percentile?", options: ["42nd", "52nd", "62nd", "72nd"], correctAnswer: "62nd", explanation: "They 'estimated that they had performed in the 62nd percentile.'", difficulty: "hard" },
+      { id: "uk-le4-q9", type: "fill-blank", question: "How many decisions should students record in their decision diary?", correctAnswer: "five", explanation: "The lecturer asks them to 'record at least five decisions.'", difficulty: "easy" },
+      { id: "uk-le4-q10", type: "true-false-ng", question: "The Dunning-Kruger effect suggests experts overestimate their ability.", options: ["True", "False", "Not Given"], correctAnswer: "False", explanation: "The lecture says 'genuine experts tend to underestimate theirs.'", difficulty: "hard" },
+    ],
+  },
 ];
 
 // ─── UK WRITING TASKS ───────────────────────────────────────────────────────

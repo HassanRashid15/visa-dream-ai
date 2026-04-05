@@ -974,6 +974,44 @@ Student 2: Sounds like a plan. Let's meet again on Thursday at 2 PM in the libra
       { id: "au-le3-q10", type: "fill-blank", question: "They plan to meet on Thursday at ___ PM.", correctAnswer: "2", explanation: "Thursday at 2 PM in the library.", difficulty: "easy" },
     ],
   },
+  {
+    id: "au-le4",
+    title: "Section 4: Lecture — The Great Barrier Reef and Marine Conservation",
+    section: 4,
+    context: "You will hear a university lecture about the current state of Australia's Great Barrier Reef and efforts to protect it.",
+    difficulty: "hard",
+    transcript: `Good afternoon. Today we're examining what many scientists consider the most pressing environmental crisis in the Southern Hemisphere — the decline of Australia's Great Barrier Reef. As marine biologists, understanding this ecosystem is fundamental to your studies, so please pay close attention.
+
+The Great Barrier Reef is the world's largest coral reef system, stretching over 2,300 kilometres along the Queensland coast. It comprises approximately 2,900 individual reef systems and 900 islands. The reef supports an estimated 1,500 species of fish, 400 types of coral, and 4,000 species of mollusc. In economic terms, it generates approximately $6.4 billion annually for the Australian economy, primarily through tourism and fishing.
+
+However, the reef has experienced six mass bleaching events since 1998, with the most severe occurring in 2016, 2017, 2020, 2022, 2024, and most recently in early 2025. Mass bleaching occurs when sea surface temperatures exceed the summer maximum by just 1 degree Celsius for a sustained period — typically four weeks or more. During bleaching, corals expel the symbiotic algae called zooxanthellae that live within their tissues. These algae provide corals with up to 90% of their energy through photosynthesis, as well as their characteristic colours.
+
+Professor Terry Hughes of James Cook University, who has led aerial surveys of the reef since 2016, documented that in the 2016 event alone, 29% of shallow-water corals died. Cumulatively, the reef has lost approximately 50% of its coral cover since 1995. The northern third of the reef has been most severely affected, losing up to 67% of its shallow coral in the 2016 bleaching event alone.
+
+What makes this particularly alarming is the recovery timeline. Under optimal conditions, a severely bleached reef takes between 10 and 15 years to fully recover. But with bleaching events now occurring every two to three years, the reef simply doesn't have sufficient time between disturbances to regenerate.
+
+Beyond bleaching, the reef faces additional threats. Crown-of-thorns starfish, which feed on coral polyps, have undergone population explosions linked to agricultural runoff from Queensland farms. Nitrogen and phosphorus from fertilisers wash into coastal waters during the wet season, creating nutrient-rich conditions that accelerate starfish larval development. A single adult crown-of-thorns can consume up to 10 square metres of coral per year.
+
+The Australian government's Reef 2050 Long-Term Sustainability Plan, updated in 2021, allocated $1.2 billion for reef protection measures. These include water quality improvement programs, crown-of-thorns starfish control — which involves injecting individual starfish with bile salts — and research into heat-resistant coral varieties. Scientists at the Australian Institute of Marine Science are currently developing coral species through selective breeding that can withstand temperatures 2 to 3 degrees higher than current species.
+
+One innovative approach involves what's called "coral IVF." Researchers collect coral spawn during the annual mass spawning event in November, grow the larvae in floating pools on the reef surface, and then settle them onto damaged reef areas. Professor Peter Harrison of Southern Cross University, who pioneered this technique, has demonstrated survival rates of up to 85% for larvae settled onto prepared substrates.
+
+The question for your generation of marine biologists is whether these interventions can outpace the damage being caused by rising ocean temperatures. Current projections suggest that if global warming reaches 2 degrees above pre-industrial levels, between 70 and 90% of the world's coral reefs will be lost. At 1.5 degrees, the figure is still between 10 and 30%. We are currently at approximately 1.2 degrees of warming.
+
+For next week's practical, you'll be analysing water quality samples from three reef sites. Please ensure you've completed the laboratory safety module before attending.`,
+    questions: [
+      { id: "au-le4-q1", type: "fill-blank", question: "The Great Barrier Reef stretches over ___ kilometres.", correctAnswer: "2,300", explanation: "It stretches 'over 2,300 kilometres along the Queensland coast.'", difficulty: "medium" },
+      { id: "au-le4-q2", type: "fill-blank", question: "The reef generates approximately $___ billion annually.", correctAnswer: "6.4", explanation: "It generates 'approximately $6.4 billion annually.'", difficulty: "medium" },
+      { id: "au-le4-q3", type: "fill-blank", question: "How many mass bleaching events have occurred since 1998?", correctAnswer: "six", explanation: "The reef has experienced 'six mass bleaching events since 1998.'", difficulty: "medium" },
+      { id: "au-le4-q4", type: "fill-blank", question: "Zooxanthellae provide corals with up to ___% of their energy.", correctAnswer: "90", explanation: "These algae 'provide corals with up to 90% of their energy.'", difficulty: "hard" },
+      { id: "au-le4-q5", type: "fill-blank", question: "The reef has lost approximately ___% of its coral cover since 1995.", correctAnswer: "50", explanation: "The reef 'has lost approximately 50% of its coral cover since 1995.'", difficulty: "hard" },
+      { id: "au-le4-q6", type: "mcq", question: "How long does a severely bleached reef take to recover under optimal conditions?", options: ["3-5 years", "5-8 years", "10-15 years", "20-25 years"], correctAnswer: "10-15 years", explanation: "Recovery takes 'between 10 and 15 years.'", difficulty: "medium" },
+      { id: "au-le4-q7", type: "fill-blank", question: "A single crown-of-thorns starfish can consume up to ___ square metres of coral per year.", correctAnswer: "10", explanation: "A single adult can consume 'up to 10 square metres of coral per year.'", difficulty: "hard" },
+      { id: "au-le4-q8", type: "fill-blank", question: "The Reef 2050 Plan allocated $___ billion for protection.", correctAnswer: "1.2", explanation: "The plan allocated '$1.2 billion for reef protection measures.'", difficulty: "hard" },
+      { id: "au-le4-q9", type: "mcq", question: "What survival rate has coral IVF demonstrated?", options: ["55%", "65%", "75%", "85%"], correctAnswer: "85%", explanation: "Survival rates of 'up to 85% for larvae settled onto prepared substrates.'", difficulty: "hard" },
+      { id: "au-le4-q10", type: "fill-blank", question: "If warming reaches 2 degrees, between ___% and 90% of coral reefs will be lost.", correctAnswer: "70", explanation: "Between '70 and 90% of the world's coral reefs will be lost.'", difficulty: "hard" },
+    ],
+  },
 ];
 
 const AUSTRALIA_WRITING_TASKS: WritingTask[] = [

@@ -777,10 +777,11 @@ function ListeningPractice({ exercises, index, onChangeIndex, countryCode }: { e
 function WritingPractice({ tasks, index, onChangeIndex }: { tasks: WritingTask[]; index: number; onChangeIndex: (i: number) => void }) {
   const task = tasks[index];
   const [essay, setEssay] = useState("");
-  const [bandResult, setBandResult] = useState<BandScore | null>(null);
+  const [bandResult, setBandResult] = useState<(BandScore & { corrections?: Record<string, string[]> }) | null>(null);
   const [timeLeft, setTimeLeft] = useState((task?.timeLimit || 40) * 60);
   const [timerActive, setTimerActive] = useState(false);
   const [isScoring, setIsScoring] = useState(false);
+  const [aiMode, setAiMode] = useState(true);
 
   useEffect(() => {
     if (!timerActive || timeLeft <= 0) return;
@@ -788,15 +789,54 @@ function WritingPractice({ tasks, index, onChangeIndex }: { tasks: WritingTask[]
     return () => clearInterval(t);
   }, [timerActive, timeLeft]);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setTimerActive(false);
     setIsScoring(true);
-    // Simulate brief processing delay for UX
+
+    if (aiMode) {
+      try {
+        const { data, error } = await supabase.functions.invoke("score-essay", {
+          body: { essay, taskNumber: task.taskNumber, prompt: task.prompt },
+        });
+
+        if (error) throw error;
+        if (data?.error) throw new Error(data.error);
+
+        // Map AI response to BandScore format
+        const corrections: Record<string, string[]> = {};
+        const feedback: BandFeedback[] = (data.feedback || []).map((fb: any) => {
+          if (fb.corrections?.length) corrections[fb.criterion] = fb.corrections;
+          return {
+            criterion: fb.criterion,
+            band: fb.band,
+            descriptor: fb.descriptor,
+            strengths: fb.strengths || [],
+            improvements: fb.improvements || [],
+          };
+        });
+
+        setBandResult({
+          overall: data.overall,
+          taskAchievement: data.taskAchievement,
+          coherenceCohesion: data.coherenceCohesion,
+          lexicalResource: data.lexicalResource,
+          grammaticalRange: data.grammaticalRange,
+          feedback,
+          corrections,
+        });
+        setIsScoring(false);
+        return;
+      } catch (e) {
+        console.warn("AI scoring failed, falling back to local:", e);
+      }
+    }
+
+    // Fallback to local scoring
     setTimeout(() => {
       const result = scoreEssay(essay, task.taskNumber, task.wordLimit);
       setBandResult(result);
       setIsScoring(false);
-    }, 800);
+    }, 400);
   };
 
   if (!task) return <p className="text-muted-foreground">No writing tasks available.</p>;

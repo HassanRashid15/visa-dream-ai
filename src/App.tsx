@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/lib/authContext";
 import Index from "./pages/Index";
 import CountryDetail from "./pages/CountryDetail";
+import VisaDetail from "./pages/VisaDetail";
 import EligibilityCheck from "./pages/EligibilityCheck";
 import ApplicationTracker from "./pages/ApplicationTracker";
 import ConsultationBooking from "./pages/ConsultationBooking";
@@ -27,6 +28,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/country/:country" element={<CountryDetail />} />
+            <Route path="/country/:country/visa/:visaType" element={<VisaDetail />} />
             <Route path="/pre-check/:country" element={<PreEligibility />} />
             <Route path="/check/:country" element={<EligibilityCheck />} />
             <Route path="/ielts-prep" element={<IELTSPrep />} />

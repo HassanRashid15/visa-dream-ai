@@ -132,13 +132,17 @@ Be strict but fair. Provide specific examples from the essay in corrections. Eac
     try {
       scoreData = JSON.parse(content);
     } catch {
-      // Try to extract JSON from the response
       const match = content.match(/\{[\s\S]*\}/);
       if (match) {
         scoreData = JSON.parse(match[0]);
       } else {
         throw new Error("Could not parse AI response");
       }
+    }
+
+    // If AI returned an array, take the first element
+    if (Array.isArray(scoreData)) {
+      scoreData = scoreData[0];
     }
 
     return new Response(JSON.stringify(scoreData), {

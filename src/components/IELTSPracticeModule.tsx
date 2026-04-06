@@ -2,7 +2,8 @@ import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ArrowRight, BookOpen, Headphones, PenTool, Mic, Clock, CheckCircle, XCircle, Eye, EyeOff, Timer, Volume2, Send, ChevronDown, ChevronUp, Play, Pause, SkipForward, AlertCircle, Info, Sparkles, Square, CircleDot, Trash2, Star, TrendingUp } from "lucide-react";
 import { generateTimestamps, getActiveSegmentIndex, getTotalDuration, type TranscriptSegment } from "@/lib/audioTimestamps";
-import { scoreEssay, type BandScore } from "@/lib/essayScoring";
+import { scoreEssay, type BandScore, type BandFeedback } from "@/lib/essayScoring";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { GradientText, TiltCard, StaggerContainer, StaggerItem, ShimmerButton, SparkleBorder, AnimatedCounter, PulseDot } from "@/components/ui/animated-bits";
@@ -776,10 +777,11 @@ function ListeningPractice({ exercises, index, onChangeIndex, countryCode }: { e
 function WritingPractice({ tasks, index, onChangeIndex }: { tasks: WritingTask[]; index: number; onChangeIndex: (i: number) => void }) {
   const task = tasks[index];
   const [essay, setEssay] = useState("");
-  const [bandResult, setBandResult] = useState<BandScore | null>(null);
+  const [bandResult, setBandResult] = useState<(BandScore & { corrections?: Record<string, string[]> }) | null>(null);
   const [timeLeft, setTimeLeft] = useState((task?.timeLimit || 40) * 60);
   const [timerActive, setTimerActive] = useState(false);
   const [isScoring, setIsScoring] = useState(false);
+  const [aiMode, setAiMode] = useState(true);
 
   useEffect(() => {
     if (!timerActive || timeLeft <= 0) return;
@@ -787,15 +789,54 @@ function WritingPractice({ tasks, index, onChangeIndex }: { tasks: WritingTask[]
     return () => clearInterval(t);
   }, [timerActive, timeLeft]);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setTimerActive(false);
     setIsScoring(true);
-    // Simulate brief processing delay for UX
+
+    if (aiMode) {
+      try {
+        const { data, error } = await supabase.functions.invoke("score-essay", {
+          body: { essay, taskNumber: task.taskNumber, prompt: task.prompt },
+        });
+
+        if (error) throw error;
+        if (data?.error) throw new Error(data.error);
+
+        // Map AI response to BandScore format
+        const corrections: Record<string, string[]> = {};
+        const feedback: BandFeedback[] = (data.feedback || []).map((fb: any) => {
+          if (fb.corrections?.length) corrections[fb.criterion] = fb.corrections;
+          return {
+            criterion: fb.criterion,
+            band: fb.band,
+            descriptor: fb.descriptor,
+            strengths: fb.strengths || [],
+            improvements: fb.improvements || [],
+          };
+        });
+
+        setBandResult({
+          overall: data.overall,
+          taskAchievement: data.taskAchievement,
+          coherenceCohesion: data.coherenceCohesion,
+          lexicalResource: data.lexicalResource,
+          grammaticalRange: data.grammaticalRange,
+          feedback,
+          corrections,
+        });
+        setIsScoring(false);
+        return;
+      } catch (e) {
+        console.warn("AI scoring failed, falling back to local:", e);
+      }
+    }
+
+    // Fallback to local scoring
     setTimeout(() => {
       const result = scoreEssay(essay, task.taskNumber, task.wordLimit);
       setBandResult(result);
       setIsScoring(false);
-    }, 800);
+    }, 400);
   };
 
   if (!task) return <p className="text-muted-foreground">No writing tasks available.</p>;
@@ -919,6 +960,17 @@ function WritingPractice({ tasks, index, onChangeIndex }: { tasks: WritingTask[]
                     </p>
                     {fb.improvements.map((s, j) => (
                       <p key={j} className="text-xs text-foreground/70 pl-4">• {s}</p>
+                    ))}
+                  </div>
+                )}
+
+                {bandResult.corrections?.[fb.criterion]?.length > 0 && (
+                  <div className="space-y-1">
+                    <p className="text-[10px] uppercase tracking-wider text-destructive font-semibold flex items-center gap-1">
+                      <XCircle className="h-3 w-3" /> Specific Corrections
+                    </p>
+                    {bandResult.corrections[fb.criterion].map((c, j) => (
+                      <p key={j} className="text-xs text-foreground/70 pl-4 italic">• {c}</p>
                     ))}
                   </div>
                 )}

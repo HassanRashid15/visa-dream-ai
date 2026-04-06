@@ -74,7 +74,7 @@ function VisaCard({ visa, index, countryId }: { visa: VisaTypeInfo; index: numbe
         )}
 
         <Button
-          onClick={() => navigate(`/pre-check/${countryId}?visa=${visa.id}`)}
+          onClick={() => navigate(`/country/${countryId}/visa/${visa.id}`)}
           className="w-full gap-2"
           variant="default"
         >

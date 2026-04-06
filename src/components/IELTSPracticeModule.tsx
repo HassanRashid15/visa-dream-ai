@@ -963,6 +963,17 @@ function WritingPractice({ tasks, index, onChangeIndex }: { tasks: WritingTask[]
                     ))}
                   </div>
                 )}
+
+                {bandResult.corrections?.[fb.criterion]?.length > 0 && (
+                  <div className="space-y-1">
+                    <p className="text-[10px] uppercase tracking-wider text-destructive font-semibold flex items-center gap-1">
+                      <XCircle className="h-3 w-3" /> Specific Corrections
+                    </p>
+                    {bandResult.corrections[fb.criterion].map((c, j) => (
+                      <p key={j} className="text-xs text-foreground/70 pl-4 italic">• {c}</p>
+                    ))}
+                  </div>
+                )}
               </div>
             ))}
           </div>

@@ -89,11 +89,7 @@ export default function EligibilityCheckPage() {
 
       {/* Form */}
       <div className="flex-1">
-        <motion.div
-          className="container max-w-2xl mx-auto px-4 -mt-8 pb-16 space-y-6"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
+        <motion.div className="max-w-2xl mx-auto" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
           {/* Visa requirements hint */}
           {visaInfo && (
             <div className="rounded-xl border border-border bg-muted/50 p-5">

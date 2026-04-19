@@ -4,15 +4,11 @@ import { COUNTRY_INFO, type Country } from "@/lib/eligibility";
 import { ArrowRight } from "lucide-react";
 
 const countryImages: Record<Country, string> = {
-  canada: "🇨🇦",
   uk: "🇬🇧",
-  australia: "🇦🇺",
 };
 
 const countryColors: Record<Country, string> = {
-  canada: "from-red-500/10 to-red-500/5",
   uk: "from-blue-500/10 to-blue-500/5",
-  australia: "from-yellow-500/10 to-yellow-500/5",
 };
 
 export default function CountrySelector() {
@@ -34,8 +30,8 @@ export default function CountrySelector() {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {(Object.entries(COUNTRY_INFO) as [Country, typeof COUNTRY_INFO.canada][]).map(
+        <div className="grid grid-cols-1 md:grid-cols-1 gap-8 max-w-md mx-auto">
+          {Object.entries(COUNTRY_INFO).map(
             ([id, info], i) => (
               <motion.button
                 key={id}

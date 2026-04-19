@@ -141,16 +141,46 @@ export default function CountryDetail() {
 
       <div className="flex-1">
         <div className="container max-w-5xl mx-auto px-4 py-12 space-y-16">
-          {/* About & Highlights */}
+          {/* Dynamic Country Snapshot */}
           <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-            <p className="text-muted-foreground leading-relaxed max-w-3xl mb-8">{detail.description}</p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {detail.highlights.map((h, i) => (
-                <div key={i} className="flex items-start gap-3 p-4 rounded-xl bg-muted/50 border border-border">
-                  <Star className="h-5 w-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span className="text-sm leading-relaxed">{h}</span>
+            <div className="mb-8">
+              <span className="text-sm font-semibold text-accent uppercase tracking-wider">Country Snapshot</span>
+              <h2 className="text-2xl md:text-3xl font-display font-bold mt-1">{detail.name} at a Glance</h2>
+              <p className="text-muted-foreground mt-2 max-w-3xl">
+                Dynamic details based on your selected country to help you compare options faster before choosing a visa category.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {[
+                { label: "Capital", value: detail.capital, icon: MapPin },
+                { label: "Language", value: detail.language, icon: Globe },
+                { label: "Currency", value: detail.currency, icon: DollarSign },
+                { label: "Visa Categories", value: `${detail.visaTypes.length} options`, icon: FileText },
+              ].map((item) => (
+                <div key={item.label} className="rounded-xl border border-border bg-card p-4 card-elevated">
+                  <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center mb-3">
+                    <item.icon className="h-4.5 w-4.5 text-primary" />
+                  </div>
+                  <p className="text-xs text-muted-foreground">{item.label}</p>
+                  <p className="text-sm font-semibold mt-1">{item.value}</p>
                 </div>
               ))}
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+              <div className="rounded-xl border border-border bg-muted/40 p-4">
+                <p className="text-xs text-muted-foreground">Tuition (per year)</p>
+                <p className="text-sm font-semibold mt-1">{detail.costs.tuitionPerYear}</p>
+              </div>
+              <div className="rounded-xl border border-border bg-muted/40 p-4">
+                <p className="text-xs text-muted-foreground">Living Cost (per month)</p>
+                <p className="text-sm font-semibold mt-1">{detail.costs.livingCostPerMonth}</p>
+              </div>
+              <div className="rounded-xl border border-border bg-muted/40 p-4">
+                <p className="text-xs text-muted-foreground">Estimated First Year</p>
+                <p className="text-sm font-semibold mt-1 text-primary">{detail.costs.totalEstimatedFirst}</p>
+              </div>
             </div>
           </motion.section>
 
@@ -168,46 +198,18 @@ export default function CountryDetail() {
             </div>
           </section>
 
-          {/* Universities */}
-          <section>
-            <motion.div className="mb-8" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-              <span className="text-sm font-semibold text-accent uppercase tracking-wider">Education</span>
-              <h2 className="text-2xl md:text-3xl font-display font-bold mt-1">Top Universities</h2>
-              <p className="text-muted-foreground mt-2">Leading institutions with globally recognized programs.</p>
-            </motion.div>
-            <div className="space-y-4">
-              {detail.universities.map((uni, i) => (
-                <motion.div
-                  key={uni.name}
-                  className="rounded-xl border border-border bg-card p-5 md:p-6 card-elevated"
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.08 }}
-                >
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
-                    <div>
-                      <h3 className="font-display font-bold text-lg">{uni.name}</h3>
-                      <div className="flex items-center gap-3 text-sm text-muted-foreground mt-1">
-                        <span className="flex items-center gap-1"><MapPin className="h-3.5 w-3.5" /> {uni.location}</span>
-                        <span className="flex items-center gap-1"><Star className="h-3.5 w-3.5 text-accent" /> {uni.ranking}</span>
-                      </div>
-                    </div>
-                    <span className="text-sm font-semibold text-primary bg-primary/10 px-3 py-1 rounded-full whitespace-nowrap">
-                      {uni.tuitionRange}
-                    </span>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {uni.popularCourses.map((course) => (
-                      <span key={course} className="text-xs px-2.5 py-1 rounded-full bg-muted text-muted-foreground border border-border">
-                        {course}
-                      </span>
-                    ))}
-                  </div>
-                </motion.div>
+          {/* About & Highlights */}
+          <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+            <p className="text-muted-foreground leading-relaxed max-w-3xl mb-8">{detail.description}</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {detail.highlights.map((h, i) => (
+                <div key={i} className="flex items-start gap-3 p-4 rounded-xl bg-muted/50 border border-border">
+                  <Star className="h-5 w-5 text-accent mt-0.5 flex-shrink-0" />
+                  <span className="text-sm leading-relaxed">{h}</span>
+                </div>
               ))}
             </div>
-          </section>
+          </motion.section>
 
           {/* Cost Breakdown */}
           <section>

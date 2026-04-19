@@ -1,4 +1,4 @@
-export type Country = "canada" | "uk" | "australia";
+export type Country = "uk";
 
 export interface EligibilityInput {
   country: Country;
@@ -52,7 +52,7 @@ export function calculateEligibility(input: EligibilityInput): EligibilityResult
   else { score += 5; improvements.push("IELTS score below 6 is below minimum for most programs."); }
 
   // Funds (max 15)
-  const fundsThreshold = input.country === "uk" ? 20000 : input.country === "australia" ? 25000 : 15000;
+  const fundsThreshold = 20000; // UK threshold
   if (input.funds >= fundsThreshold) score += 15;
   else if (input.funds >= fundsThreshold * 0.7) { score += 10; improvements.push(`Increase settlement funds to at least $${fundsThreshold.toLocaleString()} for better standing.`); }
   else { score += 5; improvements.push(`Minimum recommended funds: $${fundsThreshold.toLocaleString()}.`); }
@@ -67,7 +67,7 @@ export function calculateEligibility(input: EligibilityInput): EligibilityResult
 }
 
 export const COUNTRY_INFO: Record<Country, { name: string; flag: string; description: string }> = {
-  canada: { name: "Canada", flag: "🇨🇦", description: "Express Entry, PNP & Study Permits" },
+  // canada: { name: "Canada", flag: "🇨🇦", description: "Express Entry, PNP & Study Permits" },
   uk: { name: "United Kingdom", flag: "🇬🇧", description: "Skilled Worker & Graduate Visas" },
-  australia: { name: "Australia", flag: "🇦🇺", description: "Skilled Migration & Student Visas" },
+  // australia: { name: "Australia", flag: "🇦🇺", description: "Skilled Migration & Student Visas" },
 };

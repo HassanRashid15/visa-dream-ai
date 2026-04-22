@@ -90,6 +90,11 @@ export default function CountryDetail() {
   const navigate = useNavigate();
   const detail = country ? COUNTRY_DETAILS[country] : null;
 
+  // Debug: Log to check if heroImage is available
+  if (detail) {
+    console.log('Country detail:', detail.name, 'Hero image:', detail.heroImage);
+  }
+
   if (!detail) {
     navigate("/");
     return null;
@@ -100,12 +105,25 @@ export default function CountryDetail() {
       <Header />
 
       {/* Hero */}
-      <div className="hero-gradient pt-28 pb-24 px-4 relative overflow-hidden">
-        <div className="absolute inset-0 overflow-hidden">
+      <div className="relative pt-28 pb-24 px-4 overflow-hidden">
+        {/* Background Image with Fade Effect */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ 
+            backgroundImage: detail.heroImage ? `url(${detail.heroImage})` : undefined,
+            backgroundColor: detail.heroImage ? 'transparent' : 'hsl(var(--muted))'
+          }}
+        >
+          {/* Fade Overlay - Top faded, bottom shadow */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/40 to-black/80" />
+        </div>
+        
+        {/* Animated Elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
           {[...Array(4)].map((_, i) => (
             <motion.div
               key={i}
-              className="absolute rounded-full bg-primary-foreground/5"
+              className="absolute rounded-full bg-white/5"
               style={{ width: 100 + i * 80, height: 100 + i * 80, right: -20 + i * 30, top: -20 + i * 40 }}
               animate={{ y: [0, -15, 0] }}
               transition={{ duration: 4 + i, repeat: Infinity, ease: "easeInOut" }}
@@ -113,26 +131,26 @@ export default function CountryDetail() {
           ))}
         </div>
         <div className="container max-w-5xl mx-auto relative z-10">
-          <button onClick={() => navigate("/")} className="flex items-center gap-2 text-primary-foreground/60 hover:text-primary-foreground mb-6 transition-colors text-sm">
+          <button onClick={() => navigate("/")} className="flex items-center gap-2 text-white/80 hover:text-white mb-6 transition-colors text-sm">
             <ArrowLeft className="h-4 w-4" /> Back to Countries
           </button>
           <div className="flex items-start gap-5 mb-6">
             <span className="text-7xl">{detail.flag}</span>
             <div>
-              <h1 className="text-3xl md:text-5xl font-display font-bold text-primary-foreground leading-tight">
+              <h1 className="text-3xl md:text-5xl font-display font-bold text-white leading-tight">
                 {detail.name}
               </h1>
-              <p className="text-primary-foreground/70 text-lg mt-2 max-w-2xl">{detail.tagline}</p>
+              <p className="text-white/90 text-lg mt-2 max-w-2xl">{detail.tagline}</p>
             </div>
           </div>
           <div className="flex flex-wrap gap-3 mt-4">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary-foreground/10 text-primary-foreground/80 text-sm backdrop-blur-sm">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 text-white/90 text-sm backdrop-blur-sm border border-white/20">
               <Globe className="h-3.5 w-3.5" /> {detail.language}
             </span>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary-foreground/10 text-primary-foreground/80 text-sm backdrop-blur-sm">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 text-white/90 text-sm backdrop-blur-sm border border-white/20">
               <DollarSign className="h-3.5 w-3.5" /> {detail.currency}
             </span>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary-foreground/10 text-primary-foreground/80 text-sm backdrop-blur-sm">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 text-white/90 text-sm backdrop-blur-sm border border-white/20">
               <MapPin className="h-3.5 w-3.5" /> {detail.capital}
             </span>
           </div>
@@ -181,6 +199,35 @@ export default function CountryDetail() {
                 <p className="text-xs text-muted-foreground">Estimated First Year</p>
                 <p className="text-sm font-semibold mt-1 text-primary">{detail.costs.totalEstimatedFirst}</p>
               </div>
+            </div>
+          </motion.section>
+
+          {/* Image Gallery */}
+          <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+            <div className="mb-8">
+              <span className="text-sm font-semibold text-accent uppercase tracking-wider">Experience {detail.name}</span>
+              <h2 className="text-2xl md:text-3xl font-display font-bold mt-1">Life & Study</h2>
+              <p className="text-muted-foreground mt-2 max-w-2xl">Get a glimpse of student life, campus experiences, and the beautiful landscapes that await you.</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {detail.galleryImages.map((image, i) => (
+                <motion.div
+                  key={i}
+                  className="relative overflow-hidden rounded-xl card-elevated group"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
+                  whileHover={{ scale: 1.02 }}
+                >
+                  <img 
+                    src={image} 
+                    alt={`${detail.name} gallery ${i + 1}`}
+                    className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                </motion.div>
+              ))}
             </div>
           </motion.section>
 

@@ -36,6 +36,8 @@ export interface CountryDetail {
   currency: string;
   language: string;
   capital: string;
+  heroImage: string;
+  galleryImages: string[];
   visaTypes: VisaTypeInfo[];
   universities: University[];
   costs: CostBreakdown;
@@ -48,6 +50,12 @@ export const COUNTRY_DETAILS: Record<string, CountryDetail> = {
     name: "Canada",
     flag: "🇨🇦",
     tagline: "Land of Opportunity & Quality Education",
+    heroImage: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&h=1080&fit=crop&auto=format",
+    galleryImages: [
+      "https://images.unsplash.com/photo-1531251445707-1f6e5c4b5c99?w=400&h=300&fit=crop&auto=format",
+      "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=400&h=300&fit=crop&auto=format",
+      "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=400&h=300&fit=crop&auto=format"
+    ],
     description: "Canada offers world-class education, post-graduation work permits, and clear pathways to permanent residency. Consistently ranked among the best countries for quality of life.",
     currency: "CAD",
     language: "English / French",
@@ -181,6 +189,12 @@ export const COUNTRY_DETAILS: Record<string, CountryDetail> = {
     name: "United Kingdom",
     flag: "🇬🇧",
     tagline: "World-Class Education with Rich Heritage",
+    heroImage: "https://images.unsplash.com/photo-1513635264979-4d1c000c4d12?w=1920&h=1080&fit=crop&auto=format",
+    galleryImages: [
+      "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=400&h=300&fit=crop&auto=format",
+      "https://images.unsplash.com/photo-1529655683826-aba9b3e77383?w=400&h=300&fit=crop&auto=format",
+      "https://images.unsplash.com/photo-1505761671935-60b3a7427bad?w=400&h=300&fit=crop&auto=format"
+    ],
     description: "The UK is home to some of the world's oldest and most prestigious universities. With shorter degree programs and the Graduate Route visa, it's an attractive destination for ambitious students.",
     currency: "GBP",
     language: "English",
@@ -305,8 +319,14 @@ export const COUNTRY_DETAILS: Record<string, CountryDetail> = {
   australia: {
     id: "australia",
     name: "Australia",
-    flag: "🇦🇺",
+    flag: "",
     tagline: "Innovation, Sunshine & Global Recognition",
+    heroImage: "https://images.unsplash.com/photo-1524492442969-5b2fb23b4e3b?w=1920&h=1080&fit=crop&auto=format",
+    galleryImages: [
+      "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop&auto=format",
+      "https://images.unsplash.com/photo-1549180030-48bf059f10d8?w=400&h=300&fit=crop&auto=format",
+      "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400&h=300&fit=crop&auto=format"
+    ],
     description: "Australia combines excellent education quality with incredible lifestyle. With generous post-study work rights and a strong economy, it's a top choice for international students and skilled migrants.",
     currency: "AUD",
     language: "English",

@@ -82,9 +82,48 @@ export default function VisaDetail() {
         <div className="flex-1">
           <div className="container max-w-4xl mx-auto px-4 py-10 space-y-14">
 
-            {/* Overview */}
+            {/* Comprehensive Overview */}
+            {visa.comprehensiveOverview && (
+              <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+                <SectionHeading icon={<Info className="h-3.5 w-3.5" />} label="About This Visa" title={`Understanding the ${visa.name}`} />
+                <div className="p-6 rounded-xl bg-gradient-to-r from-primary/5 to-primary/10 border border-primary/20">
+                  <p className="text-sm leading-relaxed text-primary-foreground/90">{visa.comprehensiveOverview}</p>
+                </div>
+              </motion.section>
+            )}
+
+            {/* Practice Features - TEMPORARILY HIDDEN */}
+            {/* {visa.practiceFeatures && visa.practiceFeatures.length > 0 && (
+              <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+                <SectionHeading icon={<ListChecks className="h-3.5 w-3.5" />} label="Practice Tools" title="Prepare Your Application" />
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {visa.practiceFeatures.map((feature, i) => (
+                    <div key={i} className="p-4 rounded-xl bg-muted/40 border border-border hover:bg-muted/60 hover:border-primary/50 transition-all duration-200 group">
+                      <div className="flex flex-col h-full">
+                        <h4 className="font-semibold text-sm mb-2 group-hover:text-primary transition-colors">
+                          {feature.title}
+                        </h4>
+                        <p className="text-xs text-muted-foreground leading-relaxed mb-4 flex-1">
+                          {feature.description}
+                        </p>
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
+                          onClick={() => navigate(feature.link)}
+                        >
+                          {feature.action}
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </motion.section>
+            )} */}
+
+            {/* Key Points */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-              <SectionHeading icon={<Info className="h-3.5 w-3.5" />} label="Overview" title="What You Need to Know" />
+              <SectionHeading icon={<Info className="h-3.5 w-3.5" />} label="Key Points" title="What You Need to Know" />
               <div className="space-y-3">
                 {visa.overview.map((p, i) => (
                   <div key={i} className="flex items-start gap-3 p-4 rounded-xl bg-muted/40 border border-border">
@@ -204,6 +243,36 @@ export default function VisaDetail() {
                 ))}
               </div>
             </motion.section>
+
+            {/* Official Resources */}
+            {visa.officialResources && visa.officialResources.length > 0 && (
+              <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+                <SectionHeading icon={<ExternalLink className="h-3.5 w-3.5" />} label="Resources" title="Official UK Government Links" />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {visa.officialResources.map((resource, i) => (
+                    <a
+                      key={i}
+                      href={resource.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block p-4 rounded-xl bg-muted/40 border border-border hover:bg-muted/60 hover:border-primary/50 transition-all duration-200 group"
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex-1">
+                          <h4 className="font-semibold text-sm mb-1 group-hover:text-primary transition-colors">
+                            {resource.title}
+                          </h4>
+                          <p className="text-xs text-muted-foreground leading-relaxed">
+                            {resource.description}
+                          </p>
+                        </div>
+                        <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0 mt-0.5" />
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              </motion.section>
+            )}
 
             {/* FAQ */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>

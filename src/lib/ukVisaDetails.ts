@@ -44,6 +44,8 @@ export interface VisaDetailData {
   officialLink: string;
   officialResources?: { title: string; url: string; description: string }[];
   faqs: { q: string; a: string }[];
+  gallery?: { url: string; caption: string }[];
+  videos?: { title: string; description: string; youtubeId: string }[];
 }
 
 export const UK_VISA_DETAILS: Record<string, VisaDetailData> = {

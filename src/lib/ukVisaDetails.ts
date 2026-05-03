@@ -152,6 +152,16 @@ export const UK_VISA_DETAILS: Record<string, VisaDetailData> = {
       { q: "Can I switch from Student visa to a work visa?", a: "Yes. You can switch to the Skilled Worker visa from within the UK if you receive a job offer from a licensed sponsor. You can also switch to the Graduate Route after completing your degree." },
       { q: "Do I need to show funds if my sponsor has paid all fees?", a: "If your CAS confirms that all tuition and accommodation fees are paid, you only need to show living cost funds. If your government or an international scholarship body is funding you, an official letter confirming this is sufficient." },
     ],
+    gallery: [
+      { url: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&h=500&fit=crop&auto=format", caption: "Historic UK university campus" },
+      { url: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=800&h=500&fit=crop&auto=format", caption: "Modern lecture halls and libraries" },
+      { url: "https://images.unsplash.com/photo-1571260899304-425eee4c7efc?w=800&h=500&fit=crop&auto=format", caption: "Vibrant international student life" },
+      { url: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=800&h=500&fit=crop&auto=format", caption: "Iconic London — study, explore, thrive" },
+    ],
+    videos: [
+      { title: "UK Student Visa — Step by Step", description: "Official walkthrough of the Student Route application.", youtubeId: "Z5wW6KRH7Vo" },
+      { title: "Life as an International Student in the UK", description: "Real student stories from UK universities.", youtubeId: "2hcS6MTMtAk" },
+    ],
   },
 
   work: {
@@ -295,6 +305,16 @@ export const UK_VISA_DETAILS: Record<string, VisaDetailData> = {
       { q: "Can my family join me?", a: "Yes, your partner and children under 18 can apply as dependants if your job meets the salary threshold. Each dependant pays their own visa fee (£719 for up to 3 years) and IHS (£776 per year)." },
       { q: "What is the going rate for my occupation?", a: "The going rate varies by occupation and is set by the Home Office. For example: Software Engineer £37,908, Mechanical Engineer £28,500, Marketing Manager £31,500. Check the official SOC code tables on gov.uk for your specific role." },
     ],
+    gallery: [
+      { url: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&h=500&fit=crop&auto=format", caption: "Modern UK office spaces" },
+      { url: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=800&h=500&fit=crop&auto=format", caption: "Collaborative work culture" },
+      { url: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&h=500&fit=crop&auto=format", caption: "London — a global business hub" },
+      { url: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=800&h=500&fit=crop&auto=format", caption: "Skilled professionals across industries" },
+    ],
+    videos: [
+      { title: "Skilled Worker Visa Explained", description: "Eligibility, salary thresholds, and sponsorship.", youtubeId: "wWJ1lJXX-Yk" },
+      { title: "Working in the UK as a Foreigner", description: "What life on a Skilled Worker visa really looks like.", youtubeId: "bgCZWY8e9KE" },
+    ],
   },
 
   pr: {
@@ -388,6 +408,16 @@ export const UK_VISA_DETAILS: Record<string, VisaDetailData> = {
       { q: "What if I fail the Life in the UK test?", a: "You can retake it as many times as needed. Each attempt costs £50. You must pass before submitting your ILR application." },
       { q: "Does my ILR expire?", a: "No, ILR does not expire. However, it can lapse if you spend more than 2 continuous years outside the UK. It can also be revoked if you obtained it through deception." },
       { q: "Can my employer help with ILR?", a: "Your employer does not need to sponsor your ILR application, but they will need to provide employment evidence (letters, payslips, P60s) to support it." },
+    ],
+    gallery: [
+      { url: "https://images.unsplash.com/photo-1568827999250-3f6afff96e66?w=800&h=500&fit=crop&auto=format", caption: "Settling down in the UK" },
+      { url: "https://images.unsplash.com/photo-1505761671935-60b3a7427bad?w=800&h=500&fit=crop&auto=format", caption: "Buying a home as a permanent resident" },
+      { url: "https://images.unsplash.com/photo-1533929736458-ca588d08c8be?w=800&h=500&fit=crop&auto=format", caption: "Family life in British towns" },
+      { url: "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800&h=500&fit=crop&auto=format", caption: "Towards British citizenship" },
+    ],
+    videos: [
+      { title: "Indefinite Leave to Remain — Full Guide", description: "Step-by-step guide to applying for ILR.", youtubeId: "8B0wO-azk8s" },
+      { title: "Life in the UK Test — What to Expect", description: "Tips and sample questions for the mandatory test.", youtubeId: "vu9Cxk0_2sM" },
     ],
   },
 
@@ -485,6 +515,16 @@ export const UK_VISA_DETAILS: Record<string, VisaDetailData> = {
       { q: "Can I study on a Visitor visa?", a: "You can take a short course of study (up to 6 months) or a recreational course. You cannot study at a state-funded school or enrol in a course longer than 6 months." },
       { q: "Do I need travel insurance?", a: "It is not mandatory but strongly recommended. The NHS may charge for treatment, and having insurance shows you are prepared." },
       { q: "Can I attend a job interview?", a: "Yes. You can attend interviews and meetings, but you cannot start working until you have the appropriate work visa." },
+    ],
+    gallery: [
+      { url: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=800&h=500&fit=crop&auto=format", caption: "Big Ben and Westminster" },
+      { url: "https://images.unsplash.com/photo-1520986606214-8b456906c813?w=800&h=500&fit=crop&auto=format", caption: "Tower Bridge by sunset" },
+      { url: "https://images.unsplash.com/photo-1543832923-44667a44c804?w=800&h=500&fit=crop&auto=format", caption: "Edinburgh's historic Royal Mile" },
+      { url: "https://images.unsplash.com/photo-1533929736458-ca588d08c8be?w=800&h=500&fit=crop&auto=format", caption: "Countryside escapes across Britain" },
+    ],
+    videos: [
+      { title: "UK Visitor Visa — Application Walkthrough", description: "How to apply for a Standard Visitor visa.", youtubeId: "S7qFc3fW0Cw" },
+      { title: "Top 10 Things To Do in the UK", description: "Plan an unforgettable visit to Britain.", youtubeId: "pCRR5GvJjkA" },
     ],
   },
 };

@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, ArrowRight, Clock, DollarSign, FileText, CheckCircle, AlertTriangle,
   ExternalLink, ChevronDown, ChevronUp, HelpCircle, Shield, Banknote, ListChecks,
-  Footprints, BookOpen, Info,
+  Footprints, BookOpen, Info, Image as ImageIcon, Video,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
@@ -87,7 +87,61 @@ export default function VisaDetail() {
               <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
                 <SectionHeading icon={<Info className="h-3.5 w-3.5" />} label="About This Visa" title={`Understanding the ${visa.name}`} />
                 <div className="p-6 rounded-xl bg-gradient-to-r from-primary/5 to-primary/10 border border-primary/20">
-                  <p className="text-sm leading-relaxed text-primary-foreground/90">{visa.comprehensiveOverview}</p>
+                  <p className="text-sm leading-relaxed text-foreground/90">{visa.comprehensiveOverview}</p>
+                </div>
+              </motion.section>
+            )}
+
+            {/* Gallery */}
+            {visa.gallery && visa.gallery.length > 0 && (
+              <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+                <SectionHeading icon={<ImageIcon className="h-3.5 w-3.5" />} label="Gallery" title={`A Glimpse of ${visa.name}`} />
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  {visa.gallery.map((img, i) => (
+                    <motion.div
+                      key={i}
+                      className="relative overflow-hidden rounded-xl group aspect-[4/3] border border-border"
+                      whileHover={{ scale: 1.03 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <img
+                        src={img.url}
+                        alt={img.caption}
+                        loading="lazy"
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
+                        <p className="text-white text-xs font-medium">{img.caption}</p>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.section>
+            )}
+
+            {/* Videos */}
+            {visa.videos && visa.videos.length > 0 && (
+              <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+                <SectionHeading icon={<Video className="h-3.5 w-3.5" />} label="Watch & Learn" title="Video Guides" />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  {visa.videos.map((video, i) => (
+                    <div key={i} className="rounded-xl overflow-hidden border border-border bg-card">
+                      <div className="relative aspect-video bg-muted">
+                        <iframe
+                          src={`https://www.youtube.com/embed/${video.youtubeId}`}
+                          title={video.title}
+                          loading="lazy"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                          className="absolute inset-0 w-full h-full"
+                        />
+                      </div>
+                      <div className="p-4">
+                        <h4 className="font-semibold text-sm mb-1">{video.title}</h4>
+                        <p className="text-xs text-muted-foreground leading-relaxed">{video.description}</p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </motion.section>
             )}
@@ -238,7 +292,7 @@ export default function VisaDetail() {
                 {visa.importantNotes.map((note, i) => (
                   <div key={i} className="flex items-start gap-3 p-4 rounded-xl bg-accent/10 border border-accent/20">
                     <AlertTriangle className="h-4 w-4 text-accent mt-0.5 flex-shrink-0" />
-                    <p className="text-sm leading-relaxed">{typeof note === 'string' ? note : note}</p>
+                    <p className="text-sm leading-relaxed">{note}</p>
                   </div>
                 ))}
               </div>
@@ -279,12 +333,7 @@ export default function VisaDetail() {
               <SectionHeading icon={<HelpCircle className="h-3.5 w-3.5" />} label="FAQ" title="Frequently Asked Questions" />
               <div className="space-y-4">
                 {visa.faqs.map((faq, i) => (
-                  <div key={i} className="border border-border rounded-xl overflow-hidden">
-                    <button className="w-full p-4 text-left flex items-center justify-between hover:bg-muted/50 transition-colors">
-                      <span className="font-medium text-sm">{faq.q}</span>
-                      <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                    </button>
-                  </div>
+                  <FaqItem key={i} q={faq.q} a={faq.a} />
                 ))}
               </div>
             </motion.section>
@@ -294,7 +343,7 @@ export default function VisaDetail() {
               <h2 className="text-2xl font-display font-bold mb-4">
                 Ready to <GradientText>Check Your Eligibility</GradientText>?
               </h2>
-              <p className="text-primary-foreground/70 mb-6 text-sm max-w-xl mx-auto">
+              <p className="text-muted-foreground mb-6 text-sm max-w-xl mx-auto">
                 Our AI assessment evaluates your profile against {visa.name} requirements in under 60 seconds.
               </p>
               <Button variant="hero" size="xl" onClick={() => navigate(`/pre-check/uk?visa=${visa.id}`)}>
@@ -306,6 +355,40 @@ export default function VisaDetail() {
         <AISidebar visa={visa} universities={universities} />
       </div>
       <Footer />
+    </div>
+  );
+}
+
+function FaqItem({ q, a }: { q: string; a: string }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="border border-border rounded-xl overflow-hidden bg-card">
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className="w-full p-4 text-left flex items-center justify-between hover:bg-muted/50 transition-colors"
+      >
+        <span className="font-medium text-sm pr-4">{q}</span>
+        {open ? (
+          <ChevronUp className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+        ) : (
+          <ChevronDown className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+        )}
+      </button>
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="overflow-hidden"
+          >
+            <div className="px-4 pb-4 pt-0 text-sm text-muted-foreground leading-relaxed border-t border-border">
+              {a}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

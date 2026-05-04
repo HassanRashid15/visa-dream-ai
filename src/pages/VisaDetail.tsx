@@ -336,20 +336,75 @@ export default function VisaDetail() {
               </div>
             </motion.section>
 
-            {/* Documents */}
+            {/* Documents — Interactive Checklist */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-              <SectionHeading icon={<FileText className="h-3.5 w-3.5" />} label="Documents" title="Required Paperwork" />
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {visa.documents.map((doc, i) => (
-                  <div key={i} className="flex items-start gap-3 p-3 rounded-xl bg-muted/40 border border-border">
-                    <FileText className="h-4 w-4 text-accent mt-0.5 flex-shrink-0" />
-                    <div>
-                      <span className="text-xs font-medium">{doc.name}</span>
-                      <p className="text-xs text-muted-foreground mt-1">{doc.detail}</p>
-                    </div>
-                  </div>
-                ))}
+              <SectionHeading icon={<FileText className="h-3.5 w-3.5" />} label="Documents" title="Interactive Document Checklist" />
+
+              {/* Progress + legend */}
+              <div className="mb-4 p-4 rounded-xl bg-muted/40 border border-border">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-medium text-muted-foreground">
+                    Required documents ready: <span className="text-foreground font-semibold">{requiredDoneCount}/{requiredDocs.length}</span>
+                  </span>
+                  <span className="text-xs font-semibold text-primary">{progressPct}%</span>
+                </div>
+                <div className="h-2 w-full rounded-full bg-background overflow-hidden">
+                  <motion.div
+                    className="h-full bg-primary"
+                    initial={{ width: 0 }}
+                    animate={{ width: `${progressPct}%` }}
+                    transition={{ duration: 0.4 }}
+                  />
+                </div>
+                <div className="flex flex-wrap gap-2 mt-3 text-[11px]">
+                  <StatusBadge status="required" />
+                  <StatusBadge status="optional" />
+                  <StatusBadge status="depends" />
+                </div>
               </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {visa.documents.map((doc, i) => {
+                  const status = doc.status ?? "required";
+                  const isChecked = !!checked[i];
+                  return (
+                    <label
+                      key={i}
+                      htmlFor={`doc-${visa.id}-${i}`}
+                      className={`flex items-start gap-3 p-3 rounded-xl bg-muted/40 border transition-colors cursor-pointer ${
+                        isChecked ? "border-primary/60 bg-primary/5" : "border-border hover:bg-muted/60"
+                      }`}
+                    >
+                      <Checkbox
+                        id={`doc-${visa.id}-${i}`}
+                        checked={isChecked}
+                        onCheckedChange={(v) =>
+                          setChecked((prev) => ({ ...prev, [i]: v === true }))
+                        }
+                        className="mt-0.5"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-2 flex-wrap">
+                          <span className={`text-xs font-medium ${isChecked ? "line-through text-muted-foreground" : ""}`}>
+                            {doc.name}
+                          </span>
+                          <StatusBadge status={status} />
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1">{doc.detail}</p>
+                      </div>
+                    </label>
+                  );
+                })}
+              </div>
+              {Object.values(checked).some(Boolean) && (
+                <button
+                  type="button"
+                  onClick={() => setChecked({})}
+                  className="mt-3 text-xs text-muted-foreground hover:text-foreground underline underline-offset-2"
+                >
+                  Reset checklist
+                </button>
+              )}
             </motion.section>
 
             {/* Important Notes */}

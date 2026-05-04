@@ -40,6 +40,69 @@ export default function VisaDetail() {
   }
   const universities = visa.id === "study" ? (COUNTRY_DETAILS[country]?.universities ?? []) : [];
 
+  // Lightbox state
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const gallery = visa.gallery ?? [];
+  const closeLightbox = useCallback(() => setLightboxIndex(null), []);
+  const showPrev = useCallback(
+    () => setLightboxIndex((i) => (i === null ? null : (i - 1 + gallery.length) % gallery.length)),
+    [gallery.length],
+  );
+  const showNext = useCallback(
+    () => setLightboxIndex((i) => (i === null ? null : (i + 1) % gallery.length)),
+    [gallery.length],
+  );
+
+  useEffect(() => {
+    if (lightboxIndex === null) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeLightbox();
+      else if (e.key === "ArrowLeft") showPrev();
+      else if (e.key === "ArrowRight") showNext();
+    };
+    window.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prev;
+    };
+  }, [lightboxIndex, closeLightbox, showPrev, showNext]);
+
+  // Document checklist state — persisted per visa
+  const storageKey = `visa-checklist:${visa.id}`;
+  const [checked, setChecked] = useState<Record<number, boolean>>({});
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(storageKey);
+      if (raw) setChecked(JSON.parse(raw));
+    } catch { /* ignore */ }
+  }, [storageKey]);
+  useEffect(() => {
+    try { localStorage.setItem(storageKey, JSON.stringify(checked)); } catch { /* ignore */ }
+  }, [checked, storageKey]);
+
+  const requiredDocs = useMemo(
+    () => visa.documents.filter((d) => (d.status ?? "required") === "required"),
+    [visa.documents],
+  );
+  const requiredDoneCount = visa.documents.reduce(
+    (acc, d, i) => acc + (((d.status ?? "required") === "required") && checked[i] ? 1 : 0),
+    0,
+  );
+  const progressPct = requiredDocs.length === 0 ? 0 : Math.round((requiredDoneCount / requiredDocs.length) * 100);
+
+  // Swipe handling for lightbox
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+  const onTouchStart = (e: React.TouchEvent) => setTouchStartX(e.touches[0].clientX);
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX === null) return;
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (dx > 50) showPrev();
+    else if (dx < -50) showNext();
+    setTouchStartX(null);
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Header />

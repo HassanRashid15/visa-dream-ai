@@ -477,7 +477,86 @@ export default function VisaDetail() {
         <AISidebar visa={visa} universities={universities} />
       </div>
       <Footer />
+
+      {/* Image Lightbox */}
+      <AnimatePresence>
+        {lightboxIndex !== null && gallery[lightboxIndex] && (
+          <motion.div
+            className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={closeLightbox}
+            onTouchStart={onTouchStart}
+            onTouchEnd={onTouchEnd}
+          >
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); closeLightbox(); }}
+              className="absolute top-4 right-4 h-10 w-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors"
+              aria-label="Close"
+            >
+              <X className="h-5 w-5" />
+            </button>
+
+            {gallery.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); showPrev(); }}
+                  className="absolute left-2 md:left-6 h-11 w-11 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors"
+                  aria-label="Previous image"
+                >
+                  <ChevronLeft className="h-6 w-6" />
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); showNext(); }}
+                  className="absolute right-2 md:right-6 h-11 w-11 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors"
+                  aria-label="Next image"
+                >
+                  <ChevronRight className="h-6 w-6" />
+                </button>
+              </>
+            )}
+
+            <motion.div
+              key={lightboxIndex}
+              initial={{ opacity: 0, scale: 0.97 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.97 }}
+              transition={{ duration: 0.18 }}
+              className="relative max-w-5xl w-full"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <img
+                src={gallery[lightboxIndex].url}
+                alt={gallery[lightboxIndex].caption}
+                className="w-full max-h-[80vh] object-contain rounded-lg"
+              />
+              <div className="mt-3 flex items-center justify-between gap-4 text-white/90">
+                <p className="text-sm">{gallery[lightboxIndex].caption}</p>
+                <span className="text-xs text-white/60">{lightboxIndex + 1} / {gallery.length}</span>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
+  );
+}
+
+function StatusBadge({ status }: { status: "required" | "optional" | "depends" }) {
+  const map = {
+    required: { label: "Required", cls: "bg-destructive/10 text-destructive border-destructive/30" },
+    optional: { label: "Optional", cls: "bg-muted text-muted-foreground border-border" },
+    depends: { label: "Depends", cls: "bg-accent/10 text-accent border-accent/30" },
+  } as const;
+  const { label, cls } = map[status];
+  return (
+    <span className={`inline-flex items-center px-2 py-0.5 rounded-full border text-[10px] font-semibold uppercase tracking-wide ${cls}`}>
+      {label}
+    </span>
   );
 }
 

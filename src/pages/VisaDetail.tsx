@@ -1,12 +1,13 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, ArrowRight, Clock, DollarSign, FileText, CheckCircle, AlertTriangle,
   ExternalLink, ChevronDown, ChevronUp, HelpCircle, Shield, Banknote, ListChecks,
-  Footprints, BookOpen, Info, Image as ImageIcon, Video,
+  Footprints, BookOpen, Info, Image as ImageIcon, Video, X, ChevronLeft, ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AISidebar from "@/components/AISidebar";
@@ -38,6 +39,69 @@ export default function VisaDetail() {
     return null;
   }
   const universities = visa.id === "study" ? (COUNTRY_DETAILS[country]?.universities ?? []) : [];
+
+  // Lightbox state
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const gallery = visa.gallery ?? [];
+  const closeLightbox = useCallback(() => setLightboxIndex(null), []);
+  const showPrev = useCallback(
+    () => setLightboxIndex((i) => (i === null ? null : (i - 1 + gallery.length) % gallery.length)),
+    [gallery.length],
+  );
+  const showNext = useCallback(
+    () => setLightboxIndex((i) => (i === null ? null : (i + 1) % gallery.length)),
+    [gallery.length],
+  );
+
+  useEffect(() => {
+    if (lightboxIndex === null) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeLightbox();
+      else if (e.key === "ArrowLeft") showPrev();
+      else if (e.key === "ArrowRight") showNext();
+    };
+    window.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prev;
+    };
+  }, [lightboxIndex, closeLightbox, showPrev, showNext]);
+
+  // Document checklist state — persisted per visa
+  const storageKey = `visa-checklist:${visa.id}`;
+  const [checked, setChecked] = useState<Record<number, boolean>>({});
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(storageKey);
+      if (raw) setChecked(JSON.parse(raw));
+    } catch { /* ignore */ }
+  }, [storageKey]);
+  useEffect(() => {
+    try { localStorage.setItem(storageKey, JSON.stringify(checked)); } catch { /* ignore */ }
+  }, [checked, storageKey]);
+
+  const requiredDocs = useMemo(
+    () => visa.documents.filter((d) => (d.status ?? "required") === "required"),
+    [visa.documents],
+  );
+  const requiredDoneCount = visa.documents.reduce(
+    (acc, d, i) => acc + (((d.status ?? "required") === "required") && checked[i] ? 1 : 0),
+    0,
+  );
+  const progressPct = requiredDocs.length === 0 ? 0 : Math.round((requiredDoneCount / requiredDocs.length) * 100);
+
+  // Swipe handling for lightbox
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+  const onTouchStart = (e: React.TouchEvent) => setTouchStartX(e.touches[0].clientX);
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX === null) return;
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (dx > 50) showPrev();
+    else if (dx < -50) showNext();
+    setTouchStartX(null);
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -98,11 +162,14 @@ export default function VisaDetail() {
                 <SectionHeading icon={<ImageIcon className="h-3.5 w-3.5" />} label="Gallery" title={`A Glimpse of ${visa.name}`} />
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   {visa.gallery.map((img, i) => (
-                    <motion.div
+                    <motion.button
                       key={i}
-                      className="relative overflow-hidden rounded-xl group aspect-[4/3] border border-border"
+                      type="button"
+                      onClick={() => setLightboxIndex(i)}
+                      className="relative overflow-hidden rounded-xl group aspect-[4/3] border border-border focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                       whileHover={{ scale: 1.03 }}
                       transition={{ duration: 0.2 }}
+                      aria-label={`Open image: ${img.caption}`}
                     >
                       <img
                         src={img.url}
@@ -111,9 +178,9 @@ export default function VisaDetail() {
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
-                        <p className="text-white text-xs font-medium">{img.caption}</p>
+                        <p className="text-white text-xs font-medium text-left">{img.caption}</p>
                       </div>
-                    </motion.div>
+                    </motion.button>
                   ))}
                 </div>
               </motion.section>
@@ -269,20 +336,75 @@ export default function VisaDetail() {
               </div>
             </motion.section>
 
-            {/* Documents */}
+            {/* Documents — Interactive Checklist */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-              <SectionHeading icon={<FileText className="h-3.5 w-3.5" />} label="Documents" title="Required Paperwork" />
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {visa.documents.map((doc, i) => (
-                  <div key={i} className="flex items-start gap-3 p-3 rounded-xl bg-muted/40 border border-border">
-                    <FileText className="h-4 w-4 text-accent mt-0.5 flex-shrink-0" />
-                    <div>
-                      <span className="text-xs font-medium">{doc.name}</span>
-                      <p className="text-xs text-muted-foreground mt-1">{doc.detail}</p>
-                    </div>
-                  </div>
-                ))}
+              <SectionHeading icon={<FileText className="h-3.5 w-3.5" />} label="Documents" title="Interactive Document Checklist" />
+
+              {/* Progress + legend */}
+              <div className="mb-4 p-4 rounded-xl bg-muted/40 border border-border">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-medium text-muted-foreground">
+                    Required documents ready: <span className="text-foreground font-semibold">{requiredDoneCount}/{requiredDocs.length}</span>
+                  </span>
+                  <span className="text-xs font-semibold text-primary">{progressPct}%</span>
+                </div>
+                <div className="h-2 w-full rounded-full bg-background overflow-hidden">
+                  <motion.div
+                    className="h-full bg-primary"
+                    initial={{ width: 0 }}
+                    animate={{ width: `${progressPct}%` }}
+                    transition={{ duration: 0.4 }}
+                  />
+                </div>
+                <div className="flex flex-wrap gap-2 mt-3 text-[11px]">
+                  <StatusBadge status="required" />
+                  <StatusBadge status="optional" />
+                  <StatusBadge status="depends" />
+                </div>
               </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {visa.documents.map((doc, i) => {
+                  const status = doc.status ?? "required";
+                  const isChecked = !!checked[i];
+                  return (
+                    <label
+                      key={i}
+                      htmlFor={`doc-${visa.id}-${i}`}
+                      className={`flex items-start gap-3 p-3 rounded-xl bg-muted/40 border transition-colors cursor-pointer ${
+                        isChecked ? "border-primary/60 bg-primary/5" : "border-border hover:bg-muted/60"
+                      }`}
+                    >
+                      <Checkbox
+                        id={`doc-${visa.id}-${i}`}
+                        checked={isChecked}
+                        onCheckedChange={(v) =>
+                          setChecked((prev) => ({ ...prev, [i]: v === true }))
+                        }
+                        className="mt-0.5"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-2 flex-wrap">
+                          <span className={`text-xs font-medium ${isChecked ? "line-through text-muted-foreground" : ""}`}>
+                            {doc.name}
+                          </span>
+                          <StatusBadge status={status} />
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1">{doc.detail}</p>
+                      </div>
+                    </label>
+                  );
+                })}
+              </div>
+              {Object.values(checked).some(Boolean) && (
+                <button
+                  type="button"
+                  onClick={() => setChecked({})}
+                  className="mt-3 text-xs text-muted-foreground hover:text-foreground underline underline-offset-2"
+                >
+                  Reset checklist
+                </button>
+              )}
             </motion.section>
 
             {/* Important Notes */}
@@ -355,7 +477,86 @@ export default function VisaDetail() {
         <AISidebar visa={visa} universities={universities} />
       </div>
       <Footer />
+
+      {/* Image Lightbox */}
+      <AnimatePresence>
+        {lightboxIndex !== null && gallery[lightboxIndex] && (
+          <motion.div
+            className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={closeLightbox}
+            onTouchStart={onTouchStart}
+            onTouchEnd={onTouchEnd}
+          >
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); closeLightbox(); }}
+              className="absolute top-4 right-4 h-10 w-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors"
+              aria-label="Close"
+            >
+              <X className="h-5 w-5" />
+            </button>
+
+            {gallery.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); showPrev(); }}
+                  className="absolute left-2 md:left-6 h-11 w-11 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors"
+                  aria-label="Previous image"
+                >
+                  <ChevronLeft className="h-6 w-6" />
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); showNext(); }}
+                  className="absolute right-2 md:right-6 h-11 w-11 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors"
+                  aria-label="Next image"
+                >
+                  <ChevronRight className="h-6 w-6" />
+                </button>
+              </>
+            )}
+
+            <motion.div
+              key={lightboxIndex}
+              initial={{ opacity: 0, scale: 0.97 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.97 }}
+              transition={{ duration: 0.18 }}
+              className="relative max-w-5xl w-full"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <img
+                src={gallery[lightboxIndex].url}
+                alt={gallery[lightboxIndex].caption}
+                className="w-full max-h-[80vh] object-contain rounded-lg"
+              />
+              <div className="mt-3 flex items-center justify-between gap-4 text-white/90">
+                <p className="text-sm">{gallery[lightboxIndex].caption}</p>
+                <span className="text-xs text-white/60">{lightboxIndex + 1} / {gallery.length}</span>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
+  );
+}
+
+function StatusBadge({ status }: { status: "required" | "optional" | "depends" }) {
+  const map = {
+    required: { label: "Required", cls: "bg-destructive/10 text-destructive border-destructive/30" },
+    optional: { label: "Optional", cls: "bg-muted text-muted-foreground border-border" },
+    depends: { label: "Depends", cls: "bg-accent/10 text-accent border-accent/30" },
+  } as const;
+  const { label, cls } = map[status];
+  return (
+    <span className={`inline-flex items-center px-2 py-0.5 rounded-full border text-[10px] font-semibold uppercase tracking-wide ${cls}`}>
+      {label}
+    </span>
   );
 }
 

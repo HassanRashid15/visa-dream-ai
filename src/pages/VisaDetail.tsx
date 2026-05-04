@@ -1,12 +1,13 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, ArrowRight, Clock, DollarSign, FileText, CheckCircle, AlertTriangle,
   ExternalLink, ChevronDown, ChevronUp, HelpCircle, Shield, Banknote, ListChecks,
-  Footprints, BookOpen, Info, Image as ImageIcon, Video,
+  Footprints, BookOpen, Info, Image as ImageIcon, Video, X, ChevronLeft, ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AISidebar from "@/components/AISidebar";

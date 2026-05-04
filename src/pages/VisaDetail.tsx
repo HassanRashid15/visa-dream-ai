@@ -162,11 +162,14 @@ export default function VisaDetail() {
                 <SectionHeading icon={<ImageIcon className="h-3.5 w-3.5" />} label="Gallery" title={`A Glimpse of ${visa.name}`} />
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   {visa.gallery.map((img, i) => (
-                    <motion.div
+                    <motion.button
                       key={i}
-                      className="relative overflow-hidden rounded-xl group aspect-[4/3] border border-border"
+                      type="button"
+                      onClick={() => setLightboxIndex(i)}
+                      className="relative overflow-hidden rounded-xl group aspect-[4/3] border border-border focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                       whileHover={{ scale: 1.03 }}
                       transition={{ duration: 0.2 }}
+                      aria-label={`Open image: ${img.caption}`}
                     >
                       <img
                         src={img.url}
@@ -175,9 +178,9 @@ export default function VisaDetail() {
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
-                        <p className="text-white text-xs font-medium">{img.caption}</p>
+                        <p className="text-white text-xs font-medium text-left">{img.caption}</p>
                       </div>
-                    </motion.div>
+                    </motion.button>
                   ))}
                 </div>
               </motion.section>

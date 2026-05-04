@@ -39,7 +39,7 @@ export interface VisaDetailData {
   applicationSteps: VisaStep[];
   fees: VisaFee[];
   totalEstimatedCost: string;
-  documents: { name: string; detail: string }[];
+  documents: { name: string; detail: string; status?: "required" | "optional" | "depends" }[];
   importantNotes: string[];
   officialLink: string;
   officialResources?: { title: string; url: string; description: string }[];

@@ -655,6 +655,10 @@ export default function VisaDetail() {
       <AnimatePresence>
         {lightboxIndex !== null && gallery[lightboxIndex] && (
           <motion.div
+            ref={lightboxRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Image ${lightboxIndex + 1} of ${gallery.length}: ${gallery[lightboxIndex].caption}`}
             className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -665,6 +669,7 @@ export default function VisaDetail() {
           >
             <button
               type="button"
+              data-autofocus="true"
               onClick={(e) => { e.stopPropagation(); closeLightbox(); }}
               className="absolute top-4 right-4 h-10 w-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors"
               aria-label="Close"

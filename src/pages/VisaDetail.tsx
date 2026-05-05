@@ -30,7 +30,7 @@ function SectionHeading({ icon, label, title }: { icon: React.ReactNode; label: 
 export default function VisaDetail() {
   const { country, visaType } = useParams<{ country: string; visaType: string }>();
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
 
   if (!country || !visaType) {
     navigate("/");

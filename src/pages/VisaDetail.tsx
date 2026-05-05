@@ -508,6 +508,32 @@ export default function VisaDetail() {
                   <StatusBadge status="optional" />
                   <StatusBadge status="depends" />
                 </div>
+                <div className="flex flex-wrap gap-2 mt-4">
+                  <Button type="button" size="sm" variant="default" onClick={handleDownloadPdf}>
+                    <Download className="h-4 w-4" /> Download PDF
+                  </Button>
+                  <Button type="button" size="sm" variant="outline" onClick={handleNativeShare}>
+                    <Share2 className="h-4 w-4" /> Share progress
+                  </Button>
+                  <Button type="button" size="sm" variant="ghost" onClick={() => setShareOpen((v) => !v)}>
+                    {shareOpen ? "Hide link" : "Show link"}
+                  </Button>
+                </div>
+                {shareOpen && (
+                  <div className="mt-3 flex items-center gap-2">
+                    <input
+                      readOnly
+                      value={shareUrl}
+                      onFocus={(e) => e.currentTarget.select()}
+                      className="flex-1 text-xs px-3 py-2 rounded-md border border-border bg-background font-mono truncate"
+                      aria-label="Shareable checklist link"
+                    />
+                    <Button type="button" size="sm" variant="outline" onClick={handleCopyShare}>
+                      {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                      {copied ? "Copied" : "Copy"}
+                    </Button>
+                  </div>
+                )}
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">

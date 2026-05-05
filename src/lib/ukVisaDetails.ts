@@ -153,14 +153,14 @@ export const UK_VISA_DETAILS: Record<string, VisaDetailData> = {
       { q: "Do I need to show funds if my sponsor has paid all fees?", a: "If your CAS confirms that all tuition and accommodation fees are paid, you only need to show living cost funds. If your government or an international scholarship body is funding you, an official letter confirming this is sufficient." },
     ],
     gallery: [
-      { url: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&h=500&fit=crop&auto=format", caption: "Historic UK university campus" },
+      { url: "https://images.unsplash.com/photo-1562774053-701939374585?w=800&h=500&fit=crop&auto=format", caption: "Historic UK university campus" },
       { url: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=800&h=500&fit=crop&auto=format", caption: "Modern lecture halls and libraries" },
       { url: "https://images.unsplash.com/photo-1571260899304-425eee4c7efc?w=800&h=500&fit=crop&auto=format", caption: "Vibrant international student life" },
       { url: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=800&h=500&fit=crop&auto=format", caption: "Iconic London — study, explore, thrive" },
     ],
     videos: [
-      { title: "UK Student Visa — Step by Step", description: "Official walkthrough of the Student Route application.", youtubeId: "Z5wW6KRH7Vo" },
-      { title: "Life as an International Student in the UK", description: "Real student stories from UK universities.", youtubeId: "2hcS6MTMtAk" },
+      { title: "Submitting Your UK Student Visa Application", description: "Step-by-step walkthrough by an International Student Adviser.", youtubeId: "31gr7CM2k7U" },
+      { title: "A Day at a UK University as an International Student", description: "Classes, friends and campus life on a Student visa.", youtubeId: "4Y3YtgXRDyw" },
     ],
   },
 
@@ -312,8 +312,8 @@ export const UK_VISA_DETAILS: Record<string, VisaDetailData> = {
       { url: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=800&h=500&fit=crop&auto=format", caption: "Skilled professionals across industries" },
     ],
     videos: [
-      { title: "Skilled Worker Visa Explained", description: "Eligibility, salary thresholds, and sponsorship.", youtubeId: "wWJ1lJXX-Yk" },
-      { title: "Working in the UK as a Foreigner", description: "What life on a Skilled Worker visa really looks like.", youtubeId: "bgCZWY8e9KE" },
+      { title: "UK Skilled Worker Visa — Salary Requirements Explained", description: "Eligibility, salary thresholds and sponsorship rules.", youtubeId: "zGWcUYdu0gg" },
+      { title: "How I Got a Skilled Worker Visa in London", description: "A real applicant's journey to working in the UK.", youtubeId: "jrqINEECwGU" },
     ],
   },
 
@@ -416,8 +416,8 @@ export const UK_VISA_DETAILS: Record<string, VisaDetailData> = {
       { url: "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800&h=500&fit=crop&auto=format", caption: "Towards British citizenship" },
     ],
     videos: [
-      { title: "Indefinite Leave to Remain — Full Guide", description: "Step-by-step guide to applying for ILR.", youtubeId: "8B0wO-azk8s" },
-      { title: "Life in the UK Test — What to Expect", description: "Tips and sample questions for the mandatory test.", youtubeId: "vu9Cxk0_2sM" },
+      { title: "Expert's Guide to Indefinite Leave to Remain", description: "Solicitor's overview of qualifying for ILR in the UK.", youtubeId: "1_Kch48NgXc" },
+      { title: "Life in the UK Test — 24 Tricky Questions", description: "Sample questions you must get right to pass.", youtubeId: "QZRwP0RrY54" },
     ],
   },
 
@@ -523,8 +523,8 @@ export const UK_VISA_DETAILS: Record<string, VisaDetailData> = {
       { url: "https://images.unsplash.com/photo-1533929736458-ca588d08c8be?w=800&h=500&fit=crop&auto=format", caption: "Countryside escapes across Britain" },
     ],
     videos: [
-      { title: "UK Visitor Visa — Application Walkthrough", description: "How to apply for a Standard Visitor visa.", youtubeId: "S7qFc3fW0Cw" },
-      { title: "Top 10 Things To Do in the UK", description: "Plan an unforgettable visit to Britain.", youtubeId: "pCRR5GvJjkA" },
+      { title: "UK Visitor Visa — Step-by-Step Application Guide", description: "How to apply for a Standard Visitor visa with documents.", youtubeId: "7oBuFdWoBrI" },
+      { title: "10 Best Places to Visit in the UK", description: "Plan an unforgettable visit to Britain.", youtubeId: "FQ__7a3N9uc" },
     ],
   },
 };

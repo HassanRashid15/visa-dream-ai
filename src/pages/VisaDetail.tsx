@@ -1,10 +1,11 @@
-import { useParams, useNavigate } from "react-router-dom";
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, ArrowRight, Clock, DollarSign, FileText, CheckCircle, AlertTriangle,
   ExternalLink, ChevronDown, ChevronUp, HelpCircle, Shield, Banknote, ListChecks,
   Footprints, BookOpen, Info, Image as ImageIcon, Video, X, ChevronLeft, ChevronRight,
+  Download, Share2, Copy, Check,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -14,6 +15,8 @@ import AISidebar from "@/components/AISidebar";
 import { UK_VISA_DETAILS, type VisaDetailData } from "@/lib/ukVisaDetails";
 import { COUNTRY_DETAILS } from "@/lib/countryData";
 import { GradientText } from "@/components/ui/animated-bits";
+import { toast } from "sonner";
+import jsPDF from "jspdf";
 
 function SectionHeading({ icon, label, title }: { icon: React.ReactNode; label: string; title: string }) {
   return (
@@ -27,6 +30,7 @@ function SectionHeading({ icon, label, title }: { icon: React.ReactNode; label: 
 export default function VisaDetail() {
   const { country, visaType } = useParams<{ country: string; visaType: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   if (!country || !visaType) {
     navigate("/");
@@ -43,6 +47,8 @@ export default function VisaDetail() {
   // Lightbox state
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const gallery = visa.gallery ?? [];
+  const lightboxRef = useRef<HTMLDivElement | null>(null);
+  const previouslyFocusedRef = useRef<HTMLElement | null>(null);
   const closeLightbox = useCallback(() => setLightboxIndex(null), []);
   const showPrev = useCallback(
     () => setLightboxIndex((i) => (i === null ? null : (i - 1 + gallery.length) % gallery.length)),
@@ -55,29 +61,75 @@ export default function VisaDetail() {
 
   useEffect(() => {
     if (lightboxIndex === null) return;
+    // Save the previously focused element so we can restore later
+    previouslyFocusedRef.current = document.activeElement as HTMLElement | null;
+
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") closeLightbox();
       else if (e.key === "ArrowLeft") showPrev();
       else if (e.key === "ArrowRight") showNext();
+      else if (e.key === "Tab") {
+        // Focus trap inside the lightbox
+        const root = lightboxRef.current;
+        if (!root) return;
+        const focusables = root.querySelectorAll<HTMLElement>(
+          'button, [href], input, [tabindex]:not([tabindex="-1"])',
+        );
+        if (focusables.length === 0) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
     };
     window.addEventListener("keydown", onKey);
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    // Move focus into the dialog
+    requestAnimationFrame(() => {
+      const root = lightboxRef.current;
+      const target = root?.querySelector<HTMLElement>('[data-autofocus="true"]') ??
+        root?.querySelector<HTMLElement>('button');
+      target?.focus();
+    });
     return () => {
       window.removeEventListener("keydown", onKey);
       document.body.style.overflow = prev;
+      previouslyFocusedRef.current?.focus?.();
     };
   }, [lightboxIndex, closeLightbox, showPrev, showNext]);
 
-  // Document checklist state — persisted per visa
+  // Document checklist state — persisted per visa, also shareable via ?c=
   const storageKey = `visa-checklist:${visa.id}`;
   const [checked, setChecked] = useState<Record<number, boolean>>({});
+  const [shareOpen, setShareOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
+
   useEffect(() => {
+    // Priority: URL param > localStorage
+    const cParam = searchParams.get("c");
+    if (cParam) {
+      try {
+        const decoded = atob(cParam);
+        // bitmask string of "0"/"1" per doc index
+        const next: Record<number, boolean> = {};
+        for (let i = 0; i < decoded.length; i++) next[i] = decoded[i] === "1";
+        setChecked(next);
+        return;
+      } catch { /* fall through */ }
+    }
     try {
       const raw = localStorage.getItem(storageKey);
       if (raw) setChecked(JSON.parse(raw));
     } catch { /* ignore */ }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storageKey]);
+
   useEffect(() => {
     try { localStorage.setItem(storageKey, JSON.stringify(checked)); } catch { /* ignore */ }
   }, [checked, storageKey]);
@@ -91,6 +143,101 @@ export default function VisaDetail() {
     0,
   );
   const progressPct = requiredDocs.length === 0 ? 0 : Math.round((requiredDoneCount / requiredDocs.length) * 100);
+
+  // Build shareable URL encoding the current checklist
+  const shareUrl = useMemo(() => {
+    const bits = visa.documents.map((_, i) => (checked[i] ? "1" : "0")).join("");
+    const encoded = btoa(bits);
+    const url = new URL(window.location.href);
+    url.searchParams.set("c", encoded);
+    return url.toString();
+  }, [checked, visa.documents]);
+
+  const handleCopyShare = async () => {
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopied(true);
+      toast.success("Share link copied to clipboard");
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast.error("Could not copy. Long-press the link to copy manually.");
+    }
+  };
+
+  const handleNativeShare = async () => {
+    const data = {
+      title: `${visa.name} — Document Checklist Progress`,
+      text: `My ${visa.name} checklist progress: ${requiredDoneCount}/${requiredDocs.length} required documents ready (${progressPct}%).`,
+      url: shareUrl,
+    };
+    if (navigator.share) {
+      try { await navigator.share(data); } catch { /* user cancelled */ }
+    } else {
+      handleCopyShare();
+    }
+  };
+
+  const handleDownloadPdf = () => {
+    const doc = new jsPDF({ unit: "pt", format: "a4" });
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const margin = 48;
+    let y = margin;
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(18);
+    doc.text(`${visa.name} — Document Checklist`, margin, y);
+    y += 22;
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.setTextColor(110);
+    doc.text(`Generated ${new Date().toLocaleDateString()}  •  Required progress: ${requiredDoneCount}/${requiredDocs.length} (${progressPct}%)`, margin, y);
+    y += 24;
+    doc.setTextColor(0);
+
+    const groups: Array<{ title: string; key: "required" | "optional" | "depends" }> = [
+      { title: "Required", key: "required" },
+      { title: "Depends on Circumstances", key: "depends" },
+      { title: "Optional", key: "optional" },
+    ];
+
+    groups.forEach((group) => {
+      const items = visa.documents
+        .map((d, i) => ({ d, i }))
+        .filter(({ d }) => (d.status ?? "required") === group.key);
+      if (items.length === 0) return;
+
+      if (y > 760) { doc.addPage(); y = margin; }
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(13);
+      doc.text(group.title, margin, y);
+      y += 16;
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(11);
+
+      items.forEach(({ d, i }) => {
+        const box = checked[i] ? "[x]" : "[ ]";
+        const nameLines = doc.splitTextToSize(`${box} ${d.name}`, pageWidth - margin * 2);
+        if (y + nameLines.length * 14 > 800) { doc.addPage(); y = margin; }
+        doc.text(nameLines, margin, y);
+        y += nameLines.length * 14;
+        if (d.detail) {
+          doc.setTextColor(110);
+          doc.setFontSize(9);
+          const detailLines = doc.splitTextToSize(d.detail, pageWidth - margin * 2 - 14);
+          if (y + detailLines.length * 12 > 800) { doc.addPage(); y = margin; }
+          doc.text(detailLines, margin + 14, y);
+          y += detailLines.length * 12 + 4;
+          doc.setTextColor(0);
+          doc.setFontSize(11);
+        }
+      });
+      y += 8;
+    });
+
+    doc.save(`${visa.id}-uk-visa-checklist.pdf`);
+    toast.success("Checklist PDF downloaded");
+  };
 
   // Swipe handling for lightbox
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
@@ -361,6 +508,32 @@ export default function VisaDetail() {
                   <StatusBadge status="optional" />
                   <StatusBadge status="depends" />
                 </div>
+                <div className="flex flex-wrap gap-2 mt-4">
+                  <Button type="button" size="sm" variant="default" onClick={handleDownloadPdf}>
+                    <Download className="h-4 w-4" /> Download PDF
+                  </Button>
+                  <Button type="button" size="sm" variant="outline" onClick={handleNativeShare}>
+                    <Share2 className="h-4 w-4" /> Share progress
+                  </Button>
+                  <Button type="button" size="sm" variant="ghost" onClick={() => setShareOpen((v) => !v)}>
+                    {shareOpen ? "Hide link" : "Show link"}
+                  </Button>
+                </div>
+                {shareOpen && (
+                  <div className="mt-3 flex items-center gap-2">
+                    <input
+                      readOnly
+                      value={shareUrl}
+                      onFocus={(e) => e.currentTarget.select()}
+                      className="flex-1 text-xs px-3 py-2 rounded-md border border-border bg-background font-mono truncate"
+                      aria-label="Shareable checklist link"
+                    />
+                    <Button type="button" size="sm" variant="outline" onClick={handleCopyShare}>
+                      {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                      {copied ? "Copied" : "Copy"}
+                    </Button>
+                  </div>
+                )}
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -482,6 +655,10 @@ export default function VisaDetail() {
       <AnimatePresence>
         {lightboxIndex !== null && gallery[lightboxIndex] && (
           <motion.div
+            ref={lightboxRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Image ${lightboxIndex + 1} of ${gallery.length}: ${gallery[lightboxIndex].caption}`}
             className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -492,6 +669,7 @@ export default function VisaDetail() {
           >
             <button
               type="button"
+              data-autofocus="true"
               onClick={(e) => { e.stopPropagation(); closeLightbox(); }}
               className="absolute top-4 right-4 h-10 w-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors"
               aria-label="Close"

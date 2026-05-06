@@ -12,6 +12,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AISidebar from "@/components/AISidebar";
+import HighlightAskAI from "@/components/HighlightAskAI";
 import { UK_VISA_DETAILS, type VisaDetailData } from "@/lib/ukVisaDetails";
 import { COUNTRY_DETAILS } from "@/lib/countryData";
 import { GradientText } from "@/components/ui/animated-bits";
@@ -109,6 +110,31 @@ export default function VisaDetail() {
   const [checked, setChecked] = useState<Record<number, boolean>>({});
   const [shareOpen, setShareOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+
+  // Active section drives dynamic AI sidebar capsules
+  const contentRef = useRef<HTMLDivElement | null>(null);
+  const [activeSection, setActiveSection] = useState<string>("overview");
+
+  useEffect(() => {
+    const root = contentRef.current;
+    if (!root) return;
+    const sections = root.querySelectorAll<HTMLElement>("[data-ai-section]");
+    if (sections.length === 0) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+        if (visible[0]) {
+          const key = (visible[0].target as HTMLElement).dataset.aiSection;
+          if (key) setActiveSection(key);
+        }
+      },
+      { rootMargin: "-30% 0px -50% 0px", threshold: [0, 0.25, 0.5, 0.75, 1] },
+    );
+    sections.forEach((s) => observer.observe(s));
+    return () => observer.disconnect();
+  }, [visa.id]);
 
   useEffect(() => {
     // Priority: URL param > localStorage

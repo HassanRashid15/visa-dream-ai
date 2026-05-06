@@ -321,7 +321,7 @@ export default function VisaDetail() {
 
             {/* Comprehensive Overview */}
             {visa.comprehensiveOverview && (
-              <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+              <motion.section data-ai-section="overview" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
                 <SectionHeading icon={<Info className="h-3.5 w-3.5" />} label="About This Visa" title={`Understanding the ${visa.name}`} />
                 <div className="p-6 rounded-xl bg-gradient-to-r from-primary/5 to-primary/10 border border-primary/20">
                   <p className="text-sm leading-relaxed text-foreground/90">{visa.comprehensiveOverview}</p>
@@ -331,7 +331,7 @@ export default function VisaDetail() {
 
             {/* Gallery */}
             {visa.gallery && visa.gallery.length > 0 && (
-              <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+              <motion.section data-ai-section="gallery" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
                 <SectionHeading icon={<ImageIcon className="h-3.5 w-3.5" />} label="Gallery" title={`A Glimpse of ${visa.name}`} />
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   {visa.gallery.map((img, i) => (
@@ -361,7 +361,7 @@ export default function VisaDetail() {
 
             {/* Videos */}
             {visa.videos && visa.videos.length > 0 && (
-              <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+              <motion.section data-ai-section="videos" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
                 <SectionHeading icon={<Video className="h-3.5 w-3.5" />} label="Watch & Learn" title="Video Guides" />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   {visa.videos.map((video, i) => (
@@ -388,7 +388,7 @@ export default function VisaDetail() {
 
             {/* Practice Features - TEMPORARILY HIDDEN */}
             {/* {visa.practiceFeatures && visa.practiceFeatures.length > 0 && (
-              <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+              <motion.section data-ai-section="overview" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
                 <SectionHeading icon={<ListChecks className="h-3.5 w-3.5" />} label="Practice Tools" title="Prepare Your Application" />
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {visa.practiceFeatures.map((feature, i) => (
@@ -416,7 +416,7 @@ export default function VisaDetail() {
             )} */}
 
             {/* Key Points */}
-            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+            <motion.section data-ai-section="overview" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
               <SectionHeading icon={<Info className="h-3.5 w-3.5" />} label="Key Points" title="What You Need to Know" />
               <div className="space-y-3">
                 {visa.overview.map((p, i) => (
@@ -432,7 +432,7 @@ export default function VisaDetail() {
 
             {/* Top Universities (Study Visa) */}
             {visa.id === "study" && universities.length > 0 && (
-              <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+              <motion.section data-ai-section="universities" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
                 <SectionHeading icon={<BookOpen className="h-3.5 w-3.5" />} label="Education" title="Top Universities" />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {universities.map((uni) => (
@@ -460,7 +460,7 @@ export default function VisaDetail() {
             )}
 
             {/* Eligibility */}
-            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+            <motion.section data-ai-section="eligibility" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
               <SectionHeading icon={<CheckCircle className="h-3.5 w-3.5" />} label="Eligibility" title="Who Can Apply" />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {visa.eligibility.map((req, i) => (
@@ -476,7 +476,7 @@ export default function VisaDetail() {
             </motion.section>
 
             {/* Application Steps */}
-            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+            <motion.section data-ai-section="steps" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
               <SectionHeading icon={<Footprints className="h-3.5 w-3.5" />} label="Process" title="Application Steps" />
               <div className="space-y-4">
                 {visa.applicationSteps.map((step, i) => (
@@ -494,7 +494,7 @@ export default function VisaDetail() {
             </motion.section>
 
             {/* Fees */}
-            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+            <motion.section data-ai-section="fees" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
               <SectionHeading icon={<DollarSign className="h-3.5 w-3.5" />} label="Costs" title="Fees & Expenses" />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {visa.fees.map((fee, i) => (
@@ -510,7 +510,7 @@ export default function VisaDetail() {
             </motion.section>
 
             {/* Documents — Interactive Checklist */}
-            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+            <motion.section data-ai-section="documents" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
               <SectionHeading icon={<FileText className="h-3.5 w-3.5" />} label="Documents" title="Interactive Document Checklist" />
 
               {/* Progress + legend */}
@@ -607,7 +607,7 @@ export default function VisaDetail() {
             </motion.section>
 
             {/* Important Notes */}
-            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+            <motion.section data-ai-section="overview" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
               <SectionHeading icon={<AlertTriangle className="h-3.5 w-3.5" />} label="Important" title="Key Points to Remember" />
               <div className="space-y-3">
                 {visa.importantNotes.map((note, i) => (
@@ -621,7 +621,7 @@ export default function VisaDetail() {
 
             {/* Official Resources */}
             {visa.officialResources && visa.officialResources.length > 0 && (
-              <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+              <motion.section data-ai-section="overview" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
                 <SectionHeading icon={<ExternalLink className="h-3.5 w-3.5" />} label="Resources" title="Official UK Government Links" />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {visa.officialResources.map((resource, i) => (
@@ -650,7 +650,7 @@ export default function VisaDetail() {
             )}
 
             {/* FAQ */}
-            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+            <motion.section data-ai-section="faqs" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
               <SectionHeading icon={<HelpCircle className="h-3.5 w-3.5" />} label="FAQ" title="Frequently Asked Questions" />
               <div className="space-y-4">
                 {visa.faqs.map((faq, i) => (

@@ -5,13 +5,26 @@ import type { Database } from './types';
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
+function requireEnvVar(name: string, value: string | undefined) {
+  if (!value) {
+    throw new Error(
+      `[config] Missing ${name}. Add it to your environment variables in Vercel Project Settings and your local .env file.`
+    );
+  }
+  return value;
+}
+
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 
-export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+export const supabase = createClient<Database>(
+  requireEnvVar('VITE_SUPABASE_URL', SUPABASE_URL),
+  requireEnvVar('VITE_SUPABASE_PUBLISHABLE_KEY', SUPABASE_PUBLISHABLE_KEY),
+  {
   auth: {
     storage: localStorage,
     persistSession: true,
     autoRefreshToken: true,
-  }
-});
+  },
+}
+);

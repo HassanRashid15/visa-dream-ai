@@ -5,6 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import type { VisaDetailData } from "@/lib/ukVisaDetails";
 import type { University } from "@/lib/countryData";
+import { supabase } from "@/integrations/supabase/client";
+import { ASK_AI_EVENT, type AskAIDetail } from "@/components/HighlightAskAI";
+import { toast } from "sonner";
 
 interface Message {
   id: string;
@@ -16,15 +19,23 @@ interface Message {
 interface AISidebarProps {
   visa: VisaDetailData;
   universities?: University[];
+  /** Active section key on the page (e.g. "fees", "documents") used to bias prompt capsules. */
+  activeSection?: string;
 }
 
-const pickRandom = <T,>(items: T[]): T => items[Math.floor(Math.random() * items.length)];
-
-const isGreeting = (message: string): boolean => {
-  const q = message.trim().toLowerCase();
-  return /^(hi|hii|hello|hey|yo|good morning|good afternoon|good evening)\b/.test(q);
+const SECTION_CAPSULES: Record<string, string[]> = {
+  overview: ["Summarise this visa in plain English", "Who is this visa best suited for?", "What's the catch?"],
+  eligibility: ["Am I likely eligible?", "What if I don't meet one requirement?", "Explain the financial requirement"],
+  steps: ["Walk me through applying step by step", "How long does each step take?", "Can I apply from inside the UK?"],
+  documents: ["Which documents are hardest to get?", "Do I need certified translations?", "What if a document is missing?"],
+  fees: ["Break down the total cost", "Can the IHS be reduced?", "Are any fees refundable?"],
+  universities: ["Compare the top universities", "Best courses for international students", "Cheapest tuition options"],
+  faqs: ["What's the most common rejection reason?", "Can I switch visas later?", "Tips for a strong application"],
+  gallery: ["What does life look like on this visa?", "What should I prepare for arrival?"],
+  videos: ["Summarise the key video takeaways", "Anything important not shown in the videos?"],
 };
 
+<<<<<<< HEAD
 const UK_IMMIGRATION_KNOWLEDGE = {
   general: {
     "processing times": "Standard UK visa processing times vary: Student visas (3-6 weeks), Skilled Worker visas (3-8 weeks), ILR (up to 6 months), Visitor visas (3 weeks). Priority services are available for faster processing.",
@@ -117,108 +128,30 @@ const buildPromptCapsules = (visa: VisaDetailData, universities: University[]): 
   };
 
   return [...basePrompts, ...ukSpecificPrompts, ...(visaSpecificPrompts[visa.id] || [])];
+=======
+const DEFAULT_CAPSULES = [
+  "What is the processing time?",
+  "What documents do I need?",
+  "How much does it cost in total?",
+  "Walk me through the application",
+];
+
+const buildPromptCapsules = (
+  visa: VisaDetailData,
+  universities: University[],
+  activeSection?: string,
+): string[] => {
+  const sectionPrompts = activeSection ? SECTION_CAPSULES[activeSection] ?? [] : [];
+  const base = [...sectionPrompts, ...DEFAULT_CAPSULES];
+  if (visa.id === "study" && universities.length > 0) {
+    base.push("Show top universities");
+  }
+  // de-dupe, cap at 6
+  return Array.from(new Set(base)).slice(0, 6);
+>>>>>>> 440ce76605a561d802fd4618c28b608dbab5d5a7
 };
 
-const getBestFaqMatch = (userMessage: string, visa: VisaDetailData): string | null => {
-  const words = userMessage
-    .toLowerCase()
-    .split(/[^a-z0-9]+/g)
-    .filter((word) => word.length > 3);
-
-  if (words.length === 0) return null;
-
-  let bestScore = 0;
-  let bestAnswer: string | null = null;
-
-  for (const faq of visa.faqs) {
-    const text = `${faq.q} ${faq.a}`.toLowerCase();
-    const score = words.reduce((acc, word) => acc + (text.includes(word) ? 1 : 0), 0);
-
-    if (score > bestScore) {
-      bestScore = score;
-      bestAnswer = faq.a;
-    }
-  }
-
-  return bestScore > 0 ? bestAnswer : null;
-};
-
-const generateVisaResponse = (userMessage: string, visa: VisaDetailData, universities: University[]): string => {
-  const q = userMessage.toLowerCase();
-
-  if (isGreeting(userMessage)) {
-    return `Hi! I can help with ${visa.name} details like eligibility, documents, costs, timelines, and next steps.`;
-  }
-
-  if (/thank|thanks/.test(q)) {
-    return "You're welcome. Ask me anything else and I will keep it specific to this visa.";
-  }
-
-  if (/official|gov|government|source|link/.test(q)) {
-    return `The official guidance for ${visa.name} is here: ${visa.officialLink}`;
-  }
-
-  if (visa.id === "study" && universities.length > 0 && /universit|college|ranking|tuition|course/.test(q)) {
-    const matchedUniversity = universities.find((uni) => {
-      const uniName = uni.name.toLowerCase();
-      return q.includes(uniName) || uniName.split(" ").some((word) => word.length > 4 && q.includes(word));
-    });
-
-    if (matchedUniversity) {
-      return `${matchedUniversity.name} (${matchedUniversity.location}) is ranked ${matchedUniversity.ranking}. Typical tuition is ${matchedUniversity.tuitionRange}. Popular courses include ${matchedUniversity.popularCourses.slice(0, 3).join(", ")}.`;
-    }
-
-    const topUniversities = universities
-      .slice(0, 3)
-      .map((uni) => `${uni.name} (${uni.ranking})`)
-      .join(", ");
-    return `For ${visa.name}, top options include ${topUniversities}. I can compare any of these by tuition, location, or courses.`;
-  }
-
-  if (/how long|processing|time|decision|wait/.test(q)) {
-    return `${visa.name} processing time is ${visa.processingTime}.`;
-  }
-
-  if (/cost|fee|money|price|charge|pay|expensive/.test(q)) {
-    const topFees = visa.fees
-      .slice(0, 3)
-      .map((fee) => `${fee.item}: ${fee.amount}`)
-      .join("; ");
-    return `For ${visa.name}, common costs include ${topFees}. Estimated total is ${visa.totalEstimatedCost}.`;
-  }
-
-  if (/document|paper|paperwork|passport|bank|statement|submit|upload/.test(q)) {
-    const docs = visa.documents
-      .slice(0, 3)
-      .map((doc) => doc.name)
-      .join(", ");
-    return `For ${visa.name}, key documents usually include ${docs}.`;
-  }
-
-  if (/eligible|eligibility|qualify|requirement|criteria|can i apply/.test(q)) {
-    const requirements = visa.eligibility
-      .filter((item) => item.mandatory)
-      .slice(0, 3)
-      .map((item) => item.label)
-      .join(", ");
-    return `To qualify for ${visa.name}, you should meet these core requirements: ${requirements}.`;
-  }
-
-  if (/step|process|apply|application|start|procedure|how to/.test(q)) {
-    const steps = visa.applicationSteps
-      .slice(0, 3)
-      .map((step) => `${step.step}. ${step.title}`)
-      .join(" ");
-    return `The application flow for ${visa.name} is: ${steps}`;
-  }
-
-  const faqAnswer = getBestFaqMatch(userMessage, visa);
-  if (faqAnswer) return faqAnswer;
-
-  return pickRandom(visa.overview);
-};
-
-export default function AISidebar({ visa, universities = [] }: AISidebarProps) {
+export default function AISidebar({ visa, universities = [], activeSection }: AISidebarProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
@@ -247,45 +180,105 @@ export default function AISidebar({ visa, universities = [] }: AISidebarProps) {
       messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
     }
   }, [messages, isTyping]);
-  const promptCapsules = useMemo(() => buildPromptCapsules(visa, universities), [visa, universities]);
+  const promptCapsules = useMemo(
+    () => buildPromptCapsules(visa, universities, activeSection),
+    [visa, universities, activeSection],
+  );
 
   useEffect(() => {
     const welcomeMessage: Message = {
       id: `welcome-${visa.id}`,
-      text: `Hello! I'm your AI visa assistant for ${visa.name}. Ask me about eligibility, costs, documents, processing time, or application steps.${visa.id === "study" && universities.length ? " I can also help with top universities." : ""}`,
+      text: `Hello! I'm your AI visa assistant for ${visa.name}. Ask me about eligibility, costs, documents, processing time, or application steps — or highlight any text on the page and tap "Ask AI".${visa.id === "study" && universities.length ? " I can also help with top universities." : ""}`,
       sender: "ai",
       timestamp: new Date(),
     };
     setMessages([welcomeMessage]);
   }, [visa.id, visa.name, universities.length]);
 
-  const handleSendMessage = (presetMessage?: string) => {
-    const currentInput = (presetMessage ?? inputMessage).trim();
-    if (!currentInput) return;
-
+  const sendToAI = async (currentInput: string, highlightedText?: string) => {
     const userMessage: Message = {
       id: Date.now().toString(),
-      text: currentInput,
+      text: highlightedText ? `“${highlightedText}” — ${currentInput}` : currentInput,
       sender: "user",
       timestamp: new Date(),
     };
-
-    setMessages(prev => [...prev, userMessage]);
+    setMessages((prev) => [...prev, userMessage]);
     setInputMessage("");
     setIsTyping(true);
 
-    // Simulate AI response delay
-    setTimeout(() => {
+    try {
+      const history = messages
+        .filter((m) => !m.id.startsWith("welcome-"))
+        .map((m) => ({ role: m.sender === "user" ? "user" : "assistant", content: m.text }));
+
+      const visaContext = {
+        name: visa.name,
+        id: visa.id,
+        processingTime: visa.processingTime,
+        totalEstimatedCost: visa.totalEstimatedCost,
+        officialLink: visa.officialLink,
+        overview: visa.overview,
+        eligibility: visa.eligibility,
+        applicationSteps: visa.applicationSteps,
+        documents: visa.documents,
+        fees: visa.fees,
+        faqs: visa.faqs,
+        universities: universities.slice(0, 8).map((u) => ({
+          name: u.name, location: u.location, ranking: u.ranking,
+          tuitionRange: u.tuitionRange, popularCourses: u.popularCourses,
+        })),
+      };
+
+      const { data, error } = await supabase.functions.invoke("visa-chat", {
+        body: { question: currentInput, highlightedText, visaContext, history },
+      });
+
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
-        text: generateVisaResponse(currentInput, visa, universities),
+        text: data?.answer ?? "Sorry, I couldn't generate a response.",
         sender: "ai",
         timestamp: new Date(),
       };
-      setMessages(prev => [...prev, aiMessage]);
+      setMessages((prev) => [...prev, aiMessage]);
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "Something went wrong.";
+      toast.error(msg);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `err-${Date.now()}`,
+          text: `I hit an error: ${msg}`,
+          sender: "ai",
+          timestamp: new Date(),
+        },
+      ]);
+    } finally {
       setIsTyping(false);
-    }, 1000 + Math.random() * 1000);
+    }
   };
+
+  const handleSendMessage = (presetMessage?: string) => {
+    const currentInput = (presetMessage ?? inputMessage).trim();
+    if (!currentInput) return;
+    void sendToAI(currentInput);
+  };
+
+  // Listen for "Ask AI" events from text-selection tooltip
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent<AskAIDetail>).detail;
+      if (!detail?.text) return;
+      setIsMinimized(false);
+      if (window.innerWidth < 768) setIsMobileDrawerOpen(true);
+      void sendToAI(detail.question ?? `Explain this: "${detail.text}"`, detail.text);
+    };
+    window.addEventListener(ASK_AI_EVENT, handler);
+    return () => window.removeEventListener(ASK_AI_EVENT, handler);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [messages, visa.id]);
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {

@@ -39,11 +39,13 @@ export interface VisaDetailData {
   applicationSteps: VisaStep[];
   fees: VisaFee[];
   totalEstimatedCost: string;
-  documents: { name: string; detail: string }[];
+  documents: { name: string; detail: string; status?: "required" | "optional" | "depends" }[];
   importantNotes: string[];
   officialLink: string;
   officialResources?: { title: string; url: string; description: string }[];
   faqs: { q: string; a: string }[];
+  gallery?: { url: string; caption: string }[];
+  videos?: { title: string; description: string; youtubeId: string }[];
 }
 
 export const UK_VISA_DETAILS: Record<string, VisaDetailData> = {
@@ -92,14 +94,14 @@ export const UK_VISA_DETAILS: Record<string, VisaDetailData> = {
     ],
     totalEstimatedCost: "£1,266 – £2,471 (visa fees only, excluding tuition)",
     documents: [
-      { name: "Valid passport", detail: "Must have at least one blank page. Validity should extend beyond your intended stay. If you have an old passport with previous visas, bring that too. Example: Passport valid until December 2026 for 2-year course starting September 2024." },
-      { name: "CAS reference number", detail: "The 14-character alphanumeric reference number from your sponsor. Your CAS will also contain details of any qualifications your sponsor has checked. Example: CAS GBR123456789012 from University of Bristol." },
-      { name: "Financial evidence", detail: "Bank statements or building society passbook showing funds held for 28 consecutive days. The 28-day period must end no more than 31 days before your application date. If using a student loan or official sponsor, provide the loan/sponsor letter. Example: Statements showing £35,000 balance from June 1-28, 2024." },
-      { name: "English language test result", detail: "IELTS for UKVI, PTE Academic UKVI, LanguageCert, or Trinity ISE. The test must have been taken within 2 years of your application date. Test Reference Number (TRN) must be provided. Example: IELTS UKVI certificate with TRN 1234567890, score 6.5 overall." },
-      { name: "Academic certificates & transcripts", detail: "Original degree certificates, diplomas, and academic transcripts. If not in English, provide certified translations. Example: Bachelor's degree certificate and transcripts with certified translation if needed." },
-      { name: "TB test certificate", detail: "From an approved clinic in your country. Valid for 6 months from the date of the test. Required for nationals of listed countries. Example: TB certificate from approved clinic, valid until March 2025." },
-      { name: "Passport photographs", detail: "Biometric passport-sized photos meeting UK specifications: 45mm x 35mm, white background, neutral expression. Example: 2 recent photos taken at professional studio." },
-      { name: "Consent letter (if under 18)", detail: "Written consent from parent/legal guardian confirming they approve of your travel, living, and care arrangements in the UK. Example: Signed letter from both parents with contact details." },
+      { name: "Valid passport", status: "required", detail: "Must have at least one blank page. Validity should extend beyond your intended stay. If you have an old passport with previous visas, bring that too. Example: Passport valid until December 2026 for 2-year course starting September 2024." },
+      { name: "CAS reference number", status: "required", detail: "The 14-character alphanumeric reference number from your sponsor. Your CAS will also contain details of any qualifications your sponsor has checked. Example: CAS GBR123456789012 from University of Bristol." },
+      { name: "Financial evidence", status: "required", detail: "Bank statements or building society passbook showing funds held for 28 consecutive days. The 28-day period must end no more than 31 days before your application date. If using a student loan or official sponsor, provide the loan/sponsor letter. Example: Statements showing £35,000 balance from June 1-28, 2024." },
+      { name: "English language test result", status: "required", detail: "IELTS for UKVI, PTE Academic UKVI, LanguageCert, or Trinity ISE. The test must have been taken within 2 years of your application date. Test Reference Number (TRN) must be provided. Example: IELTS UKVI certificate with TRN 1234567890, score 6.5 overall." },
+      { name: "Academic certificates & transcripts", status: "required", detail: "Original degree certificates, diplomas, and academic transcripts. If not in English, provide certified translations. Example: Bachelor's degree certificate and transcripts with certified translation if needed." },
+      { name: "TB test certificate", status: "depends", detail: "From an approved clinic in your country. Valid for 6 months from the date of the test. Required for nationals of listed countries. Example: TB certificate from approved clinic, valid until March 2025." },
+      { name: "Passport photographs", status: "required", detail: "Biometric passport-sized photos meeting UK specifications: 45mm x 35mm, white background, neutral expression. Example: 2 recent photos taken at professional studio." },
+      { name: "Consent letter (if under 18)", status: "depends", detail: "Written consent from parent/legal guardian confirming they approve of your travel, living, and care arrangements in the UK. Example: Signed letter from both parents with contact details." },
     ],
     importantNotes: [
       "You can apply up to 6 months before your course start date (if applying from outside the UK). Example: Course starts September 1, you can apply from March 1 onwards.",
@@ -129,7 +131,7 @@ export const UK_VISA_DETAILS: Record<string, VisaDetailData> = {
       },
       {
         title: "UKVI Application Centres",
-        url: "https://www.gov.uk/find-a-uk-visa-application-centre",
+        url: "https://www.gov.uk/find-a-visa-application-centre",
         description: "Locate your nearest visa application centre for biometrics and document submission."
       },
       {
@@ -139,7 +141,7 @@ export const UK_VISA_DETAILS: Record<string, VisaDetailData> = {
       },
       {
         title: "Graduate Route Visa",
-        url: "https://www.gov.uk/graduate-route",
+        url: "https://www.gov.uk/graduate-visa",
         description: "Details about the 2-year post-study work visa available after completing your degree."
       }
     ],
@@ -149,6 +151,16 @@ export const UK_VISA_DETAILS: Record<string, VisaDetailData> = {
       { q: "What happens if my visa application is refused?", a: "You will receive a written refusal letter explaining the reasons. You can reapply immediately with additional evidence addressing the refusal reasons. There is no formal appeal right when applying from outside the UK." },
       { q: "Can I switch from Student visa to a work visa?", a: "Yes. You can switch to the Skilled Worker visa from within the UK if you receive a job offer from a licensed sponsor. You can also switch to the Graduate Route after completing your degree." },
       { q: "Do I need to show funds if my sponsor has paid all fees?", a: "If your CAS confirms that all tuition and accommodation fees are paid, you only need to show living cost funds. If your government or an international scholarship body is funding you, an official letter confirming this is sufficient." },
+    ],
+    gallery: [
+      { url: "https://images.unsplash.com/photo-1562774053-701939374585?w=800&h=500&fit=crop&auto=format", caption: "Historic UK university campus" },
+      { url: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=800&h=500&fit=crop&auto=format", caption: "Modern lecture halls and libraries" },
+      { url: "https://images.unsplash.com/photo-1571260899304-425eee4c7efc?w=800&h=500&fit=crop&auto=format", caption: "Vibrant international student life" },
+      { url: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=800&h=500&fit=crop&auto=format", caption: "Iconic London — study, explore, thrive" },
+    ],
+    videos: [
+      { title: "Submitting Your UK Student Visa Application", description: "Step-by-step walkthrough by an International Student Adviser.", youtubeId: "31gr7CM2k7U" },
+      { title: "A Day at a UK University as an International Student", description: "Classes, friends and campus life on a Student visa.", youtubeId: "4Y3YtgXRDyw" },
     ],
   },
 
@@ -235,12 +247,12 @@ export const UK_VISA_DETAILS: Record<string, VisaDetailData> = {
     ],
     totalEstimatedCost: "£1,754 – £3,455 (visa + IHS for applicant only)",
     documents: [
-      { name: "Valid passport", detail: "Must be valid for the duration of your planned stay. Example: Passport valid until December 2025 for a 3-year visa starting July 2024." },
-      { name: "Certificate of Sponsorship reference number", detail: "Provided by your employer. Contains your job details, salary, and SOC code. Example: CoS number Z12345678 from your employer's sponsor licence." },
-      { name: "English language evidence", detail: "IELTS Life Skills B1, or degree certificate from an English-taught programme, or passport from a majority English-speaking country. Example: IELTS Life Skills B1 certificate with TRN 1234567890." },
-      { name: "Bank statements", detail: "Showing at least £1,270 held for 28 consecutive days (unless sponsor certifies maintenance). Example: Statements from HSBC showing £2,000 balance from January 1-28, 2024." },
-      { name: "Criminal record certificate", detail: "If applying for work in healthcare, education, or social care. Must be from every country you've lived in for 12+ months in the last 10 years. Example: Police clearance certificate from India if lived there for 2 years in 2015-2017." },
-      { name: "TB test certificate", detail: "Required for nationals of listed countries. Example: TB test certificate from approved clinic in India, valid for 6 months from test date." },
+      { name: "Valid passport", status: "required", detail: "Must be valid for the duration of your planned stay. Example: Passport valid until December 2025 for a 3-year visa starting July 2024." },
+      { name: "Certificate of Sponsorship reference number", status: "required", detail: "Provided by your employer. Contains your job details, salary, and SOC code. Example: CoS number Z12345678 from your employer's sponsor licence." },
+      { name: "English language evidence", status: "required", detail: "IELTS Life Skills B1, or degree certificate from an English-taught programme, or passport from a majority English-speaking country. Example: IELTS Life Skills B1 certificate with TRN 1234567890." },
+      { name: "Bank statements", status: "depends", detail: "Showing at least £1,270 held for 28 consecutive days (unless sponsor certifies maintenance). Example: Statements from HSBC showing £2,000 balance from January 1-28, 2024." },
+      { name: "Criminal record certificate", status: "depends", detail: "If applying for work in healthcare, education, or social care. Must be from every country you've lived in for 12+ months in the last 10 years. Example: Police clearance certificate from India if lived there for 2 years in 2015-2017." },
+      { name: "TB test certificate", status: "depends", detail: "Required for nationals of listed countries. Example: TB test certificate from approved clinic in India, valid for 6 months from test date." },
     ],
     importantNotes: [
       "You cannot switch employers without applying for a new visa with a new CoS from your new employer. Example: If you want to move from Company A to Company B, Company B must issue a new CoS and you must apply again.",
@@ -260,27 +272,27 @@ export const UK_VISA_DETAILS: Record<string, VisaDetailData> = {
       },
       {
         title: "SOC Code Occupation Tables",
-        url: "https://www.gov.uk/government/publications/soc-code-occupation-tables",
+        url: "https://www.gov.uk/government/publications/skilled-worker-visa-going-rates-for-eligible-occupations",
         description: "Standard Occupational Classification codes with corresponding going rates for each occupation."
       },
       {
         title: "Immigration Health Surcharge Calculator",
-        url: "https://www.gov.uk/immigration-health-surcharge",
+        url: "https://www.gov.uk/healthcare-immigration-application",
         description: "Calculate your IHS payment based on visa duration and dependants."
       },
       {
         title: "UKVI Application Centres",
-        url: "https://www.gov.uk/find-a-uk-visa-application-centre",
+        url: "https://www.gov.uk/find-a-visa-application-centre",
         description: "Locate your nearest visa application centre for biometrics and document submission."
       },
       {
         title: "Points-Based System Overview",
-        url: "https://www.gov.uk/guidance/points-based-immigration-system",
+        url: "https://www.gov.uk/government/publications/uk-points-based-immigration-system-employer-information",
         description: "Complete guide to the UK's points-based immigration system and how points are calculated."
       },
       {
         title: "Visa Processing Times",
-        url: "https://www.gov.uk/government/publications/visa-processing-times-applications-outside-the-uk",
+        url: "https://www.gov.uk/guidance/visa-decision-waiting-times-applications-outside-the-uk",
         description: "Current visa processing times for applications made from outside the UK."
       }
     ],
@@ -292,6 +304,16 @@ export const UK_VISA_DETAILS: Record<string, VisaDetailData> = {
       { q: "What occupations are eligible?", a: "Jobs at RQF level 3 or above (A-level equivalent) that appear on the eligible occupations list. Examples: Software developers, engineers, doctors, teachers, accountants, managers, chefs (in certain establishments), and many other professional roles." },
       { q: "Can my family join me?", a: "Yes, your partner and children under 18 can apply as dependants if your job meets the salary threshold. Each dependant pays their own visa fee (£719 for up to 3 years) and IHS (£776 per year)." },
       { q: "What is the going rate for my occupation?", a: "The going rate varies by occupation and is set by the Home Office. For example: Software Engineer £37,908, Mechanical Engineer £28,500, Marketing Manager £31,500. Check the official SOC code tables on gov.uk for your specific role." },
+    ],
+    gallery: [
+      { url: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&h=500&fit=crop&auto=format", caption: "Modern UK office spaces" },
+      { url: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=800&h=500&fit=crop&auto=format", caption: "Collaborative work culture" },
+      { url: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&h=500&fit=crop&auto=format", caption: "London — a global business hub" },
+      { url: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=800&h=500&fit=crop&auto=format", caption: "Skilled professionals across industries" },
+    ],
+    videos: [
+      { title: "UK Skilled Worker Visa — Salary Requirements Explained", description: "Eligibility, salary thresholds and sponsorship rules.", youtubeId: "zGWcUYdu0gg" },
+      { title: "How I Got a Skilled Worker Visa in London", description: "A real applicant's journey to working in the UK.", youtubeId: "jrqINEECwGU" },
     ],
   },
 
@@ -337,13 +359,13 @@ export const UK_VISA_DETAILS: Record<string, VisaDetailData> = {
     ],
     totalEstimatedCost: "£2,935 – £3,885 (per applicant)",
     documents: [
-      { name: "Current BRP", detail: "Your current Biometric Residence Permit or digital immigration status evidence. Example: BRP card expiring December 2024." },
-      { name: "Valid passport", detail: "Current passport plus any expired passports covering the 5-year qualifying period. Example: Current passport issued 2020, old passport 2015-2020." },
-      { name: "Life in the UK test pass certificate", detail: "The unique reference number from your pass notification. Example: Test pass certificate with reference LITUK123456789." },
-      { name: "English language evidence", detail: "IELTS Life Skills B1 certificate, or qualifying degree certificate, or passport from English-speaking country. Example: IELTS Life Skills B1 certificate dated July 2024." },
-      { name: "Employment evidence", detail: "P60s for each tax year, payslips (at least 6 months of recent payslips), employment contracts, employer letters confirming salary and role. Example: 5 P60s (2019-2024), 12 recent payslips, employment contract." },
-      { name: "Absence record", detail: "A full record of all trips outside the UK during the 5-year period, including dates and destinations. Example: Holiday to Spain July 2023 (10 days), business trip to USA March 2022 (5 days)." },
-      { name: "Criminal record declaration", detail: "You must declare any criminal convictions anywhere in the world. Example: Declaration form confirming no criminal convictions." },
+      { name: "Current BRP", status: "required", detail: "Your current Biometric Residence Permit or digital immigration status evidence. Example: BRP card expiring December 2024." },
+      { name: "Valid passport", status: "required", detail: "Current passport plus any expired passports covering the 5-year qualifying period. Example: Current passport issued 2020, old passport 2015-2020." },
+      { name: "Life in the UK test pass certificate", status: "required", detail: "The unique reference number from your pass notification. Example: Test pass certificate with reference LITUK123456789." },
+      { name: "English language evidence", status: "required", detail: "IELTS Life Skills B1 certificate, or qualifying degree certificate, or passport from English-speaking country. Example: IELTS Life Skills B1 certificate dated July 2024." },
+      { name: "Employment evidence", status: "required", detail: "P60s for each tax year, payslips (at least 6 months of recent payslips), employment contracts, employer letters confirming salary and role. Example: 5 P60s (2019-2024), 12 recent payslips, employment contract." },
+      { name: "Absence record", status: "required", detail: "A full record of all trips outside the UK during the 5-year period, including dates and destinations. Example: Holiday to Spain July 2023 (10 days), business trip to USA March 2022 (5 days)." },
+      { name: "Criminal record declaration", status: "required", detail: "You must declare any criminal convictions anywhere in the world. Example: Declaration form confirming no criminal convictions." },
     ],
     importantNotes: [
       "If you leave the UK for more than 2 continuous years after getting ILR, your ILR will lapse. You would need to apply for a Returning Resident visa. Example: Move to Australia for 3 years, ILR lapses, need Returning Resident visa.",
@@ -372,7 +394,7 @@ export const UK_VISA_DETAILS: Record<string, VisaDetailData> = {
       },
       {
         title: "British Citizenship Application",
-        url: "https://www.gov.uk/apply-for-citizenship",
+        url: "https://www.gov.uk/british-citizenship",
         description: "Information about applying for British citizenship after holding ILR for 12 months."
       },
       {
@@ -386,6 +408,16 @@ export const UK_VISA_DETAILS: Record<string, VisaDetailData> = {
       { q: "What if I fail the Life in the UK test?", a: "You can retake it as many times as needed. Each attempt costs £50. You must pass before submitting your ILR application." },
       { q: "Does my ILR expire?", a: "No, ILR does not expire. However, it can lapse if you spend more than 2 continuous years outside the UK. It can also be revoked if you obtained it through deception." },
       { q: "Can my employer help with ILR?", a: "Your employer does not need to sponsor your ILR application, but they will need to provide employment evidence (letters, payslips, P60s) to support it." },
+    ],
+    gallery: [
+      { url: "https://images.unsplash.com/photo-1568827999250-3f6afff96e66?w=800&h=500&fit=crop&auto=format", caption: "Settling down in the UK" },
+      { url: "https://images.unsplash.com/photo-1505761671935-60b3a7427bad?w=800&h=500&fit=crop&auto=format", caption: "Buying a home as a permanent resident" },
+      { url: "https://images.unsplash.com/photo-1533929736458-ca588d08c8be?w=800&h=500&fit=crop&auto=format", caption: "Family life in British towns" },
+      { url: "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800&h=500&fit=crop&auto=format", caption: "Towards British citizenship" },
+    ],
+    videos: [
+      { title: "Expert's Guide to Indefinite Leave to Remain", description: "Solicitor's overview of qualifying for ILR in the UK.", youtubeId: "1_Kch48NgXc" },
+      { title: "Life in the UK Test — 24 Tricky Questions", description: "Sample questions you must get right to pass.", youtubeId: "QZRwP0RrY54" },
     ],
   },
 
@@ -430,12 +462,12 @@ export const UK_VISA_DETAILS: Record<string, VisaDetailData> = {
     ],
     totalEstimatedCost: "£115 – £1,963 (depending on visa duration and priority)",
     documents: [
-      { name: "Valid passport", detail: "Must have at least one blank page. Bring old passports showing previous travel history. Example: Passport with 2 blank pages, old passport with previous UK visits." },
-      { name: "Financial evidence", detail: "Last 6 months of bank statements. Payslips or employment letter showing salary. If someone else is paying for your trip, their financial evidence plus a sponsor letter. Example: 6 months statements showing average £5,000 balance." },
-      { name: "Accommodation proof", detail: "Hotel booking confirmation, or invitation letter from host in the UK including their full address, contact details, and immigration status. Example: Hilton London confirmation or invitation letter from sister." },
-      { name: "Travel itinerary", detail: "Flight booking (return trip recommended), and a brief outline of planned activities during your visit. Example: Flight NY-London return July 1-15, itinerary showing London, Edinburgh, Bath." },
-      { name: "Employment/study proof", detail: "Letter from employer confirming your role, salary, and approved leave dates. Or university enrolment letter if you are a student. Example: Employer letter confirming 2-week approved leave July 1-15." },
-      { name: "Invitation letter (if visiting someone)", detail: "From the person inviting you, stating your relationship, their address, their immigration status, and how long you plan to stay. Example: Sister's invitation letter with her ILR status copy." },
+      { name: "Valid passport", status: "required", detail: "Must have at least one blank page. Bring old passports showing previous travel history. Example: Passport with 2 blank pages, old passport with previous UK visits." },
+      { name: "Financial evidence", status: "required", detail: "Last 6 months of bank statements. Payslips or employment letter showing salary. If someone else is paying for your trip, their financial evidence plus a sponsor letter. Example: 6 months statements showing average £5,000 balance." },
+      { name: "Accommodation proof", status: "required", detail: "Hotel booking confirmation, or invitation letter from host in the UK including their full address, contact details, and immigration status. Example: Hilton London confirmation or invitation letter from sister." },
+      { name: "Travel itinerary", status: "optional", detail: "Flight booking (return trip recommended), and a brief outline of planned activities during your visit. Example: Flight NY-London return July 1-15, itinerary showing London, Edinburgh, Bath." },
+      { name: "Employment/study proof", status: "depends", detail: "Letter from employer confirming your role, salary, and approved leave dates. Or university enrolment letter if you are a student. Example: Employer letter confirming 2-week approved leave July 1-15." },
+      { name: "Invitation letter (if visiting someone)", status: "depends", detail: "From the person inviting you, stating your relationship, their address, their immigration status, and how long you plan to stay. Example: Sister's invitation letter with her ILR status copy." },
     ],
     importantNotes: [
       "You cannot work (paid or unpaid), access public funds, or register with a GP for NHS treatment (except emergencies). Example: Cannot take job at UK restaurant during visit.",
@@ -459,7 +491,7 @@ export const UK_VISA_DETAILS: Record<string, VisaDetailData> = {
       },
       {
         title: "UKVI Application Centres",
-        url: "https://www.gov.uk/find-a-uk-visa-application-centre",
+        url: "https://www.gov.uk/find-a-visa-application-centre",
         description: "Locate your nearest visa application centre for biometrics and document submission."
       },
       {
@@ -483,6 +515,16 @@ export const UK_VISA_DETAILS: Record<string, VisaDetailData> = {
       { q: "Can I study on a Visitor visa?", a: "You can take a short course of study (up to 6 months) or a recreational course. You cannot study at a state-funded school or enrol in a course longer than 6 months." },
       { q: "Do I need travel insurance?", a: "It is not mandatory but strongly recommended. The NHS may charge for treatment, and having insurance shows you are prepared." },
       { q: "Can I attend a job interview?", a: "Yes. You can attend interviews and meetings, but you cannot start working until you have the appropriate work visa." },
+    ],
+    gallery: [
+      { url: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=800&h=500&fit=crop&auto=format", caption: "Big Ben and Westminster" },
+      { url: "https://images.unsplash.com/photo-1520986606214-8b456906c813?w=800&h=500&fit=crop&auto=format", caption: "Tower Bridge by sunset" },
+      { url: "https://images.unsplash.com/photo-1543832923-44667a44c804?w=800&h=500&fit=crop&auto=format", caption: "Edinburgh's historic Royal Mile" },
+      { url: "https://images.unsplash.com/photo-1533929736458-ca588d08c8be?w=800&h=500&fit=crop&auto=format", caption: "Countryside escapes across Britain" },
+    ],
+    videos: [
+      { title: "UK Visitor Visa — Step-by-Step Application Guide", description: "How to apply for a Standard Visitor visa with documents.", youtubeId: "7oBuFdWoBrI" },
+      { title: "10 Best Places to Visit in the UK", description: "Plan an unforgettable visit to Britain.", youtubeId: "FQ__7a3N9uc" },
     ],
   },
 };

@@ -71,16 +71,21 @@ export default function VisaDetail() {
           // Simulate API call delay
           await new Promise(resolve => setTimeout(resolve, 100));
           
+          console.log('Fetching visa data for:', { country, visaType });
+          
           const countryData = COUNTRY_DETAILS[country || ""];
           if (!countryData) {
+            console.error('Country not found:', country);
             throw new Error("Country not found");
           }
 
           const visaData = UK_VISA_DETAILS[visaType || ""];
           if (!visaData) {
+            console.error('Visa type not found:', visaType, 'Available types:', Object.keys(UK_VISA_DETAILS));
             throw new Error("Visa type not found");
           }
 
+          console.log('Found visa data:', visaData.name);
           return visaData;
         },
         1000 * 60 * 60 // 1 hour cache
@@ -108,6 +113,31 @@ export default function VisaDetail() {
   if (!country || !visaType) {
     navigate("/");
     return null;
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading visa information...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto p-6">
+          <h2 className="text-xl font-semibold mb-2">Error</h2>
+          <p className="text-muted-foreground mb-4">{error}</p>
+          <Button onClick={() => navigate(`/country/${country}`)}>
+            Back to {country === "uk" ? "United Kingdom" : country}
+          </Button>
+        </div>
+      </div>
+    );
   }
 
   if (!visa) {

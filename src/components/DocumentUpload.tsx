@@ -1,11 +1,13 @@
 import { useState, useRef } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Upload, FileText, CheckCircle, AlertCircle, X, Eye, Download } from "lucide-react";
+import { Upload, FileText, CheckCircle, AlertCircle, X, Eye, Download, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/hooks/use-toast";
+import { useAuth } from "@/lib/authContext";
 
 interface DocumentItem {
   id: string;
@@ -65,10 +67,28 @@ export default function DocumentUpload({ visaType, onDocumentsChange, maxFiles =
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedDoc, setSelectedDoc] = useState<DocumentItem | null>(null);
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const requirements = UK_DOCUMENT_REQUIREMENTS[visaType] || [];
 
+  const requireAuthForUpload = () => {
+    if (isAuthenticated) return true;
+
+    const returnTo = `${location.pathname}${location.search}${location.hash}`;
+    const encodedReturnTo = encodeURIComponent(returnTo || "/");
+
+    toast({
+      title: "Sign in required",
+      description: "Please sign up or sign in to upload your visa documents.",
+    });
+    navigate(`/auth?redirect=${encodedReturnTo}`);
+    return false;
+  };
+
   const handleFileSelect = async (files: FileList | null) => {
+    if (!requireAuthForUpload()) return;
     if (!files) return;
 
     const newDocuments: DocumentItem[] = [];
@@ -164,11 +184,13 @@ export default function DocumentUpload({ visaType, onDocumentsChange, maxFiles =
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
+    if (!requireAuthForUpload()) return;
     handleFileSelect(e.dataTransfer.files);
   };
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
+    if (!isAuthenticated) return;
     setIsDragging(true);
   };
 
@@ -232,38 +254,60 @@ export default function DocumentUpload({ visaType, onDocumentsChange, maxFiles =
     <div className="space-y-6">
       {/* Upload Area */}
       <Card className="p-6">
-        <div
-          className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-            isDragging
-              ? "border-blue-500 bg-blue-50"
-              : "border-gray-300 hover:border-gray-400"
-          }`}
-          onDrop={handleDrop}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-        >
-          <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold mb-2">Upload UK Visa Documents</h3>
-          <p className="text-gray-600 mb-4">
-            Drag and drop your files here, or click to browse
-          </p>
-          <p className="text-sm text-gray-500 mb-4">
-            Supported formats: PDF, JPG, PNG (Max 10MB per file)
-          </p>
-          <Button
-            onClick={() => fileInputRef.current?.click()}
-            className="bg-blue-600 hover:bg-blue-700"
+        <div className="relative">
+          <div
+            className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+              isDragging
+                ? "border-blue-500 bg-blue-50"
+                : "border-gray-300 hover:border-gray-400"
+            }`}
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
           >
-            Select Files
-          </Button>
-          <input
-            ref={fileInputRef}
-            type="file"
-            multiple
-            accept=".pdf,.jpg,.jpeg,.png"
-            className="hidden"
-            onChange={(e) => handleFileSelect(e.target.files)}
-          />
+            <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold mb-2">Upload UK Visa Documents</h3>
+            {!isAuthenticated && (
+              <p className="text-sm text-amber-600 font-medium mb-3">
+                Please sign in first to start uploading files.
+              </p>
+            )}
+            <p className="text-gray-600 mb-4">
+              Drag and drop your files here, or click to browse
+            </p>
+            <p className="text-sm text-gray-500 mb-4">
+              Supported formats: PDF, JPG, PNG (Max 10MB per file)
+            </p>
+            <Button
+              onClick={() => {
+                if (!requireAuthForUpload()) return;
+                fileInputRef.current?.click();
+              }}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              {isAuthenticated ? "Select Files" : "Sign in to Upload"}
+            </Button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              multiple
+              accept=".pdf,.jpg,.jpeg,.png"
+              className="hidden"
+              onChange={(e) => handleFileSelect(e.target.files)}
+            />
+          </div>
+
+          {!isAuthenticated && (
+            <div className="absolute inset-0 rounded-lg bg-background/55 backdrop-blur-[1px] border border-border/60 flex items-center justify-center">
+              <div className="text-center">
+                <div className="h-11 w-11 rounded-full bg-primary/10 border border-primary/20 mx-auto mb-2 flex items-center justify-center">
+                  <Lock className="h-5 w-5 text-primary" />
+                </div>
+                <p className="text-sm font-semibold">Upload Locked</p>
+                <p className="text-xs text-muted-foreground">Sign in to upload your documents</p>
+              </div>
+            </div>
+          )}
         </div>
       </Card>
 

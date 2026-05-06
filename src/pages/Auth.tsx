@@ -17,7 +17,8 @@ export default function AuthPage() {
   const { login, signup } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const redirect = searchParams.get("redirect") || "/";
+  const redirectParam = searchParams.get("redirect");
+  const redirect = redirectParam && redirectParam.startsWith("/") ? redirectParam : "/";
 
   // Phase 2 Feature: User Authentication
 // Set SEO metadata for authentication page

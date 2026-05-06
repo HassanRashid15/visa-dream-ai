@@ -18,7 +18,6 @@ import { UK_VISA_DETAILS, type VisaDetailData } from "@/lib/ukVisaDetails";
 import { COUNTRY_DETAILS } from "@/lib/countryData";
 import { GradientText } from "@/components/ui/animated-bits";
 import { toast } from "sonner";
-import jsPDF from "jspdf";  
 import { useViewport } from "@/hooks/use-mobile";
 import { usePerformanceOptimization } from "@/hooks/usePerformanceOptimization";
 import { useSEO } from "@/hooks/useSEO";
@@ -196,7 +195,8 @@ export default function VisaDetail() {
           if (key) setActiveSection(key);
         }
       },
-      { rootMargin: "-30% 0px -50% 0px", threshold: [0, 0.25, 0.5, 0.75, 1] },
+      // Observe against viewport scroll so AI capsules update as user moves through sections.
+      { root: null, rootMargin: "-30% 0px -50% 0px", threshold: [0, 0.25, 0.5, 0.75, 1] },
     );
     sections.forEach((s) => observer.observe(s));
     return () => observer.disconnect();
@@ -270,7 +270,8 @@ export default function VisaDetail() {
     }
   };
 
-  const handleDownloadPdf = () => {
+  const handleDownloadPdf = async () => {
+    const { default: jsPDF } = await import("jspdf");
     const doc = new jsPDF({ unit: "pt", format: "a4" });
     const pageWidth = doc.internal.pageSize.getWidth();
     const margin = 48;

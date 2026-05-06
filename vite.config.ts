@@ -22,18 +22,31 @@ export default defineConfig(({ mode }) => ({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom'],
-          ui: ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-select'],
-          utils: ['clsx', 'tailwind-merge', 'class-variance-authority'],
-          icons: ['lucide-react'],
-          motion: ['framer-motion'],
-          date: ['date-fns'],
-          forms: ['react-hook-form', '@hookform/resolvers'],
-          charts: ['recharts'],
-          query: ['@tanstack/react-query'],
-          supabase: ['@supabase/supabase-js'],
-          router: ['react-router-dom'],
+        manualChunks(id) {
+          if (id.includes("node_modules/jspdf")) return "pdf";
+          if (id.includes("node_modules/html2canvas")) return "html2canvas";
+          if (id.includes("node_modules/@supabase/supabase-js")) return "supabase";
+          if (id.includes("node_modules/framer-motion")) return "motion";
+          if (id.includes("node_modules/lucide-react")) return "icons";
+          if (id.includes("node_modules/@tanstack/react-query")) return "query";
+          if (id.includes("node_modules/react-router-dom")) return "router";
+          if (id.includes("node_modules/recharts")) return "charts";
+          if (
+            id.includes("node_modules/@radix-ui/react-dialog") ||
+            id.includes("node_modules/@radix-ui/react-dropdown-menu") ||
+            id.includes("node_modules/@radix-ui/react-select")
+          ) return "ui";
+          if (
+            id.includes("node_modules/clsx") ||
+            id.includes("node_modules/tailwind-merge") ||
+            id.includes("node_modules/class-variance-authority")
+          ) return "utils";
+          if (
+            id.includes("node_modules/react-hook-form") ||
+            id.includes("node_modules/@hookform/resolvers")
+          ) return "forms";
+          if (id.includes("node_modules/date-fns")) return "date";
+          if (id.includes("node_modules/react") || id.includes("node_modules/react-dom")) return "vendor";
         },
       },
     },

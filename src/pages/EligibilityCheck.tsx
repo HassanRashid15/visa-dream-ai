@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { calculateEligibility, COUNTRY_INFO, type Country, type EligibilityInput } from "@/lib/eligibility";
+import { calculateTravelReadiness, COUNTRY_INFO, type Country, type TravelReadinessInput } from "@/lib/eligibility";
 import { COUNTRY_DETAILS } from "@/lib/countryData";
 import ScoreResult from "@/components/ScoreResult";
 import Header from "@/components/Header";
@@ -50,7 +50,7 @@ export default function EligibilityCheckPage() {
     ieltsScore: "",
     funds: "",
   });
-  const [result, setResult] = useState<ReturnType<typeof calculateEligibility> | null>(null);
+  const [result, setResult] = useState<ReturnType<typeof calculateTravelReadiness> | null>(null);
 
   if (!countryInfo) {
     navigate("/");
@@ -59,15 +59,15 @@ export default function EligibilityCheckPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const input: EligibilityInput = {
+    const input: TravelReadinessInput = {
       country: countryId,
       age: Number(formData.age),
       education: formData.education,
       experience: Number(formData.experience),
-      ieltsScore: Number(formData.ieltsScore),
-      funds: Number(formData.funds),
+      languageScore: Number(formData.ieltsScore),
+      budget: Number(formData.funds),
     };
-    setResult(calculateEligibility(input));
+    setResult(calculateTravelReadiness(input));
   };
 
   if (result) {

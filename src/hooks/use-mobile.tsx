@@ -1,6 +1,7 @@
 import * as React from "react";
 
 const MOBILE_BREAKPOINT = 768;
+const TABLET_BREAKPOINT = 1024;
 
 export function useIsMobile() {
   const [isMobile, setIsMobile] = React.useState<boolean | undefined>(undefined);
@@ -16,4 +17,32 @@ export function useIsMobile() {
   }, []);
 
   return !!isMobile;
+}
+
+export function useViewport() {
+  const [isMobile, setIsMobile] = React.useState<boolean | undefined>(undefined);
+  const [isTablet, setIsTablet] = React.useState<boolean | undefined>(undefined);
+
+  React.useEffect(() => {
+    const updateViewport = () => {
+      const width = window.innerWidth;
+      setIsMobile(width < MOBILE_BREAKPOINT);
+      setIsTablet(width >= MOBILE_BREAKPOINT && width < TABLET_BREAKPOINT);
+    };
+
+    const mql = window.matchMedia(`(max-width: ${TABLET_BREAKPOINT - 1}px)`);
+    const onChange = () => {
+      updateViewport();
+    };
+    
+    mql.addEventListener("change", onChange);
+    updateViewport();
+    
+    return () => mql.removeEventListener("change", onChange);
+  }, []);
+
+  return {
+    isMobile: !!isMobile,
+    isTablet: !!isTablet,
+  };
 }

@@ -13,12 +13,15 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AISidebar from "@/components/AISidebar";
 import HighlightAskAI from "@/components/HighlightAskAI";
+import DocumentUpload from "@/components/DocumentUpload";
 import { UK_VISA_DETAILS, type VisaDetailData } from "@/lib/ukVisaDetails";
 import { COUNTRY_DETAILS } from "@/lib/countryData";
 import { GradientText } from "@/components/ui/animated-bits";
 import { toast } from "sonner";
-import jsPDF from "jspdf";
->>>>>>> 440ce76605a561d802fd4618c28b608dbab5d5a7
+import jsPDF from "jspdf";  
+import { useViewport } from "@/hooks/use-mobile";
+import { usePerformanceOptimization } from "@/hooks/usePerformanceOptimization";
+import { useSEO } from "@/hooks/useSEO";
 
 function SectionHeading({ icon, label, title }: { icon: React.ReactNode; label: string; title: string }) {
   return (
@@ -32,7 +35,6 @@ function SectionHeading({ icon, label, title }: { icon: React.ReactNode; label: 
 export default function VisaDetail() {
   const { country, visaType } = useParams<{ country: string; visaType: string }>();
   const navigate = useNavigate();
-<<<<<<< HEAD
   const { isMobile, isTablet } = useViewport();
   const { optimizedApiCall } = usePerformanceOptimization();
   
@@ -101,9 +103,7 @@ export default function VisaDetail() {
   useEffect(() => {
     fetchVisaData();
   }, [fetchVisaData]);
-=======
   const [searchParams] = useSearchParams();
->>>>>>> 440ce76605a561d802fd4618c28b608dbab5d5a7
 
   if (!country || !visaType) {
     navigate("/");
@@ -634,7 +634,6 @@ export default function VisaDetail() {
                 )}
               </div>
 
-<<<<<<< HEAD
               {country === "uk" && (uploadVisaType === "study" || uploadVisaType === "work" || uploadVisaType === "ilr" || uploadVisaType === "tourist") && (
                 <div className="mt-6 rounded-xl border border-border bg-card p-4">
                   <div className="mb-3 flex items-center justify-between">
@@ -646,7 +645,8 @@ export default function VisaDetail() {
                     onDocumentsChange={(documents) => setUploadedDocumentsCount(documents.length)}
                   />
                 </div>
-=======
+              )}
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {visa.documents.map((doc, i) => {
                   const status = doc.status ?? "required";
@@ -688,7 +688,6 @@ export default function VisaDetail() {
                 >
                   Reset checklist
                 </button>
->>>>>>> 440ce76605a561d802fd4618c28b608dbab5d5a7
               )}
             </motion.section>
 

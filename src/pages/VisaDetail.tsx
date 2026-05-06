@@ -110,46 +110,9 @@ export default function VisaDetail() {
   }, [fetchVisaData]);
   const [searchParams] = useSearchParams();
 
-  if (!country || !visaType) {
-    navigate("/");
-    return null;
-  }
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading visa information...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center max-w-md mx-auto p-6">
-          <h2 className="text-xl font-semibold mb-2">Error</h2>
-          <p className="text-muted-foreground mb-4">{error}</p>
-          <Button onClick={() => navigate(`/country/${country}`)}>
-            Back to {country === "uk" ? "United Kingdom" : country}
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
-  if (!visa) {
-    navigate(`/country/${country}`);
-    return null;
-  }
-
-  const uploadVisaType = visa.id === "pr" ? "ilr" : visa.id;
-
   // Lightbox state
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
-  const gallery = visa.gallery ?? [];
+  const gallery = visa?.gallery ?? [];
   const lightboxRef = useRef<HTMLDivElement | null>(null);
   const previouslyFocusedRef = useRef<HTMLElement | null>(null);
   const closeLightbox = useCallback(() => setLightboxIndex(null), []);
@@ -208,7 +171,8 @@ export default function VisaDetail() {
   }, [lightboxIndex, closeLightbox, showPrev, showNext]);
 
   // Document checklist state — persisted per visa, also shareable via ?c=
-  const storageKey = `visa-checklist:${visa.id}`;
+  const currentVisaId = visa?.id ?? "";
+  const storageKey = `visa-checklist:${currentVisaId}`;
   const [checked, setChecked] = useState<Record<number, boolean>>({});
   const [shareOpen, setShareOpen] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -236,7 +200,7 @@ export default function VisaDetail() {
     );
     sections.forEach((s) => observer.observe(s));
     return () => observer.disconnect();
-  }, [visa.id]);
+  }, [currentVisaId]);
 
   useEffect(() => {
     // Priority: URL param > localStorage
@@ -262,11 +226,12 @@ export default function VisaDetail() {
     try { localStorage.setItem(storageKey, JSON.stringify(checked)); } catch { /* ignore */ }
   }, [checked, storageKey]);
 
+  const visaDocuments = visa?.documents ?? [];
   const requiredDocs = useMemo(
-    () => visa.documents.filter((d) => (d.status ?? "required") === "required"),
-    [visa.documents],
+    () => visaDocuments.filter((d) => (d.status ?? "required") === "required"),
+    [visaDocuments],
   );
-  const requiredDoneCount = visa.documents.reduce(
+  const requiredDoneCount = visaDocuments.reduce(
     (acc, d, i) => acc + (((d.status ?? "required") === "required") && checked[i] ? 1 : 0),
     0,
   );
@@ -274,12 +239,12 @@ export default function VisaDetail() {
 
   // Build shareable URL encoding the current checklist
   const shareUrl = useMemo(() => {
-    const bits = visa.documents.map((_, i) => (checked[i] ? "1" : "0")).join("");
+    const bits = visaDocuments.map((_, i) => (checked[i] ? "1" : "0")).join("");
     const encoded = btoa(bits);
     const url = new URL(window.location.href);
     url.searchParams.set("c", encoded);
     return url.toString();
-  }, [checked, visa.documents]);
+  }, [checked, visaDocuments]);
 
   const handleCopyShare = async () => {
     try {
@@ -377,6 +342,43 @@ export default function VisaDetail() {
     else if (dx < -50) showNext();
     setTouchStartX(null);
   };
+
+  if (!country || !visaType) {
+    navigate("/");
+    return null;
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading visa information...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto p-6">
+          <h2 className="text-xl font-semibold mb-2">Error</h2>
+          <p className="text-muted-foreground mb-4">{error}</p>
+          <Button onClick={() => navigate(`/country/${country}`)}>
+            Back to {country === "uk" ? "United Kingdom" : country}
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!visa) {
+    navigate(`/country/${country}`);
+    return null;
+  }
+
+  const uploadVisaType = visa.id === "pr" ? "ilr" : visa.id;
 
   return (
     <div className="min-h-screen bg-background">

@@ -19,6 +19,7 @@ import {
   GradientText, TiltCard, StaggerContainer, StaggerItem, ShimmerButton
 } from "@/components/ui/animated-bits";
 import { toast } from "@/hooks/use-toast";
+import { useSEO } from "@/hooks/useSEO";
 
 interface Advisor {
   id: string;
@@ -86,6 +87,13 @@ export default function ConsultationBooking() {
   const [selectedTime, setSelectedTime] = useState<string>("");
   const [callType, setCallType] = useState<string>("video");
   const [formData, setFormData] = useState({ name: "", email: "", phone: "", message: "" });
+
+  // Set SEO metadata for travel consultation booking
+  useSEO({
+    title: 'Book Travel Consultation | Expert Travel Advisors | TravelAI',
+    description: 'Schedule a personalized travel consultation with expert travel advisors. Get professional guidance for your trip planning, destination insights, and travel journey assistance.',
+    keywords: 'travel consultation, travel advisor, expert travel planning, travel guidance, trip planning help, travel consultant, AI travel assistance'
+  });
 
   const steps: { id: Step; label: string }[] = [
     { id: "advisor", label: "Choose Advisor" },

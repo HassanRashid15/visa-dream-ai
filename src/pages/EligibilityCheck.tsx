@@ -11,6 +11,7 @@ import { COUNTRY_DETAILS } from "@/lib/countryData";
 import ScoreResult from "@/components/ScoreResult";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { useSEO } from "@/hooks/useSEO";
 
 const VISA_LABELS: Record<string, string> = {
   study: "Study Visa",
@@ -28,6 +29,18 @@ export default function EligibilityCheckPage() {
   const visaType = searchParams.get("visa") || "study";
   const visaLabel = VISA_LABELS[visaType] || visaType;
   const detail = country ? COUNTRY_DETAILS[country] : null;
+
+  // Phase 2 Feature: Travel Planning Assessment
+// Set SEO metadata for travel planning assessment
+  useSEO({
+    title: detail ? `Travel Planning Assessment for ${detail.name} | AI Travel Guidance | TravelAI` : 'Travel Planning Assessment | AI Travel Guidance | TravelAI',
+    description: detail 
+      ? `Get AI-powered travel planning assessment for ${detail.name}. Check travel requirements, get personalized recommendations, and plan your perfect journey with confidence.`
+      : 'Plan your perfect journey with AI-powered travel assessment. Get personalized travel recommendations, requirement checks, and comprehensive planning guidance.',
+    keywords: detail 
+      ? `travel planning ${detail.name}, ${detail.name} travel assessment, AI travel guide ${detail.name}, travel requirements ${detail.name}, personalized travel ${detail.name}`
+      : 'travel planning assessment, AI travel guidance, personalized travel recommendations, travel requirement check, intelligent travel planning'
+  });
   const visaInfo = detail?.visaTypes.find(v => v.id === visaType);
 
   const [formData, setFormData] = useState({

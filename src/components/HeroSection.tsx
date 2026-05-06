@@ -3,10 +3,11 @@ import heroBg from "@/assets/hero-bg.jpg";
 import { ArrowDown, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
+// Phase 1: Informative Travel Planning Stats
 const stats = [
-  { value: "3", label: "Countries Supported" },
-  { value: "60s", label: "Assessment Time" },
-  { value: "100%", label: "Free & Transparent" },
+  { value: "50+", label: "Destinations" },
+  { value: "24/7", label: "AI Guidance" },
+  { value: "100%", label: "Free Access" },
 ];
 
 export default function HeroSection() {
@@ -44,15 +45,15 @@ export default function HeroSection() {
         >
           <span className="inline-flex items-center gap-2 mb-6 rounded-full border border-primary-foreground/20 bg-primary-foreground/10 px-5 py-2 text-sm text-primary-foreground/80 backdrop-blur-sm">
             <CheckCircle className="h-3.5 w-3.5" />
-            Free Eligibility Check — No Sign Up Required
+            Free Travel Planning — No Sign Up Required
           </span>
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-extrabold text-primary-foreground leading-[1.1] mb-6">
-            Your Immigration
+            Your Intelligent
             <br />
-            <span className="text-accent">Consultant</span> Online
+            <span className="text-accent">Travel Agent</span>
           </h1>
           <p className="text-lg md:text-xl text-primary-foreground/75 mb-10 max-w-2xl mx-auto leading-relaxed">
-            From eligibility checks to visa applications — we guide you through every step. Canada, UK, or Australia. All in one place.
+            Discover amazing destinations and plan perfect journeys with AI-powered guidance. Get expert travel insights and recommendations for your next adventure.
           </p>
         </motion.div>
 

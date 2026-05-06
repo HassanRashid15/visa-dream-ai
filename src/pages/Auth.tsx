@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/lib/authContext";
 import { toast } from "@/hooks/use-toast";
+import { useSEO } from "@/hooks/useSEO";
 
 export default function AuthPage() {
   const [mode, setMode] = useState<"login" | "signup">("login");
@@ -17,6 +18,18 @@ export default function AuthPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const redirect = searchParams.get("redirect") || "/";
+
+  // Phase 2 Feature: User Authentication
+// Set SEO metadata for authentication page
+  useSEO({
+    title: mode === "login" ? "Sign In to TravelAI | Access Your Travel Journey" : "Sign Up for TravelAI | Start Your Travel Planning",
+    description: mode === "login" 
+      ? "Sign in to your TravelAI account to track your travel journeys, access personalized trip planning, and manage your travel experiences."
+      : "Create your free TravelAI account to get instant travel planning assistance, track journeys, and access expert travel guidance.",
+    keywords: mode === "login"
+      ? "TravelAI login, sign in travel account, access travel planning, travel journey login"
+      : "TravelAI signup, create travel account, free travel planning, travel platform registration"
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

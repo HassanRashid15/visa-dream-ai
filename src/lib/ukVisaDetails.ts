@@ -367,7 +367,7 @@ export const UK_VISA_DETAILS: Record<string, VisaDetailData> = {
       },
       {
         title: "ILR Eligibility Guide",
-        url: "https://www.gov.uk/indefinite-leave-to-remain/eligibility",
+        url: "https://www.gov.uk/indefinite-leave-to-remain",
         description: "Guide to check if you qualify for Indefinite Leave to Remain."
       },
       {
@@ -377,7 +377,7 @@ export const UK_VISA_DETAILS: Record<string, VisaDetailData> = {
       },
       {
         title: "ILR Application Fees",
-        url: "https://www.gov.uk/indefinite-leave-to-remain/fees",
+        url: "https://www.gov.uk/indefinite-leave-to-remain-tier-2-t2-skilled-worker-visa",
         description: "Current fees for Indefinite Leave to Remain application."
       }
     ],
@@ -445,7 +445,7 @@ export const UK_VISA_DETAILS: Record<string, VisaDetailData> = {
       "If you overstay your visa even by 1 day, it can affect future UK visa applications for up to 10 years. Example: Stay until July 16 instead of leaving July 15.",
       "Some visitors may need to register with the police within 7 days of arrival if required by their nationality. Example: Certain nationalities must register at local police station.",
     ],
-    officialLink: "https://www.gov.uk/standard-visitor",
+    officialLink: "https://www.gov.uk/standard-visitor/visit-as-a-standard-visitor",
     officialResources: [
       {
         title: "Check if You Need a UK Visa",
@@ -454,7 +454,7 @@ export const UK_VISA_DETAILS: Record<string, VisaDetailData> = {
       },
       {
         title: "Standard Visitor Visa Guide",
-        url: "https://www.gov.uk/standard-visitor-visa",
+        url: "https://www.gov.uk/standard-visitor/visit-as-a-standard-visitor",
         description: "Complete guide to visitor visa requirements, application process, and rules."
       },
       {
@@ -474,7 +474,7 @@ export const UK_VISA_DETAILS: Record<string, VisaDetailData> = {
       },
       {
         title: "Visitor Visa Fees",
-        url: "https://www.gov.uk/standard-visitor-visa/fees",
+        url: "https://www.gov.uk/standard-visitor/apply-standard-visitor-visa",
         description: "Current fees for Standard Visitor visa applications."
       }
     ],

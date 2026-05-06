@@ -1,8 +1,16 @@
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
+import { useSEO } from "@/hooks/useSEO";
 
 const NotFound = () => {
   const location = useLocation();
+
+  // Set SEO metadata for 404 page
+  useSEO({
+    title: 'Page Not Found | 404 Error | TravelAI',
+    description: 'The page you are looking for does not exist. Return to TravelAI homepage to access AI-powered travel planning and destination guidance.',
+    keywords: '404 error, page not found, TravelAI homepage, travel planning, AI travel guidance, travel assistance'
+  });
 
   useEffect(() => {
     console.error("404 Error: User attempted to access non-existent route:", location.pathname);

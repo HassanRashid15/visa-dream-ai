@@ -4,23 +4,23 @@ import { Shield, Eye, Ban, AlertTriangle } from "lucide-react";
 const items = [
   {
     icon: Shield,
-    title: "No Guarantees",
-    description: "No agent or tool can guarantee visa approval. Anyone who says otherwise is misleading you.",
+    title: "Travel Safety First",
+    description: "Your safety is our priority. We provide verified travel information and safety guidelines for every destination.",
   },
   {
     icon: Eye,
-    title: "Full Transparency",
-    description: "Our scoring criteria are based on publicly available immigration guidelines. No black box.",
+    title: "Transparent Pricing",
+    description: "No hidden fees or surprise charges. All travel planning costs and services are clearly displayed upfront.",
   },
   {
     icon: Ban,
-    title: "Spot the Red Flags",
-    description: "Beware of agents demanding large upfront fees, promising guaranteed outcomes, or rushing your decision.",
+    title: "Avoid Travel Scams",
+    description: "Watch out for too-good-to-be-true deals, fake travel agencies, and unrealistic promises about destinations.",
   },
   {
     icon: AlertTriangle,
-    title: "Realistic Cost Ranges",
-    description: "Visa fees vary by country. Always budget for application fees, medical exams, and biometrics separately.",
+    title: "Real Travel Costs",
+    description: "Budget realistically for flights, accommodation, food, and activities. We help you plan within your means.",
   },
 ];
 
@@ -34,10 +34,10 @@ export default function TrustSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          <span className="text-sm font-semibold text-accent uppercase tracking-wider">Stay Safe</span>
-          <h2 className="text-3xl md:text-4xl font-display font-bold mt-2">Trust & Fraud Awareness</h2>
+          <span className="text-sm font-semibold text-accent uppercase tracking-wider">Travel Smart</span>
+          <h2 className="text-3xl md:text-4xl font-display font-bold mt-2">Travel Safety & Tips</h2>
           <p className="text-muted-foreground mt-3 max-w-lg mx-auto">
-            We believe in transparency. Here's what you need to know to protect yourself.
+            Travel confidently with our expert guidance. Here's what you need to know for safe journeys.
           </p>
         </motion.div>
 

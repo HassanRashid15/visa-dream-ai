@@ -25,21 +25,98 @@ const isGreeting = (message: string): boolean => {
   return /^(hi|hii|hello|hey|yo|good morning|good afternoon|good evening)\b/.test(q);
 };
 
+const UK_IMMIGRATION_KNOWLEDGE = {
+  general: {
+    "processing times": "Standard UK visa processing times vary: Student visas (3-6 weeks), Skilled Worker visas (3-8 weeks), ILR (up to 6 months), Visitor visas (3 weeks). Priority services are available for faster processing.",
+    "fees": "UK visa fees include application fees and Immigration Health Surcharge. Student visa: £490 + £776/year IHS. Skilled Worker: £719 + £1,035/year IHS. ILR: £2,885. Visitor visa: £115 for 6 months.",
+    "english requirements": "Most UK visas require B1 level English (IELTS 4.0 in speaking and listening). Student visas need B2 level (IELTS 5.5-6.5). Some exemptions apply for English-speaking nationals and degree holders.",
+    "maintenance funds": "You need £1,270 in your bank account for 28 consecutive days, unless your employer certifies maintenance. Student visas require additional funds for tuition fees.",
+  },
+  study: {
+    "graduate route": "The Graduate Route allows you to work in the UK for 2 years (3 years for PhD graduates) after completing your degree. No sponsor required. Apply before your Student visa expires.",
+    "part-time work": "Students can work up to 20 hours per week during term time and full-time during vacations. PhD students have no work restrictions. Cannot be self-employed or fill permanent positions.",
+    "cas": "Confirmation of Acceptance for Studies (CAS) is a unique 14-digit reference number from your licensed sponsor. Valid for 6 months. Contains course details, fees paid, and sponsor information.",
+    "ielts requirements": "Student visas need IELTS 5.5-6.5 overall depending on course level. Must be UKVI-approved test. Some universities accept other English qualifications.",
+  },
+  work: {
+    "points system": "Skilled Worker visa requires 70 points: 50 mandatory (job offer, sponsor, skill level) + 20 tradeable (salary, age, education, English). Salary must meet £38,700 threshold or occupation going rate.",
+    "salary requirements": "General threshold: £38,700/year or occupation going rate (whichever is higher). New entrants under 26 or recent graduates: 70% of going rate. Health and education roles may have different thresholds.",
+    "certificate of sponsorship": "CoS is a virtual document with unique reference number from licensed employer. Contains job details, salary, SOC code. Required for Skilled Worker visa application.",
+    "job switching": "You can switch employers but need a new CoS and visa application. Cannot start new job until approved. Must maintain salary requirements.",
+  },
+  ilr: {
+    "residency requirements": "ILR requires 5 continuous years on qualifying visa. Maximum 180 days absence per 12-month period allowed. Some absences may be permitted with exceptional circumstances.",
+    "life in uk test": "24-question multiple-choice test about British history, culture, and politics. Need 75% (18/24) to pass. Costs £50. Can retake unlimited times.",
+    "citizenship": "Can apply for British citizenship 12 months after ILR. Must meet residence requirements, pass Life in UK test (if not already), and have good character.",
+    "document requirements": "Need 5 years of evidence: payslips, P60s, tax returns, BRPs, employer letters, absence records. All documents must be original or certified copies.",
+  },
+  tourist: {
+    "work restrictions": "Cannot work (paid or unpaid) on Visitor visa. Can attend business meetings, conferences, and sign deals. Cannot study courses longer than 6 months.",
+    "duration": "Standard Visitor visa allows up to 6 months per visit. Long-term visas (2, 5, 10 years) allow multiple entries but each visit limited to 6 months maximum.",
+    "extensions": "Generally cannot extend Visitor visa. Must leave UK before expiry. Extensions only in exceptional circumstances (medical emergencies, etc.).",
+    "activities": "Allowed: tourism, visiting family/friends, business meetings, conferences, short courses (up to 6 months), private medical treatment.",
+  },
+};
+
 const buildPromptCapsules = (visa: VisaDetailData, universities: University[]): string[] => {
-  const prompts = [
+  const basePrompts = [
     "What is the processing time?",
-    "What documents are required?",
-    "How much does this visa cost?",
-    "Show me the key eligibility requirements",
-    "Explain the application steps",
+    "What documents do I need?",
+    "How much does it cost?",
+    "What are the eligibility requirements?",
+    "Can I work while studying?",
+    "Can I bring my family?",
+    "What is the success rate?",
+    "How long can I stay?",
   ];
 
-  if (visa.id === "study" && universities.length > 0) {
-    prompts.push("Show top universities");
-    prompts.push("Best universities for Computer Science?");
-  }
+  const ukSpecificPrompts = [
+    "What are the English language requirements?",
+    "How much maintenance funds do I need?",
+    "What is the Immigration Health Surcharge?",
+    "Can I switch to a different visa type?",
+    "What happens if my application is refused?",
+    "How do I prove my qualifications?",
+    "What are the visa conditions?",
+    "Can I travel outside the UK?",
+  ];
 
-  return prompts;
+  const visaSpecificPrompts: Record<string, string[]> = {
+    study: [
+      "What is the Graduate Route visa?",
+      "Can I work part-time during studies?",
+      "How do I get a CAS number?",
+      "What are the UKVI-approved English tests?",
+      "Can I bring my dependants?",
+      "What happens after my course ends?",
+    ],
+    work: [
+      "How does the points system work?",
+      "What are the salary thresholds?",
+      "What is a Certificate of Sponsorship?",
+      "Can I change employers?",
+      "What occupations are in shortage?",
+      "How do I check if my employer is licensed?",
+    ],
+    pr: [
+      "What is Indefinite Leave to Remain?",
+      "How long does ILR processing take?",
+      "What are the residency requirements?",
+      "How do I prepare for Life in UK test?",
+      "When can I apply for citizenship?",
+      "What documents do I need for ILR?",
+    ],
+    tourist: [
+      "Can I work on a Visitor visa?",
+      "How long can I stay in the UK?",
+      "Can I extend my visitor visa?",
+      "What activities are allowed?",
+      "Do I need travel insurance?",
+      "Can I study on a Visitor visa?",
+    ],
+  };
+
+  return [...basePrompts, ...ukSpecificPrompts, ...(visaSpecificPrompts[visa.id] || [])];
 };
 
 const getBestFaqMatch = (userMessage: string, visa: VisaDetailData): string | null => {

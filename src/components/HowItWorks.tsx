@@ -1,26 +1,37 @@
 import { motion } from "framer-motion";
 import { ClipboardCheck, BarChart3, Lightbulb } from "lucide-react";
 
+// Phase 1: Informative Travel Planning
 const steps = [
   {
     icon: ClipboardCheck,
     step: "01",
-    title: "Fill Your Profile",
-    description: "Enter your age, education, work experience, IELTS score, and available funds.",
+    title: "Discover Destinations",
+    description: "Explore amazing countries, attractions, and experiences tailored to your interests.",
   },
   {
     icon: BarChart3,
     step: "02",
-    title: "Get Your Score",
-    description: "Our algorithm calculates eligibility based on real immigration criteria.",
+    title: "Plan Your Journey",
+    description: "Get AI-powered travel recommendations, itineraries, and destination insights.",
   },
   {
     icon: Lightbulb,
     step: "03",
-    title: "Improve & Apply",
-    description: "Get actionable tips to strengthen your profile before applying.",
+    title: "Travel Guidance",
+    description: "Receive expert travel tips, safety information, and local insights for your perfect trip.",
   },
 ];
+
+// Phase 2: Preparation & Practice (Coming Soon)
+// const phase2Steps = [
+//   {
+//     icon: Lightbulb,
+//     step: "03",
+//     title: "Prepare & Practice",
+//     description: "Access travel classes, language practice, and expert guidance for your perfect trip.",
+//   },
+// ];
 
 export default function HowItWorks() {
   return (
@@ -32,10 +43,10 @@ export default function HowItWorks() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          <span className="text-sm font-semibold text-accent uppercase tracking-wider">Simple Process</span>
-          <h2 className="text-3xl md:text-4xl font-display font-bold mt-2">How It Works</h2>
+          <span className="text-sm font-semibold text-accent uppercase tracking-wider">Phase 1</span>
+          <h2 className="text-3xl md:text-4xl font-display font-bold mt-2">Informative Travel Planning</h2>
           <p className="text-muted-foreground mt-3 max-w-lg mx-auto">
-            Three simple steps to understand your immigration eligibility.
+            Phase 1: Three simple steps to discover and plan your perfect journey with AI-powered travel guidance.
           </p>
         </motion.div>
 

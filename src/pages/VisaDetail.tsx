@@ -1,18 +1,34 @@
-import { useParams, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  ArrowLeft, ArrowRight, Clock, DollarSign, FileText, CheckCircle, AlertTriangle,
-  ExternalLink, ChevronDown, ChevronUp, HelpCircle, Shield, Banknote, ListChecks,
-  Footprints, BookOpen, Info,
+import { 
+  ArrowLeft, Clock, Users, FileText, CheckCircle, AlertCircle, 
+  BookOpen, Globe, Heart, Shield, Plane, Briefcase, CreditCard,
+  ChevronRight, Star, ArrowRight, Info, ListChecks, ExternalLink,
+  Footprints, DollarSign, AlertTriangle, HelpCircle, ChevronDown
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { UK_VISA_DETAILS, type VisaDetailData } from "@/lib/ukVisaDetails";
+import { COUNTRY_DETAILS } from "@/lib/countryData";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AISidebar from "@/components/AISidebar";
-import { UK_VISA_DETAILS, type VisaDetailData } from "@/lib/ukVisaDetails";
-import { COUNTRY_DETAILS } from "@/lib/countryData";
-import { GradientText } from "@/components/ui/animated-bits";
+import ScoreResult from "@/components/ScoreResult";
+import DocumentUpload from "@/components/DocumentUpload";
+import { usePerformanceOptimization, useViewport } from "@/hooks/usePerformanceOptimization";
+import { MobileContainer, MobileGrid, MobileCard, MobileButton, MobileText, MobileNav } from "@/components/ui/mobile-optimized";
+import { memoryCache } from "@/lib/performance";
+import {
+  AnimatedCounter, GradientText, PulseDot, TiltCard,
+  StaggerContainer, StaggerItem, SparkleBorder
+} from "@/components/ui/animated-bits";
+import { useSEO } from "@/hooks/useSEO";
 
 function SectionHeading({ icon, label, title }: { icon: React.ReactNode; label: string; title: string }) {
   return (
@@ -26,18 +42,86 @@ function SectionHeading({ icon, label, title }: { icon: React.ReactNode; label: 
 export default function VisaDetail() {
   const { country, visaType } = useParams<{ country: string; visaType: string }>();
   const navigate = useNavigate();
+  const { isMobile, isTablet } = useViewport();
+  const { optimizedApiCall } = usePerformanceOptimization();
+  
+  const [visa, setVisa] = useState<VisaDetailData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState("overview");
+  const [showAISidebar, setShowAISidebar] = useState(false);
+  const [uploadedDocumentsCount, setUploadedDocumentsCount] = useState(0);
+
+  // Set SEO metadata based on visa type
+  useSEO({
+    title: visa ? `Travel Requirements for ${country} | ${visa.name} Guide | TravelAI` : 'Travel Requirements Guide | TravelAI',
+    description: visa 
+      ? `Complete travel guide for ${country} including ${visa.name} requirements, travel documents, and entry information. Get AI-powered travel planning assistance.`
+      : 'Comprehensive travel requirements and entry information for your destination. Get AI-powered travel guidance and document preparation assistance.',
+    keywords: visa 
+      ? `${country} travel requirements, ${visa.name} travel guide, ${country} entry requirements, travel documents ${country}, ${country} tourism guide`
+      : 'travel requirements, entry requirements, travel documents, tourism guide, travel preparation, AI travel assistance'
+  });
+
+  // Cache key for visa details
+  const cacheKey = `visa-${country}-${visaType}`;
+
+  // Optimized data fetching with caching
+  const fetchVisaData = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const data = await optimizedApiCall(
+        cacheKey,
+        async () => {
+          // Simulate API call delay
+          await new Promise(resolve => setTimeout(resolve, 100));
+          
+          const countryData = COUNTRY_DETAILS[country || ""];
+          if (!countryData) {
+            throw new Error("Country not found");
+          }
+
+          const visaData = UK_VISA_DETAILS[visaType || ""];
+          if (!visaData) {
+            throw new Error("Visa type not found");
+          }
+
+          return visaData;
+        },
+        1000 * 60 * 60 // 1 hour cache
+      );
+
+      setVisa(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to load visa information");
+    } finally {
+      setLoading(false);
+    }
+  }, [country, visaType, optimizedApiCall, cacheKey]);
+
+  // Memoized universities data
+  const universities = useMemo(() => {
+    if (!country || !COUNTRY_DETAILS[country]) return [];
+    return COUNTRY_DETAILS[country].universities || [];
+  }, [country]);
+
+  useEffect(() => {
+    fetchVisaData();
+  }, [fetchVisaData]);
 
   if (!country || !visaType) {
     navigate("/");
     return null;
   }
 
-  const visa: VisaDetailData | undefined = UK_VISA_DETAILS[visaType];
   if (!visa) {
     navigate(`/country/${country}`);
     return null;
   }
-  const universities = visa.id === "study" ? (COUNTRY_DETAILS[country]?.universities ?? []) : [];
+
+  const uploadVisaType = visa.id === "pr" ? "ilr" : visa.id;
 
   return (
     <div className="min-h-screen bg-background">
@@ -229,6 +313,19 @@ export default function VisaDetail() {
                   </div>
                 ))}
               </div>
+
+              {country === "uk" && (uploadVisaType === "study" || uploadVisaType === "work" || uploadVisaType === "ilr" || uploadVisaType === "tourist") && (
+                <div className="mt-6 rounded-xl border border-border bg-card p-4">
+                  <div className="mb-3 flex items-center justify-between">
+                    <p className="text-sm font-semibold">Document Upload (UK)</p>
+                    <span className="text-xs text-muted-foreground">{uploadedDocumentsCount} uploaded</span>
+                  </div>
+                  <DocumentUpload
+                    visaType={uploadVisaType}
+                    onDocumentsChange={(documents) => setUploadedDocumentsCount(documents.length)}
+                  />
+                </div>
+              )}
             </motion.section>
 
             {/* Important Notes */}

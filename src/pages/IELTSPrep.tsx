@@ -11,6 +11,7 @@ import { COUNTRY_PRACTICE_DATA, saveTestAttempt, saveModuleProgress, type TestAt
 import { GradientText, TiltCard, StaggerContainer, StaggerItem, ShimmerButton, SparkleBorder, AnimatedCounter, PulseDot } from "@/components/ui/animated-bits";
 import IELTSDashboard from "@/components/IELTSDashboard";
 import IELTSPracticeModule from "@/components/IELTSPracticeModule";
+import { useSEO } from "@/hooks/useSEO";
 
 type View = "dashboard" | "overview" | "modules" | "lesson" | "test" | "results" | "practice";
 
@@ -24,6 +25,14 @@ export default function IELTSPrepPage() {
   const practiceData = COUNTRY_PRACTICE_DATA[redirectCountry] || COUNTRY_PRACTICE_DATA["uk"];
   const modules = config.modules;
   const questions = config.questions;
+
+  // Phase 2 Feature: Travel Requirements Preparation
+// Set SEO metadata for travel requirements preparation
+  useSEO({
+    title: 'Travel Requirements Preparation | Language Test Training | TravelAI',
+    description: 'Prepare for travel requirements with comprehensive language test preparation, practice modules, and expert guidance. Meet travel eligibility criteria with AI-powered training.',
+    keywords: 'travel requirements preparation, language test for travel, travel eligibility training, IELTS for travel, English test for tourism, travel language preparation'
+  });
 
   const [view, setView] = useState<View>("dashboard");
   const [activeModule, setActiveModule] = useState<IELTSModule | null>(null);

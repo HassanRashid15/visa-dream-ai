@@ -6,6 +6,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { COUNTRY_DETAILS, type VisaTypeInfo } from "@/lib/countryData";
 import { useState } from "react";
+import { useSEO } from "@/hooks/useSEO";
 
 function VisaCard({ visa, index, countryId }: { visa: VisaTypeInfo; index: number; countryId: string }) {
   const [expanded, setExpanded] = useState(false);
@@ -89,6 +90,17 @@ export default function CountryDetail() {
   const { country } = useParams<{ country: string }>();
   const navigate = useNavigate();
   const detail = country ? COUNTRY_DETAILS[country] : null;
+
+  // Set SEO metadata based on country
+  useSEO({
+    title: detail ? `${detail.name} Travel Guide | AI-Powered Destination Insights | TravelAI` : 'Destination Travel Guide | TravelAI',
+    description: detail 
+      ? `Discover comprehensive travel information for ${detail.name}. Get AI-powered destination insights, travel requirements, local attractions, and personalized travel planning assistance.`
+      : 'Explore amazing destinations with AI-powered travel guidance. Get destination insights, travel requirements, and personalized planning for your perfect journey.',
+    keywords: detail 
+      ? `${detail.name} travel guide, ${detail.name} tourism, visit ${detail.name}, ${detail.name} attractions, ${detail.name} travel planning, AI travel ${detail.name}`
+      : 'travel guide, destination insights, travel planning, AI travel assistance, tourism guide, travel destinations'
+  });
 
   // Debug: Log to check if heroImage is available
   if (detail) {

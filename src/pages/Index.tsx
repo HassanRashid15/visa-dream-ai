@@ -7,8 +7,15 @@ import TrustSection from "@/components/TrustSection";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
+import { useSEO } from "@/hooks/useSEO";
 
 const Index = () => {
+  useSEO({
+    title: 'TravelAI — Your Intelligent Travel Agent | Plan Perfect Journeys',
+    description: 'Discover amazing destinations with AI-powered travel guidance. Get personalized travel planning, destination insights, and comprehensive travel assistance for Canada, UK, and Australia.',
+    keywords: 'AI travel agent, intelligent travel planning, destination guide, travel assistance, Canada travel guide, UK travel planning, Australia travel advisor, personalized travel'
+  });
+
   return (
     <div className="min-h-screen bg-background relative">
       <Header />

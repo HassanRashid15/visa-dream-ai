@@ -14,6 +14,7 @@ import {
   AnimatedCounter, GradientText, PulseDot, TiltCard,
   StaggerContainer, StaggerItem, SparkleBorder
 } from "@/components/ui/animated-bits";
+import { useSEO } from "@/hooks/useSEO";
 
 interface ApplicationStep {
   id: string;
@@ -120,6 +121,13 @@ export default function ApplicationTracker() {
   const navigate = useNavigate();
   const [steps] = useState<ApplicationStep[]>(DEMO_STEPS);
   const [expandedStep, setExpandedStep] = useState<string | null>("3");
+
+  // Set SEO metadata for travel journey tracker
+  useSEO({
+    title: 'Travel Journey Tracker | Real-time Trip Planning Updates | TravelAI',
+    description: 'Track your travel journey progress in real-time. Monitor trip planning stages, document preparation, and get timely updates for your perfect travel experience.',
+    keywords: 'travel journey tracker, trip planning progress, travel preparation status, travel document tracking, journey planning updates, AI travel assistance'
+  });
 
   const completedSteps = steps.filter(s => s.status === "completed").length;
   const totalSteps = steps.length;

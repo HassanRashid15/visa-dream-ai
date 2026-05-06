@@ -10,31 +10,31 @@ export default function Footer() {
               <div className="h-8 w-8 rounded-lg bg-accent flex items-center justify-center">
                 <Globe className="h-4 w-4 text-accent-foreground" />
               </div>
-              <span className="font-display text-lg font-bold">VisaCheck</span>
+              <span className="font-display text-lg font-bold">TravelAI</span>
             </div>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              AI-powered visa eligibility assessment. Transparent, honest, and built to help you make informed decisions.
+              AI-powered travel planning assistance. Your intelligent travel agent for amazing journeys and experiences.
             </p>
           </div>
           <div>
-            <h4 className="font-semibold text-sm mb-3">Countries</h4>
+            <h4 className="font-semibold text-sm mb-3">Destinations</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><a href="/check/canada" className="hover:text-foreground transition-colors">🇨🇦 Canada</a></li>
-              <li><a href="/check/uk" className="hover:text-foreground transition-colors">🇬🇧 United Kingdom</a></li>
-              <li><a href="/check/australia" className="hover:text-foreground transition-colors">🇦🇺 Australia</a></li>
+              <li><a href="/country/canada" className="hover:text-foreground transition-colors">🇨🇦 Canada</a></li>
+              <li><a href="/country/uk" className="hover:text-foreground transition-colors">🇬🇧 United Kingdom</a></li>
+              <li><a href="/country/australia" className="hover:text-foreground transition-colors">🇦🇺 Australia</a></li>
             </ul>
           </div>
           <div>
-            <h4 className="font-semibold text-sm mb-3">Important</h4>
+            <h4 className="font-semibold text-sm mb-3">Travel Tips</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li>No one can guarantee a visa</li>
-              <li>Always verify with official sources</li>
-              <li>This is an indicative tool only</li>
+              <li>Always check travel advisories</li>
+              <li>Verify with official tourism sources</li>
+              <li>Prepare documents in advance</li>
             </ul>
           </div>
         </div>
         <div className="border-t border-border pt-6 text-center text-xs text-muted-foreground">
-          © {new Date().getFullYear()} VisaCheck. This tool is for informational purposes only. Not legal advice.
+          © {new Date().getFullYear()} TravelAI. Your AI travel planning companion. Not a substitute for professional travel advice.
         </div>
       </div>
     </footer>

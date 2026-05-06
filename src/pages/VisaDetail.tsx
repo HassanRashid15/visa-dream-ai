@@ -1,36 +1,3 @@
-<<<<<<< HEAD
-import { useState, useEffect, useMemo, useCallback } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
-import { 
-  ArrowLeft, Clock, Users, FileText, CheckCircle, AlertCircle, 
-  BookOpen, Globe, Heart, Shield, Plane, Briefcase, CreditCard,
-  ChevronRight, Star, ArrowRight, Info, ListChecks, ExternalLink,
-  Footprints, DollarSign, AlertTriangle, HelpCircle, ChevronDown
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { UK_VISA_DETAILS, type VisaDetailData } from "@/lib/ukVisaDetails";
-import { COUNTRY_DETAILS } from "@/lib/countryData";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import AISidebar from "@/components/AISidebar";
-import ScoreResult from "@/components/ScoreResult";
-import DocumentUpload from "@/components/DocumentUpload";
-import { usePerformanceOptimization, useViewport } from "@/hooks/usePerformanceOptimization";
-import { MobileContainer, MobileGrid, MobileCard, MobileButton, MobileText, MobileNav } from "@/components/ui/mobile-optimized";
-import { memoryCache } from "@/lib/performance";
-import {
-  AnimatedCounter, GradientText, PulseDot, TiltCard,
-  StaggerContainer, StaggerItem, SparkleBorder
-} from "@/components/ui/animated-bits";
-import { useSEO } from "@/hooks/useSEO";
-=======
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";

@@ -317,7 +317,7 @@ export default function VisaDetail() {
       {/* Main Content with Sidebar */}
       <div className="flex">
         <div className="flex-1">
-          <div className="container max-w-4xl mx-auto px-4 py-10 space-y-14">
+          <div ref={contentRef} className="container max-w-4xl mx-auto px-4 py-10 space-y-14">
 
             {/* Comprehensive Overview */}
             {visa.comprehensiveOverview && (
@@ -673,7 +673,8 @@ export default function VisaDetail() {
             </motion.section>
           </div>
         </div>
-        <AISidebar visa={visa} universities={universities} />
+        <AISidebar visa={visa} universities={universities} activeSection={activeSection} />
+        <HighlightAskAI containerRef={contentRef} />
       </div>
       <Footer />
 

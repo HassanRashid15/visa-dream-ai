@@ -495,6 +495,55 @@ export default function AISidebar({ visa, universities = [], activeSection }: AI
 
           {/* Input Area */}
           <div className="p-4 border-t border-border flex-shrink-0 sticky bottom-0 bg-background">
+            {rateLimit && (() => {
+              const secondsLeft = Math.max(0, Math.ceil((rateLimit.retryAt - now) / 1000));
+              const ready = secondsLeft === 0;
+              return (
+                <div className="mb-3 rounded-lg border border-amber-500/30 bg-amber-500/5 p-3 space-y-2">
+                  <div className="flex items-start gap-2">
+                    <Clock className="h-4 w-4 text-amber-600 mt-0.5 flex-shrink-0" />
+                    <div className="text-xs">
+                      <p className="font-semibold text-foreground">
+                        {ready ? "Ready to retry" : `Slow down — too many questions`}
+                      </p>
+                      <p className="text-muted-foreground mt-0.5">
+                        {ready
+                          ? "You can send your question again now."
+                          : `Try again in ${secondsLeft}s. Meanwhile, a clearer question often gets a better answer.`}
+                      </p>
+                    </div>
+                  </div>
+                  {!ready && (
+                    <ul className="text-[11px] text-muted-foreground space-y-0.5 pl-6 list-disc">
+                      {REPHRASE_TIPS.slice(0, 3).map((t) => <li key={t}>{t}</li>)}
+                    </ul>
+                  )}
+                  <div className="flex items-center gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      disabled={!ready}
+                      onClick={() => {
+                        const q = rateLimit.lastQuestion;
+                        setRateLimit(null);
+                        void sendToAI(q);
+                      }}
+                      className="h-7 text-xs gap-1"
+                    >
+                      <RefreshCw className="h-3 w-3" /> Retry{ready ? "" : ` (${secondsLeft}s)`}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => setRateLimit(null)}
+                      className="h-7 text-xs"
+                    >
+                      Dismiss
+                    </Button>
+                  </div>
+                </div>
+              );
+            })()}
             <div className="relative">
               <div className="flex gap-2 mb-3 overflow-x-auto scrollbar-hide w-full">
                 {promptCapsules.map((prompt) => (

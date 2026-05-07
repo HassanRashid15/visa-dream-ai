@@ -38,13 +38,16 @@ export default function AuthPage() {
     try {
       if (mode === "login") {
         await login(form.email, form.password);
+        toast({ title: "Welcome back!", description: "You're now signed in." });
+        navigate(redirect);
       } else {
         await signup(form.name, form.email, form.password);
+        toast({ title: "Account created!", description: "You're now signed in." });
+        navigate(redirect);
       }
-      toast({ title: mode === "login" ? "Welcome back!" : "Account created!", description: "You're now signed in." });
-      navigate(redirect);
-    } catch {
-      toast({ title: "Error", description: "Something went wrong", variant: "destructive" });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Something went wrong";
+      toast({ title: "Authentication failed", description: msg, variant: "destructive" });
     } finally {
       setLoading(false);
     }

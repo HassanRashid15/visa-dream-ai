@@ -368,6 +368,18 @@ export default function AISidebar({ visa, universities = [], activeSection }: AI
             </div>
           </div>
         )}
+        <div className="flex items-center gap-1">
+        {!isMinimized && messages.length > 1 && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={clearChat}
+            className="h-8 w-8 p-0"
+            title="Clear chat history"
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        )}
         <Button
           variant="ghost"
           size="sm"
@@ -378,6 +390,7 @@ export default function AISidebar({ visa, universities = [], activeSection }: AI
           {!isMobile && isMinimized && <Maximize2 className="h-4 w-4" />}
           {!isMobile && !isMinimized && <Minimize2 className="h-4 w-4" />}
         </Button>
+        </div>
       </div>
 
       {!isMinimized && (
@@ -424,7 +437,28 @@ export default function AISidebar({ visa, universities = [], activeSection }: AI
                   </div>
                 )}
                 <Card className={`max-w-[80%] p-3 ${message.sender === "user" ? "bg-primary text-primary-foreground" : "bg-muted"}`}>
-                  <p className="text-sm">{message.text}</p>
+                  <p className="text-sm whitespace-pre-wrap">{message.text}</p>
+                  {message.sender === "ai" && message.refs && message.refs.length > 0 && (
+                    <div className="mt-2 flex flex-wrap gap-1">
+                      {message.refs.map((ref) => (
+                        <button
+                          key={ref}
+                          type="button"
+                          onClick={() => {
+                            const el = document.querySelector(`[data-ai-section="${ref}"]`);
+                            if (el) {
+                              el.scrollIntoView({ behavior: "smooth", block: "start" });
+                              if (isMobile) setIsMobileDrawerOpen(false);
+                            }
+                          }}
+                          className="text-[10px] font-medium uppercase tracking-wide px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-colors"
+                          title={`Jump to ${SECTION_LABELS[ref] ?? ref}`}
+                        >
+                          § {SECTION_LABELS[ref] ?? ref}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                   <p className="text-xs opacity-70 mt-1">
                     {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </p>

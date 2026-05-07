@@ -85,10 +85,14 @@ export default function AISidebar({ visa, universities = [], activeSection }: AI
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [showSignInPrompt, setShowSignInPrompt] = useState(false);
+  const [rateLimit, setRateLimit] = useState<{ retryAt: number; lastQuestion: string } | null>(null);
+  const [now, setNow] = useState(Date.now());
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const location = useLocation();
   const { isAuthenticated } = useAuth();
+
+  const storageKey = `visa-chat-${visa.id}`;
 
   // Check if mobile
   useEffect(() => {
@@ -121,16 +125,59 @@ export default function AISidebar({ visa, universities = [], activeSection }: AI
   const guestRemainingCount = Math.max(0, GUEST_CHAT_LIMIT - guestUsedCount);
 
   useEffect(() => {
-    const welcomeMessage: Message = {
-      id: `welcome-${visa.id}`,
-      text: `Hello! I'm your AI visa assistant for ${visa.name}. Ask me about eligibility, costs, documents, processing time, or application steps — or highlight any text on the page and tap "Ask AI".${visa.id === "study" && universities.length ? " I can also help with top universities." : ""}`,
-      sender: "ai",
-      timestamp: new Date(),
-    };
-    setMessages([welcomeMessage]);
-  }, [visa.id, visa.name, universities.length]);
+    // Load saved messages for this visa, or seed welcome
+    try {
+      const saved = localStorage.getItem(storageKey);
+      if (saved) {
+        const parsed = JSON.parse(saved) as Message[];
+        setMessages(parsed.map((m) => ({ ...m, timestamp: new Date(m.timestamp) })));
+        return;
+      }
+    } catch {
+      /* ignore */
+    }
+    setMessages([
+      {
+        id: `welcome-${visa.id}`,
+        text: `Hello! I'm your AI visa assistant for ${visa.name}. Ask me about eligibility, costs, documents, processing time, or application steps — or highlight any text on the page and tap "Ask AI".${visa.id === "study" && universities.length ? " I can also help with top universities." : ""}`,
+        sender: "ai",
+        timestamp: new Date(),
+      },
+    ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [visa.id]);
+
+  // Persist messages per visa
+  useEffect(() => {
+    if (messages.length === 0) return;
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(messages));
+    } catch {
+      /* ignore quota */
+    }
+  }, [messages, storageKey]);
+
+  // Tick for rate-limit countdown
+  useEffect(() => {
+    if (!rateLimit) return;
+    const id = setInterval(() => setNow(Date.now()), 500);
+    return () => clearInterval(id);
+  }, [rateLimit]);
+
+  const clearChat = () => {
+    try { localStorage.removeItem(storageKey); } catch { /* ignore */ }
+    setMessages([
+      {
+        id: `welcome-${visa.id}-${Date.now()}`,
+        text: `Chat cleared. Ask me anything about ${visa.name}.`,
+        sender: "ai",
+        timestamp: new Date(),
+      },
+    ]);
+  };
 
   const sendToAI = async (currentInput: string, highlightedText?: string) => {
+    if (rateLimit && Date.now() < rateLimit.retryAt) return;
     const userMessage: Message = {
       id: Date.now().toString(),
       text: highlightedText ? `“${highlightedText}” — ${currentInput}` : currentInput,
@@ -168,6 +215,13 @@ export default function AISidebar({ visa, universities = [], activeSection }: AI
         body: { question: currentInput, highlightedText, visaContext, history },
       });
 
+      // Detect rate limit (functions.invoke surfaces non-2xx as error)
+      const errStatus = (error as unknown as { context?: { status?: number } } | null)?.context?.status;
+      if (errStatus === 429 || data?.code === "rate_limited") {
+        const retrySec = (data?.retryAfter as number | undefined) ?? 30;
+        setRateLimit({ retryAt: Date.now() + retrySec * 1000, lastQuestion: currentInput });
+        return;
+      }
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
 
@@ -176,6 +230,7 @@ export default function AISidebar({ visa, universities = [], activeSection }: AI
         text: data?.answer ?? "Sorry, I couldn't generate a response.",
         sender: "ai",
         timestamp: new Date(),
+        refs: Array.isArray(data?.refs) ? data.refs : [],
       };
       setMessages((prev) => [...prev, aiMessage]);
     } catch (e) {

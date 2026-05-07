@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Send, Bot, User, Minimize2, Maximize2, MessageCircle, X, Lock } from "lucide-react";
+import { Send, Bot, User, Minimize2, Maximize2, MessageCircle, X, Lock, Clock, RefreshCw, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import type { VisaDetailData } from "@/lib/ukVisaDetails";
@@ -16,7 +16,25 @@ interface Message {
   text: string;
   sender: "user" | "ai";
   timestamp: Date;
+  refs?: string[];
 }
+
+const SECTION_LABELS: Record<string, string> = {
+  overview: "Overview",
+  eligibility: "Eligibility",
+  steps: "Application Steps",
+  documents: "Documents",
+  fees: "Fees",
+  universities: "Universities",
+  faqs: "FAQs",
+};
+
+const REPHRASE_TIPS = [
+  "Be specific — mention the visa stage (apply, decide, arrive).",
+  "Ask about one thing at a time (cost OR documents, not both).",
+  "Include your situation: country, course, salary, dependants.",
+  "Try yes/no questions for faster, clearer answers.",
+];
 
 interface AISidebarProps {
   visa: VisaDetailData;

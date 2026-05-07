@@ -4,6 +4,10 @@ import HeroSection from "@/components/HeroSection";
 import CountrySelector from "@/components/CountrySelector";
 import HowItWorks from "@/components/HowItWorks";
 import TrustSection from "@/components/TrustSection";
+import VisaTypesPreview from "@/components/VisaTypesPreview";
+import Testimonials from "@/components/Testimonials";
+import FAQSection from "@/components/FAQSection";
+import NewsletterSignup from "@/components/NewsletterSignup";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
@@ -11,9 +15,9 @@ import { useSEO } from "@/hooks/useSEO";
 
 const Index = () => {
   useSEO({
-    title: 'TravelAI — Your Intelligent Travel Agent | Plan Perfect Journeys',
-    description: 'Discover amazing destinations with AI-powered travel guidance. Get personalized travel planning, destination insights, and comprehensive travel assistance for Canada, UK, and Australia.',
-    keywords: 'AI travel agent, intelligent travel planning, destination guide, travel assistance, Canada travel guide, UK travel planning, Australia travel advisor, personalized travel'
+    title: 'VisaDreams — UK Visa & Immigration Experts | AI-Powered Guidance',
+    description: 'Navigate UK visa applications with AI-powered guidance. Get eligibility checks, document checklists, IELTS prep, cost calculators, and expert consultations for Student, Work, ILR, and Tourist visas.',
+    keywords: 'UK visa, UK immigration, student visa UK, work visa UK, ILR UK, tourist visa UK, visa eligibility, UK visa calculator, IELTS prep UK, visa consultation'
   });
 
   return (
@@ -21,8 +25,12 @@ const Index = () => {
       <Header />
       <HeroSection />
       <CountrySelector />
+      <VisaTypesPreview />
       <HowItWorks />
       <TrustSection />
+      <Testimonials />
+      <FAQSection />
+      <NewsletterSignup />
 
       {/* CTA Section */}
       <section className="py-24 px-4 hero-gradient relative overflow-hidden">
@@ -49,14 +57,14 @@ const Index = () => {
             viewport={{ once: true }}
           >
             <h2 className="text-3xl md:text-4xl font-display font-bold text-primary-foreground mb-4">
-              Ready to Check Your Eligibility?
+              Ready to Start Your UK Visa Journey?
             </h2>
             <p className="text-primary-foreground/70 mb-8 max-w-xl mx-auto">
-              It takes less than 60 seconds. No sign-up required. Get honest, data-driven results.
+              It takes less than 60 seconds. No sign-up required. Get honest, AI-powered eligibility results.
             </p>
             <Button variant="hero" size="xl" asChild>
               <a href="#countries">
-                Start Now <ArrowRight className="h-5 w-5" />
+                Check Eligibility Now <ArrowRight className="h-5 w-5" />
               </a>
             </Button>
           </motion.div>

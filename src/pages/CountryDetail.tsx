@@ -1,6 +1,9 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, ArrowRight, Clock, DollarSign, FileText, GraduationCap, MapPin, Globe, Star, CheckCircle, ChevronDown } from "lucide-react";
+import {
+  ArrowLeft, ArrowRight, Clock, DollarSign, FileText, GraduationCap, MapPin, Globe, Star, CheckCircle, ChevronDown,
+  Users, Crown, Briefcase, Landmark, TrendingUp, Building2, HeartPulse, Code, Plane, BookOpen, ChevronRight
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -93,13 +96,13 @@ export default function CountryDetail() {
 
   // Set SEO metadata based on country
   useSEO({
-    title: detail ? `${detail.name} Travel Guide | AI-Powered Destination Insights | TravelAI` : 'Destination Travel Guide | TravelAI',
+    title: detail ? `${detail.name} UK Visa Guide | Immigration Insights | VisaDreams` : 'UK Visa Guide | VisaDreams',
     description: detail 
-      ? `Discover comprehensive travel information for ${detail.name}. Get AI-powered destination insights, travel requirements, local attractions, and personalized travel planning assistance.`
-      : 'Explore amazing destinations with AI-powered travel guidance. Get destination insights, travel requirements, and personalized planning for your perfect journey.',
+      ? `Comprehensive UK visa and immigration information for ${detail.name}. Get AI-powered insights, visa requirements, costs, timelines, and personalized application guidance.`
+      : 'Explore UK visa options with AI-powered immigration guidance. Get visa requirements, costs, timelines, and personalized application assistance.',
     keywords: detail 
-      ? `${detail.name} travel guide, ${detail.name} tourism, visit ${detail.name}, ${detail.name} attractions, ${detail.name} travel planning, AI travel ${detail.name}`
-      : 'travel guide, destination insights, travel planning, AI travel assistance, tourism guide, travel destinations'
+      ? `${detail.name} UK visa, ${detail.name} immigration, UK visa guide, ${detail.name} visa requirements, UK visa costs, AI immigration ${detail.name}`
+      : 'UK visa guide, UK immigration, visa requirements UK, visa costs UK, AI visa assistance, immigration guidance'
   });
 
   // Debug: Log to check if heroImage is available
@@ -165,61 +168,105 @@ export default function CountryDetail() {
             <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 text-white/90 text-sm backdrop-blur-sm border border-white/20">
               <MapPin className="h-3.5 w-3.5" /> {detail.capital}
             </span>
+            {detail.id === "uk" && (
+              <>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 text-white/90 text-sm backdrop-blur-sm border border-white/20">
+                  <Users className="h-3.5 w-3.5" /> 600K+ yearly arrivals
+                </span>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 text-white/90 text-sm backdrop-blur-sm border border-white/20">
+                  <Crown className="h-3.5 w-3.5" /> 4 Top-10 Universities
+                </span>
+              </>
+            )}
           </div>
         </div>
       </div>
 
       <div className="flex-1">
         <div className="container max-w-5xl mx-auto px-4 py-12 space-y-16">
-          {/* Dynamic Country Snapshot */}
-          <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-            <div className="mb-8">
-              <span className="text-sm font-semibold text-accent uppercase tracking-wider">Country Snapshot</span>
-              <h2 className="text-2xl md:text-3xl font-display font-bold mt-1">{detail.name} at a Glance</h2>
-              <p className="text-muted-foreground mt-2 max-w-3xl">
-                Dynamic details based on your selected country to help you compare options faster before choosing a visa category.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {[
-                { label: "Capital", value: detail.capital, icon: MapPin },
-                { label: "Language", value: detail.language, icon: Globe },
-                { label: "Currency", value: detail.currency, icon: DollarSign },
-                { label: "Visa Categories", value: `${detail.visaTypes.length} options`, icon: FileText },
-              ].map((item) => (
-                <div key={item.label} className="rounded-xl border border-border bg-card p-4 card-elevated">
-                  <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center mb-3">
-                    <item.icon className="h-4.5 w-4.5 text-primary" />
+          {/* Aspirational Stats — Why the UK */}
+          {detail.id === "uk" && (
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+              <div className="mb-8">
+                <span className="text-sm font-semibold text-accent uppercase tracking-wider">Why the UK?</span>
+                <h2 className="text-2xl md:text-3xl font-display font-bold mt-1">The Numbers That Make the UK Irresistible</h2>
+                <p className="text-muted-foreground mt-2 max-w-3xl">
+                  Thousands of students and professionals choose the UK every year. Here is why it could be your perfect next chapter.
+                </p>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {[
+                  { label: "International Students", value: "600,000+", sub: "welcomed yearly", icon: Users },
+                  { label: "Top-Ranked Universities", value: "4", sub: "in the global top 10", icon: Crown },
+                  { label: "Post-Study Work", value: "2 Years", sub: "via Graduate Route", icon: Briefcase },
+                  { label: "Part-Time Earnings", value: "£15–25", sub: "per hour while studying", icon: DollarSign },
+                ].map((item) => (
+                  <div key={item.label} className="rounded-xl border border-border bg-card p-5 card-elevated text-center">
+                    <div className="h-10 w-10 rounded-lg bg-accent/10 flex items-center justify-center mx-auto mb-3">
+                      <item.icon className="h-5 w-5 text-accent" />
+                    </div>
+                    <p className="text-2xl font-display font-bold text-foreground">{item.value}</p>
+                    <p className="text-xs font-semibold text-foreground mt-1">{item.label}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{item.sub}</p>
                   </div>
-                  <p className="text-xs text-muted-foreground">{item.label}</p>
-                  <p className="text-sm font-semibold mt-1">{item.value}</p>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            </motion.section>
+          )}
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-              <div className="rounded-xl border border-border bg-muted/40 p-4">
-                <p className="text-xs text-muted-foreground">Tuition (per year)</p>
-                <p className="text-sm font-semibold mt-1">{detail.costs.tuitionPerYear}</p>
+          {/* Generic Country Snapshot for non-UK */}
+          {detail.id !== "uk" && (
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+              <div className="mb-8">
+                <span className="text-sm font-semibold text-accent uppercase tracking-wider">Country Snapshot</span>
+                <h2 className="text-2xl md:text-3xl font-display font-bold mt-1">{detail.name} at a Glance</h2>
+                <p className="text-muted-foreground mt-2 max-w-3xl">
+                  Dynamic details based on your selected country to help you compare options faster before choosing a visa category.
+                </p>
               </div>
-              <div className="rounded-xl border border-border bg-muted/40 p-4">
-                <p className="text-xs text-muted-foreground">Living Cost (per month)</p>
-                <p className="text-sm font-semibold mt-1">{detail.costs.livingCostPerMonth}</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {[
+                  { label: "Capital", value: detail.capital, icon: MapPin },
+                  { label: "Language", value: detail.language, icon: Globe },
+                  { label: "Currency", value: detail.currency, icon: DollarSign },
+                  { label: "Visa Categories", value: `${detail.visaTypes.length} options`, icon: FileText },
+                ].map((item) => (
+                  <div key={item.label} className="rounded-xl border border-border bg-card p-4 card-elevated">
+                    <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center mb-3">
+                      <item.icon className="h-4.5 w-4.5 text-primary" />
+                    </div>
+                    <p className="text-xs text-muted-foreground">{item.label}</p>
+                    <p className="text-sm font-semibold mt-1">{item.value}</p>
+                  </div>
+                ))}
               </div>
-              <div className="rounded-xl border border-border bg-muted/40 p-4">
-                <p className="text-xs text-muted-foreground">Estimated First Year</p>
-                <p className="text-sm font-semibold mt-1 text-primary">{detail.costs.totalEstimatedFirst}</p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                <div className="rounded-xl border border-border bg-muted/40 p-4">
+                  <p className="text-xs text-muted-foreground">Tuition (per year)</p>
+                  <p className="text-sm font-semibold mt-1">{detail.costs.tuitionPerYear}</p>
+                </div>
+                <div className="rounded-xl border border-border bg-muted/40 p-4">
+                  <p className="text-xs text-muted-foreground">Living Cost (per month)</p>
+                  <p className="text-sm font-semibold mt-1">{detail.costs.livingCostPerMonth}</p>
+                </div>
+                <div className="rounded-xl border border-border bg-muted/40 p-4">
+                  <p className="text-xs text-muted-foreground">Estimated First Year</p>
+                  <p className="text-sm font-semibold mt-1 text-primary">{detail.costs.totalEstimatedFirst}</p>
+                </div>
               </div>
-            </div>
-          </motion.section>
+            </motion.section>
+          )}
 
           {/* Image Gallery */}
           <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
             <div className="mb-8">
               <span className="text-sm font-semibold text-accent uppercase tracking-wider">Experience {detail.name}</span>
               <h2 className="text-2xl md:text-3xl font-display font-bold mt-1">Life & Study</h2>
-              <p className="text-muted-foreground mt-2 max-w-2xl">Get a glimpse of student life, campus experiences, and the beautiful landscapes that await you.</p>
+              <p className="text-muted-foreground mt-2 max-w-2xl">
+                {detail.id === "uk"
+                  ? "From the historic quads of Oxford to the vibrant streets of London, the tech hubs of Manchester to the creative scene in Edinburgh — picture yourself here."
+                  : "Get a glimpse of student life, campus experiences, and the beautiful landscapes that await you."}
+              </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {detail.galleryImages.map((image, i) => (
@@ -232,8 +279,8 @@ export default function CountryDetail() {
                   transition={{ delay: i * 0.1 }}
                   whileHover={{ scale: 1.02 }}
                 >
-                  <img 
-                    src={image} 
+                  <img
+                    src={image}
                     alt={`${detail.name} gallery ${i + 1}`}
                     className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
                   />
@@ -243,12 +290,114 @@ export default function CountryDetail() {
             </div>
           </motion.section>
 
+          {/* Top Universities — UK only */}
+          {detail.id === "uk" && detail.universities && detail.universities.length > 0 && (
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+              <div className="mb-8">
+                <span className="text-sm font-semibold text-accent uppercase tracking-wider">World-Class Institutions</span>
+                <h2 className="text-2xl md:text-3xl font-display font-bold mt-1">Top UK Universities</h2>
+                <p className="text-muted-foreground mt-2 max-w-2xl">
+                  These are the institutions shaping the next generation of global leaders. Your name could be on their admission list.
+                </p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {detail.universities.map((uni, i) => (
+                  <motion.div
+                    key={uni.name}
+                    className="rounded-xl border border-border bg-card p-5 card-elevated"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.08 }}
+                  >
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="font-display font-bold text-sm">{uni.name}</h3>
+                      <span className="text-xs font-semibold text-accent bg-accent/10 px-2 py-0.5 rounded-full">{uni.ranking}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-3">
+                      <MapPin className="h-3 w-3" /> {uni.location}
+                    </div>
+                    <p className="text-xs text-muted-foreground mb-2">Tuition: {uni.tuitionRange}</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {uni.popularCourses.map((course) => (
+                        <span key={course} className="text-[10px] bg-muted px-2 py-0.5 rounded-full text-muted-foreground">{course}</span>
+                      ))}
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.section>
+          )}
+
+          {/* Your UK Visa Journey */}
+          {detail.id === "uk" && (
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+              <div className="mb-8">
+                <span className="text-sm font-semibold text-accent uppercase tracking-wider">Your Pathway</span>
+                <h2 className="text-2xl md:text-3xl font-display font-bold mt-1">From Application to Settlement</h2>
+                <p className="text-muted-foreground mt-2 max-w-2xl">
+                  The UK offers one of the clearest immigration pathways in the world. See how your journey could unfold step by step.
+                </p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {[
+                  {
+                    title: "Study Route",
+                    icon: BookOpen,
+                    color: "bg-blue-500/10 text-blue-600 border-blue-500/20",
+                    steps: ["Get admission & CAS from a UK university", "Apply for Student Visa (3–6 weeks)", "Arrive, study, work part-time", "Graduate & switch to Graduate Route (2 years)", "Find a sponsored job & switch to Skilled Worker"],
+                  },
+                  {
+                    title: "Work Route",
+                    icon: Briefcase,
+                    color: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20",
+                    steps: ["Secure a job offer from a licensed sponsor", "Receive Certificate of Sponsorship (CoS)", "Apply for Skilled Worker Visa (3–8 weeks)", "Move to the UK & start your career", "After 5 years → apply for Indefinite Leave to Remain"],
+                  },
+                  {
+                    title: "Settlement Route",
+                    icon: Landmark,
+                    color: "bg-violet-500/10 text-violet-600 border-violet-500/20",
+                    steps: ["Complete 5 years on a qualifying visa", "Pass the Life in the UK test", "Prove English at B1 level or higher", "Apply for ILR (Indefinite Leave to Remain)", "After 1 year of ILR → apply for British Citizenship"],
+                  },
+                ].map((path, i) => (
+                  <motion.div
+                    key={path.title}
+                    className={`rounded-2xl border p-6 card-elevated ${path.color}`}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.12 }}
+                  >
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="h-10 w-10 rounded-lg bg-white/60 flex items-center justify-center">
+                        <path.icon className="h-5 w-5" />
+                      </div>
+                      <h3 className="font-display font-bold">{path.title}</h3>
+                    </div>
+                    <ol className="space-y-3">
+                      {path.steps.map((step, j) => (
+                        <li key={j} className="flex items-start gap-2.5 text-sm">
+                          <span className="flex-shrink-0 h-5 w-5 rounded-full bg-current/10 flex items-center justify-center text-xs font-bold mt-0.5">{j + 1}</span>
+                          <span className="text-foreground/90">{step}</span>
+                        </li>
+                      ))}
+                    </ol>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.section>
+          )}
+
           {/* Visa Types */}
           <section>
             <motion.div className="mb-8" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
               <span className="text-sm font-semibold text-accent uppercase tracking-wider">Visa Options</span>
               <h2 className="text-2xl md:text-3xl font-display font-bold mt-1">Choose Your Visa Type</h2>
-              <p className="text-muted-foreground mt-2 max-w-2xl">Select the visa that matches your goals. Each includes requirements, costs, and a full document checklist.</p>
+              <p className="text-muted-foreground mt-2 max-w-2xl">
+                {detail.id === "uk"
+                  ? "Every UK visa has a purpose — and a clear path forward. Pick the one that aligns with your dream and we will guide you through every document, deadline, and detail."
+                  : "Select the visa that matches your goals. Each includes requirements, costs, and a full document checklist."}
+              </p>
             </motion.div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {detail.visaTypes.map((visa, i) => (
@@ -259,16 +408,65 @@ export default function CountryDetail() {
 
           {/* About & Highlights */}
           <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+            <div className="mb-6">
+              <span className="text-sm font-semibold text-accent uppercase tracking-wider">Why {detail.name}?</span>
+              <h2 className="text-2xl md:text-3xl font-display font-bold mt-1">A Destination That Invests in You</h2>
+            </div>
             <p className="text-muted-foreground leading-relaxed max-w-3xl mb-8">{detail.description}</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {detail.highlights.map((h, i) => (
-                <div key={i} className="flex items-start gap-3 p-4 rounded-xl bg-muted/50 border border-border">
+                <motion.div
+                  key={i}
+                  className="flex items-start gap-3 p-4 rounded-xl bg-muted/50 border border-border card-elevated"
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.05 }}
+                >
                   <Star className="h-5 w-5 text-accent mt-0.5 flex-shrink-0" />
                   <span className="text-sm leading-relaxed">{h}</span>
-                </div>
+                </motion.div>
               ))}
             </div>
           </motion.section>
+
+          {/* Top UK Employers — UK only */}
+          {detail.id === "uk" && (
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+              <div className="mb-8">
+                <span className="text-sm font-semibold text-accent uppercase tracking-wider">Career Opportunities</span>
+                <h2 className="text-2xl md:text-3xl font-display font-bold mt-1">Top UK Employers Hiring Internationally</h2>
+                <p className="text-muted-foreground mt-2 max-w-2xl">
+                  These companies actively sponsor Skilled Worker visas. Your next job — and your path to settlement — could start here.
+                </p>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
+                {[
+                  { name: "NHS", sector: "Healthcare", icon: HeartPulse },
+                  { name: "Deloitte", sector: "Consulting", icon: Briefcase },
+                  { name: "Google UK", sector: "Technology", icon: Code },
+                  { name: "Barclays", sector: "Finance", icon: Landmark },
+                  { name: "BP", sector: "Energy", icon: TrendingUp },
+                  { name: "Rolls-Royce", sector: "Engineering", icon: Building2 },
+                ].map((emp, i) => (
+                  <motion.div
+                    key={emp.name}
+                    className="rounded-xl border border-border bg-card p-4 card-elevated text-center"
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.06 }}
+                  >
+                    <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-2">
+                      <emp.icon className="h-4.5 w-4.5 text-primary" />
+                    </div>
+                    <p className="text-xs font-semibold">{emp.name}</p>
+                    <p className="text-[10px] text-muted-foreground">{emp.sector}</p>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.section>
+          )}
 
           {/* Cost Breakdown */}
           <section>
@@ -320,15 +518,22 @@ export default function CountryDetail() {
             viewport={{ once: true }}
           >
             <h2 className="text-2xl md:text-3xl font-display font-bold text-primary-foreground mb-3">
-              Ready to Start Your Journey to {detail.name}?
+              {detail.id === "uk" ? "Your UK Visa Is Closer Than You Think" : `Ready to Start Your Journey to ${detail.name}?`}
             </h2>
             <p className="text-primary-foreground/70 mb-6 max-w-xl mx-auto">
-              Check your eligibility now or explore visa options above. Our AI-powered assessment takes less than 60 seconds.
+              {detail.id === "uk"
+                ? "Thousands have made it. Check your eligibility, review your documents, and take the first real step toward your UK dream — in under 60 seconds."
+                : "Check your eligibility now or explore visa options above. Our AI-powered assessment takes less than 60 seconds."}
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Button variant="hero" size="xl" onClick={() => navigate(`/pre-check/${detail.id}`)}>
                 Check My Eligibility <ArrowRight className="h-5 w-5" />
               </Button>
+              {detail.id === "uk" && (
+                <Button variant="hero-outline" size="lg" onClick={() => navigate(`/country/uk/visa/student`)}>
+                  Explore Student Visa <ChevronRight className="h-5 w-5" />
+                </Button>
+              )}
             </div>
           </motion.section>
         </div>

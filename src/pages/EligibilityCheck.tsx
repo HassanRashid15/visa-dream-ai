@@ -30,13 +30,11 @@ export default function EligibilityCheckPage() {
   const visaLabel = VISA_LABELS[visaType] || visaType;
   const detail = country ? COUNTRY_DETAILS[country] : null;
 
-  // Phase 2 Feature: Travel Planning Assessment
-// Set SEO metadata for travel planning assessment
   useSEO({
-    title: detail ? `Travel Planning Assessment for ${detail.name} | AI Travel Guidance | TravelAI` : 'Travel Planning Assessment | AI Travel Guidance | TravelAI',
+    title: detail ? `UK Visa Eligibility Check for ${detail.name} | AI Assessment | VisaDreams` : 'UK Visa Eligibility Check | AI Assessment | VisaDreams',
     description: detail 
-      ? `Get AI-powered travel planning assessment for ${detail.name}. Check travel requirements, get personalized recommendations, and plan your perfect journey with confidence.`
-      : 'Plan your perfect journey with AI-powered travel assessment. Get personalized travel recommendations, requirement checks, and comprehensive planning guidance.',
+      ? `Get AI-powered UK visa eligibility assessment for ${detail.name}. Check requirements, get personalized recommendations, and plan your application with confidence.`
+      : 'Check your UK visa eligibility with AI-powered assessment. Get personalized recommendations, requirement checks, and comprehensive application guidance.',
     keywords: detail 
       ? `travel planning ${detail.name}, ${detail.name} travel assessment, AI travel guide ${detail.name}, travel requirements ${detail.name}, personalized travel ${detail.name}`
       : 'travel planning assessment, AI travel guidance, personalized travel recommendations, travel requirement check, intelligent travel planning'

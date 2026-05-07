@@ -4,23 +4,23 @@ import { Shield, Eye, Ban, AlertTriangle } from "lucide-react";
 const items = [
   {
     icon: Shield,
-    title: "Travel Safety First",
-    description: "Your safety is our priority. We provide verified travel information and safety guidelines for every destination.",
+    title: "Official GOV.UK Links",
+    description: "All visa information is cross-checked with official UK government sources. We never provide outdated or misleading guidance.",
   },
   {
     icon: Eye,
     title: "Transparent Pricing",
-    description: "No hidden fees or surprise charges. All travel planning costs and services are clearly displayed upfront.",
+    description: "No hidden fees. See exact visa costs, IHS fees, and living expenses upfront with our UK Cost Calculator.",
   },
   {
     icon: Ban,
-    title: "Avoid Travel Scams",
-    description: "Watch out for too-good-to-be-true deals, fake travel agencies, and unrealistic promises about destinations.",
+    title: "Avoid Visa Rejection",
+    description: "Common rejection reasons include incomplete documents, insufficient funds, and wrong visa category. We help you get it right the first time.",
   },
   {
     icon: AlertTriangle,
-    title: "Real Travel Costs",
-    description: "Budget realistically for flights, accommodation, food, and activities. We help you plan within your means.",
+    title: "Real Cost Breakdown",
+    description: "Budget for visa fees, NHS surcharge, biometrics, flights, tuition, and living costs. We give you the full financial picture.",
   },
 ];
 
@@ -34,10 +34,10 @@ export default function TrustSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          <span className="text-sm font-semibold text-accent uppercase tracking-wider">Travel Smart</span>
-          <h2 className="text-3xl md:text-4xl font-display font-bold mt-2">Travel Safety & Tips</h2>
+          <span className="text-sm font-semibold text-accent uppercase tracking-wider">Trust & Transparency</span>
+          <h2 className="text-3xl md:text-4xl font-display font-bold mt-2">Why Trust VisaDreams</h2>
           <p className="text-muted-foreground mt-3 max-w-lg mx-auto">
-            Travel confidently with our expert guidance. Here's what you need to know for safe journeys.
+            Accurate, up-to-date, and honest UK immigration guidance powered by official sources and AI.
           </p>
         </motion.div>
 

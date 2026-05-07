@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import {
   ArrowLeft, FileText, CheckCircle, Clock, Upload, AlertCircle,
   ChevronRight, Shield, Plane, BookOpen, Briefcase, CreditCard,
-  Globe, Heart, Users, Download
+  Globe, Heart, Users, Download, Sparkles, Award, FileWarning
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -27,7 +27,7 @@ interface ApplicationStep {
 
 interface DocumentItem {
   name: string;
-  status: "uploaded" | "pending" | "rejected" | "not-required";
+  status: "uploaded" | "pending" | "rejected" | "not-required" | "ai-verified" | "consultant-approved" | "needs-review";
   note?: string;
 }
 
@@ -61,12 +61,12 @@ const DEMO_STEPS: ApplicationStep[] = [
     icon: FileText,
     status: "in-progress",
     documents: [
-      { name: "Academic Transcripts", status: "uploaded" },
-      { name: "Degree Certificate", status: "uploaded" },
-      { name: "IELTS Score Report", status: "pending" },
-      { name: "Work Experience Letters", status: "pending" },
-      { name: "Police Clearance Certificate", status: "pending" },
-      { name: "Medical Examination", status: "not-required" },
+      { name: "Passport", status: "ai-verified", note: "AI Score: 95/100 — Valid 14 months" },
+      { name: "CAS Letter", status: "consultant-approved", note: "Advisor approved — Valid CAS ref" },
+      { name: "Bank Statements", status: "ai-verified", note: "AI Score: 88/100 — 28-day rule met" },
+      { name: "IELTS Certificate", status: "needs-review", note: "AI Flagged — Check UKVI centre list" },
+      { name: "Academic Transcripts", status: "pending" },
+      { name: "TB Test Certificate", status: "not-required" },
     ],
   },
   {
@@ -115,6 +115,9 @@ const docStatusConfig = {
   pending: { color: "text-amber-600", bg: "bg-amber-50", icon: Clock, label: "Pending" },
   rejected: { color: "text-destructive", bg: "bg-destructive/10", icon: AlertCircle, label: "Rejected" },
   "not-required": { color: "text-muted-foreground", bg: "bg-muted/50", icon: CheckCircle, label: "Not Required" },
+  "ai-verified": { color: "text-blue-600", bg: "bg-blue-50", icon: Sparkles, label: "AI Verified" },
+  "consultant-approved": { color: "text-violet-600", bg: "bg-violet-50", icon: Award, label: "Advisor Approved" },
+  "needs-review": { color: "text-amber-600", bg: "bg-amber-50", icon: FileWarning, label: "Needs Review" },
 };
 
 export default function ApplicationTracker() {
@@ -124,9 +127,9 @@ export default function ApplicationTracker() {
 
   // Set SEO metadata for travel journey tracker
   useSEO({
-    title: 'Travel Journey Tracker | Real-time Trip Planning Updates | TravelAI',
-    description: 'Track your travel journey progress in real-time. Monitor trip planning stages, document preparation, and get timely updates for your perfect travel experience.',
-    keywords: 'travel journey tracker, trip planning progress, travel preparation status, travel document tracking, journey planning updates, AI travel assistance'
+    title: 'UK Visa Application Tracker | Real-time Status Updates | VisaDreams',
+    description: 'Track your UK visa application progress in real-time. Monitor document stages, biometrics appointments, and get timely updates on your immigration journey.',
+    keywords: 'UK visa tracker, visa application status, UK immigration tracking, document preparation status, visa timeline updates, AI visa assistance'
   });
 
   const completedSteps = steps.filter(s => s.status === "completed").length;

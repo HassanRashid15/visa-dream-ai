@@ -10,11 +10,11 @@ interface SEOData {
 }
 
 const defaultSEOData: SEOData = {
-  title: 'TravelAI — Your Intelligent Travel Agent Assistant',
-  description: 'Plan your perfect journey with AI-powered travel guidance. Get destination insights, visa information, and personalized travel planning for Canada, UK, and Australia.',
-  keywords: 'AI travel agent, travel planning, destination guide, travel assistance, Canada travel, UK travel, Australia travel, intelligent travel advisor',
+  title: 'VisaDreams — UK Visa & Immigration Experts',
+  description: 'Navigate UK visa applications with AI-powered guidance. Get eligibility checks, document checklists, IELTS prep, cost calculators, and expert consultations.',
+  keywords: 'UK visa, UK immigration, student visa UK, work visa UK, ILR UK, tourist visa UK, visa eligibility, UK visa calculator, IELTS prep UK, visa consultation',
   ogImage: 'https://lovable.dev/opengraph-image-p98pqg.png',
-  ogUrl: 'https://travelai.com'
+  ogUrl: 'https://visadream.ai'
 };
 
 export const useSEO = (seoData?: Partial<SEOData>) => {
@@ -49,7 +49,7 @@ export const useSEO = (seoData?: Partial<SEOData>) => {
     
     // Update Twitter Card tags
     updateMetaName('twitter:card', 'summary_large_image');
-    updateMetaName('twitter:site', '@TravelAI');
+    updateMetaName('twitter:site', '@VisaDreamAI');
     updateMetaName('twitter:title', finalSEOData.title);
     updateMetaName('twitter:description', finalSEOData.description);
     
@@ -58,7 +58,7 @@ export const useSEO = (seoData?: Partial<SEOData>) => {
     }
     
     // Update canonical URL
-    updateCanonicalLink(finalSEOData.ogUrl || `https://travelai.com${location.pathname}`);
+    updateCanonicalLink(finalSEOData.ogUrl || `https://visadream.ai${location.pathname}`);
     
   }, [location.pathname, seoData]);
 };

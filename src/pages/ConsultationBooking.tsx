@@ -90,9 +90,9 @@ export default function ConsultationBooking() {
 
   // Set SEO metadata for travel consultation booking
   useSEO({
-    title: 'Book Travel Consultation | Expert Travel Advisors | TravelAI',
-    description: 'Schedule a personalized travel consultation with expert travel advisors. Get professional guidance for your trip planning, destination insights, and travel journey assistance.',
-    keywords: 'travel consultation, travel advisor, expert travel planning, travel guidance, trip planning help, travel consultant, AI travel assistance'
+    title: 'Book UK Visa Consultation | Immigration Advisors | VisaDreams',
+    description: 'Schedule a personalized UK visa consultation with expert immigration advisors. Get professional guidance for your visa application, document review, and settlement planning.',
+    keywords: 'UK visa consultation, immigration advisor, UK visa expert, visa application help, settlement advice, visa document review, AI visa assistance'
   });
 
   const steps: { id: Step; label: string }[] = [

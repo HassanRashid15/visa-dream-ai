@@ -188,22 +188,24 @@ export const COUNTRY_DETAILS: Record<string, CountryDetail> = {
     id: "uk",
     name: "United Kingdom",
     flag: "🇬🇧",
-    tagline: "World-Class Education with Rich Heritage",
+    tagline: "Your Future Starts Here — World-Class Opportunities Await",
     heroImage: "https://images.unsplash.com/photo-1513635264979-4d1c000c4d12?w=1920&h=1080&fit=crop&auto=format",
     galleryImages: [
       "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=400&h=300&fit=crop&auto=format",
       "https://images.unsplash.com/photo-1529655683826-aba9b3e77383?w=400&h=300&fit=crop&auto=format",
       "https://images.unsplash.com/photo-1505761671935-60b3a7427bad?w=400&h=300&fit=crop&auto=format"
     ],
-    description: "The UK is home to some of the world's oldest and most prestigious universities. With shorter degree programs and the Graduate Route visa, it's an attractive destination for ambitious students.",
+    description: "The United Kingdom welcomes over 600,000 international students and skilled workers every year. With 4 of the world's top 10 universities, a 2-year Graduate Route for post-study work, and a thriving economy hiring across tech, healthcare, and finance — the UK is not just a destination, it's a launchpad for your global career. Whether you dream of walking the halls of Oxford, coding at a London fintech, or settling permanently after 5 years, your pathway is clearer than you think.",
     currency: "GBP",
     language: "English",
     capital: "London",
     highlights: [
-      "1-year Master's programs (save time & money)",
-      "Graduate Route: 2-year post-study work visa",
-      "Work up to 20 hours/week during term",
-      "NHS healthcare access for students",
+      "4 universities in the global top 10 — Oxford, Cambridge, Imperial, UCL",
+      "Graduate Route: 2 years to work & build your career after graduation",
+      "Earn £15–25/hour part-time while you study",
+      "NHS healthcare included via IHS — no surprise medical bills",
+      "Clear 5-year path from Student Visa → Skilled Worker → ILR → Citizenship",
+      "London ranked #1 global city for students; Manchester & Edinburgh booming",
     ],
     visaTypes: [
       {

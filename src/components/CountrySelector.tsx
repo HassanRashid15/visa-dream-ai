@@ -23,10 +23,10 @@ export default function CountrySelector() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          <span className="text-sm font-semibold text-accent uppercase tracking-wider">Destinations</span>
-          <h2 className="text-3xl md:text-4xl font-display font-bold mt-2">Discover Amazing Places</h2>
+          <span className="text-sm font-semibold text-accent uppercase tracking-wider">Choose Your Country</span>
+          <h2 className="text-3xl md:text-4xl font-display font-bold mt-2">Start Your UK Visa Journey</h2>
           <p className="text-muted-foreground mt-3 max-w-lg mx-auto">
-            Explore incredible destinations and get AI-powered travel guidance for your perfect journey.
+            Select your destination country to explore visa types, check eligibility, and plan your application.
           </p>
         </motion.div>
 
@@ -48,7 +48,7 @@ export default function CountrySelector() {
                 <h3 className="text-2xl font-display font-bold mb-2">{info.name}</h3>
                 <p className="text-sm text-muted-foreground mb-6">{info.description}</p>
                 <span className="inline-flex items-center gap-2 text-sm font-semibold text-primary group-hover:gap-3 transition-all">
-                  Explore Destination <ArrowRight className="h-4 w-4" />
+                  Explore Visa Options <ArrowRight className="h-4 w-4" />
                 </span>
               </motion.button>
             )

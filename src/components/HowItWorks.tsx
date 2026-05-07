@@ -1,25 +1,24 @@
 import { motion } from "framer-motion";
 import { ClipboardCheck, BarChart3, Lightbulb } from "lucide-react";
 
-// Phase 1: Informative Travel Planning
 const steps = [
   {
     icon: ClipboardCheck,
     step: "01",
-    title: "Discover Destinations",
-    description: "Explore amazing countries, attractions, and experiences tailored to your interests.",
+    title: "Check Eligibility",
+    description: "Answer a few questions and get an instant AI-powered assessment for your UK visa category.",
   },
   {
     icon: BarChart3,
     step: "02",
-    title: "Plan Your Journey",
-    description: "Get AI-powered travel recommendations, itineraries, and destination insights.",
+    title: "Review Your Pathway",
+    description: "See your personalized visa roadmap with required documents, costs, and processing timelines.",
   },
   {
     icon: Lightbulb,
     step: "03",
-    title: "Travel Guidance",
-    description: "Receive expert travel tips, safety information, and local insights for your perfect trip.",
+    title: "Apply with Confidence",
+    description: "Use our templates, IELTS prep, and expert consultations to submit a winning application.",
   },
 ];
 
@@ -43,10 +42,10 @@ export default function HowItWorks() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          <span className="text-sm font-semibold text-accent uppercase tracking-wider">Phase 1</span>
-          <h2 className="text-3xl md:text-4xl font-display font-bold mt-2">Informative Travel Planning</h2>
+          <span className="text-sm font-semibold text-accent uppercase tracking-wider">Simple Process</span>
+          <h2 className="text-3xl md:text-4xl font-display font-bold mt-2">How VisaDreams Works</h2>
           <p className="text-muted-foreground mt-3 max-w-lg mx-auto">
-            Phase 1: Three simple steps to discover and plan your perfect journey with AI-powered travel guidance.
+            Three simple steps to navigate your UK visa journey with AI-powered immigration guidance.
           </p>
         </motion.div>
 

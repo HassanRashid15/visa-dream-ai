@@ -26,12 +26,10 @@ export default function IELTSPrepPage() {
   const modules = config.modules;
   const questions = config.questions;
 
-  // Phase 2 Feature: Travel Requirements Preparation
-// Set SEO metadata for travel requirements preparation
   useSEO({
-    title: 'Travel Requirements Preparation | Language Test Training | TravelAI',
-    description: 'Prepare for travel requirements with comprehensive language test preparation, practice modules, and expert guidance. Meet travel eligibility criteria with AI-powered training.',
-    keywords: 'travel requirements preparation, language test for travel, travel eligibility training, IELTS for travel, English test for tourism, travel language preparation'
+    title: 'IELTS Preparation for UK Visas | Practice & Training | VisaDreams',
+    description: 'Prepare for UKVI-approved IELTS tests with practice modules, score predictions, and expert guidance. Meet UK visa English requirements with AI-powered training.',
+    keywords: 'IELTS UKVI, UK visa English test, IELTS preparation, UKVI SELT, English test for UK visa, IELTS practice'
   });
 
   const [view, setView] = useState<View>("dashboard");

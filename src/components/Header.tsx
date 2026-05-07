@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Globe, Menu, X, LogIn, LogOut, User } from "lucide-react";
+import { FileCheck, Menu, X, LogIn, LogOut, User } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/lib/authContext";
 
@@ -15,10 +15,10 @@ export default function Header() {
       <div className="container max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2.5 group">
           <div className="h-9 w-9 rounded-lg bg-accent flex items-center justify-center shadow-sm">
-            <Globe className="h-5 w-5 text-accent-foreground" />
+            <FileCheck className="h-5 w-5 text-accent-foreground" />
           </div>
           <span className={`font-display text-xl font-bold tracking-tight ${isHome ? "text-primary-foreground" : "text-foreground"}`}>
-            TravelAI
+            VisaDreams
           </span>
         </Link>
 

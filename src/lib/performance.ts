@@ -1,6 +1,6 @@
 import React from 'react';
 
-// Performance optimization utilities for UK Visa Dream AI
+// Performance optimization utilities for UK VisaDreams
 
 // Cache configuration
 export const CACHE_CONFIG = {
@@ -237,7 +237,7 @@ export const seoOptimization = {
       "description": visaDetails.summary,
       "provider": {
         "@type": "Organization",
-        "name": "Visa Dream AI",
+        "name": "VisaDreams",
         "url": "https://visa-dream-ai.com",
       },
       "serviceType": "Immigration Consultancy",

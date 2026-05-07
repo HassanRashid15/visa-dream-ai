@@ -7,9 +7,9 @@ const NotFound = () => {
 
   // Set SEO metadata for 404 page
   useSEO({
-    title: 'Page Not Found | 404 Error | TravelAI',
-    description: 'The page you are looking for does not exist. Return to TravelAI homepage to access AI-powered travel planning and destination guidance.',
-    keywords: '404 error, page not found, TravelAI homepage, travel planning, AI travel guidance, travel assistance'
+    title: 'Page Not Found | 404 Error | VisaDreams',
+    description: 'The page you are looking for does not exist. Return to VisaDreams homepage for UK visa and immigration guidance.',
+    keywords: '404 error, page not found, VisaDreams homepage, UK visa, immigration guidance, AI visa assistance'
   });
 
   useEffect(() => {

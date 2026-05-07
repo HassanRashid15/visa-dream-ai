@@ -19,13 +19,11 @@ export default function PreEligibilityPage() {
   const countryId = country as Country;
   const countryInfo = COUNTRY_INFO[countryId];
 
-  // Phase 2 Feature: Travel Readiness Check
-// Set SEO metadata for travel readiness page
   useSEO({
-    title: countryInfo ? `Travel Readiness Check for ${countryInfo.name} | Quick Assessment | TravelAI` : 'Travel Readiness Check | Quick Assessment | TravelAI',
+    title: countryInfo ? `UK Visa Pre-Check for ${countryInfo.name} | Quick Assessment | VisaDreams` : 'UK Visa Pre-Check | Quick Assessment | VisaDreams',
     description: countryInfo 
-      ? `Get a quick travel readiness assessment for ${countryInfo.name}. Fast, free initial check to see if you are prepared for your journey before detailed planning.`
-      : 'Get a quick travel readiness assessment for your journey. Fast, free initial check to see if you are prepared for your trip before detailed planning.',
+      ? `Get a quick visa readiness assessment for ${countryInfo.name}. Fast, free initial check to see if you meet basic UK visa requirements before detailed planning.`
+      : 'Get a quick UK visa readiness assessment. Fast, free initial check to see if you meet basic requirements before detailed planning.',
     keywords: countryInfo 
       ? `travel readiness ${countryInfo.name}, travel preparation check ${countryInfo.name}, quick travel assessment ${countryInfo.name}, ${countryInfo.name} trip readiness`
       : 'travel readiness check, travel preparation assessment, quick travel screening, trip readiness check, travel preparation guide'

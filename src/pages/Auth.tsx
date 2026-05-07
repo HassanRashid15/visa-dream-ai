@@ -23,13 +23,13 @@ export default function AuthPage() {
   // Phase 2 Feature: User Authentication
 // Set SEO metadata for authentication page
   useSEO({
-    title: mode === "login" ? "Sign In to TravelAI | Access Your Travel Journey" : "Sign Up for TravelAI | Start Your Travel Planning",
+    title: mode === "login" ? "Sign In to VisaDreams | Access Your UK Visa Dashboard" : "Sign Up for VisaDreams | Start Your UK Visa Journey",
     description: mode === "login" 
-      ? "Sign in to your TravelAI account to track your travel journeys, access personalized trip planning, and manage your travel experiences."
-      : "Create your free TravelAI account to get instant travel planning assistance, track journeys, and access expert travel guidance.",
+      ? "Sign in to your VisaDreams account to track your UK visa applications, access document checklists, and manage your immigration journey."
+      : "Create your free VisaDreams account to get UK visa eligibility checks, document guidance, and expert immigration assistance.",
     keywords: mode === "login"
-      ? "TravelAI login, sign in travel account, access travel planning, travel journey login"
-      : "TravelAI signup, create travel account, free travel planning, travel platform registration"
+      ? "VisaDreams login, sign in UK visa account, access visa application tracker, UK immigration login"
+      : "VisaDreams signup, create UK visa account, free visa eligibility check, UK immigration platform registration"
   });
 
   const handleSubmit = async (e: React.FormEvent) => {

@@ -42,17 +42,16 @@ export default function VisaDetail() {
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("overview");
   const [showAISidebar, setShowAISidebar] = useState(false);
-  const [uploadedDocumentsCount, setUploadedDocumentsCount] = useState(0);
+  const [uploadedDocuments, setUploadedDocuments] = useState<any[]>([]);
 
-  // Set SEO metadata based on visa type
   useSEO({
-    title: visa ? `Travel Requirements for ${country} | ${visa.name} Guide | TravelAI` : 'Travel Requirements Guide | TravelAI',
+    title: visa ? `${visa.name} for ${country?.toUpperCase()} | UK Visa Guidance | VisaDreams` : 'UK Visa Guide | VisaDreams',
     description: visa 
-      ? `Complete travel guide for ${country} including ${visa.name} requirements, travel documents, and entry information. Get AI-powered travel planning assistance.`
-      : 'Comprehensive travel requirements and entry information for your destination. Get AI-powered travel guidance and document preparation assistance.',
+      ? `Complete UK visa guidance for ${visa.name}. Requirements, documents, costs, timelines, and AI-powered assistance for your application.`
+      : 'Comprehensive UK visa guidance. Requirements, documents, costs, timelines, and AI-powered assistance for your application.',
     keywords: visa 
-      ? `${country} travel requirements, ${visa.name} travel guide, ${country} entry requirements, travel documents ${country}, ${country} tourism guide`
-      : 'travel requirements, entry requirements, travel documents, tourism guide, travel preparation, AI travel assistance'
+      ? `${country} visa, ${visa.name}, UK visa requirements, UK immigration, visa documents, visa costs UK`
+      : 'UK visa, UK immigration, visa requirements, visa documents, visa costs, AI visa assistance'
   });
 
   // Cache key for visa details
@@ -668,14 +667,10 @@ export default function VisaDetail() {
               </div>
 
               {country === "uk" && (uploadVisaType === "study" || uploadVisaType === "work" || uploadVisaType === "ilr" || uploadVisaType === "tourist") && (
-                <div className="mt-6 rounded-xl border border-border bg-card p-4">
-                  <div className="mb-3 flex items-center justify-between">
-                    <p className="text-sm font-semibold">Document Upload (UK)</p>
-                    <span className="text-xs text-muted-foreground">{uploadedDocumentsCount} uploaded</span>
-                  </div>
+                <div className="mt-6">
                   <DocumentUpload
                     visaType={uploadVisaType}
-                    onDocumentsChange={(documents) => setUploadedDocumentsCount(documents.length)}
+                    onDocumentsChange={(documents) => setUploadedDocuments(documents)}
                   />
                 </div>
               )}

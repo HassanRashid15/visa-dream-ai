@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Send, Bot, User, Minimize2, Maximize2, MessageCircle, X, Lock } from "lucide-react";
+import { Send, Bot, User, Minimize2, Maximize2, MessageCircle, X, Lock, Clock, RefreshCw, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import type { VisaDetailData } from "@/lib/ukVisaDetails";
@@ -16,7 +16,25 @@ interface Message {
   text: string;
   sender: "user" | "ai";
   timestamp: Date;
+  refs?: string[];
 }
+
+const SECTION_LABELS: Record<string, string> = {
+  overview: "Overview",
+  eligibility: "Eligibility",
+  steps: "Application Steps",
+  documents: "Documents",
+  fees: "Fees",
+  universities: "Universities",
+  faqs: "FAQs",
+};
+
+const REPHRASE_TIPS = [
+  "Be specific — mention the visa stage (apply, decide, arrive).",
+  "Ask about one thing at a time (cost OR documents, not both).",
+  "Include your situation: country, course, salary, dependants.",
+  "Try yes/no questions for faster, clearer answers.",
+];
 
 interface AISidebarProps {
   visa: VisaDetailData;
@@ -67,10 +85,14 @@ export default function AISidebar({ visa, universities = [], activeSection }: AI
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [showSignInPrompt, setShowSignInPrompt] = useState(false);
+  const [rateLimit, setRateLimit] = useState<{ retryAt: number; lastQuestion: string } | null>(null);
+  const [now, setNow] = useState(Date.now());
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const location = useLocation();
   const { isAuthenticated } = useAuth();
+
+  const storageKey = `visa-chat-${visa.id}`;
 
   // Check if mobile
   useEffect(() => {
@@ -103,16 +125,59 @@ export default function AISidebar({ visa, universities = [], activeSection }: AI
   const guestRemainingCount = Math.max(0, GUEST_CHAT_LIMIT - guestUsedCount);
 
   useEffect(() => {
-    const welcomeMessage: Message = {
-      id: `welcome-${visa.id}`,
-      text: `Hello! I'm your AI visa assistant for ${visa.name}. Ask me about eligibility, costs, documents, processing time, or application steps — or highlight any text on the page and tap "Ask AI".${visa.id === "study" && universities.length ? " I can also help with top universities." : ""}`,
-      sender: "ai",
-      timestamp: new Date(),
-    };
-    setMessages([welcomeMessage]);
-  }, [visa.id, visa.name, universities.length]);
+    // Load saved messages for this visa, or seed welcome
+    try {
+      const saved = localStorage.getItem(storageKey);
+      if (saved) {
+        const parsed = JSON.parse(saved) as Message[];
+        setMessages(parsed.map((m) => ({ ...m, timestamp: new Date(m.timestamp) })));
+        return;
+      }
+    } catch {
+      /* ignore */
+    }
+    setMessages([
+      {
+        id: `welcome-${visa.id}`,
+        text: `Hello! I'm your AI visa assistant for ${visa.name}. Ask me about eligibility, costs, documents, processing time, or application steps — or highlight any text on the page and tap "Ask AI".${visa.id === "study" && universities.length ? " I can also help with top universities." : ""}`,
+        sender: "ai",
+        timestamp: new Date(),
+      },
+    ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [visa.id]);
+
+  // Persist messages per visa
+  useEffect(() => {
+    if (messages.length === 0) return;
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(messages));
+    } catch {
+      /* ignore quota */
+    }
+  }, [messages, storageKey]);
+
+  // Tick for rate-limit countdown
+  useEffect(() => {
+    if (!rateLimit) return;
+    const id = setInterval(() => setNow(Date.now()), 500);
+    return () => clearInterval(id);
+  }, [rateLimit]);
+
+  const clearChat = () => {
+    try { localStorage.removeItem(storageKey); } catch { /* ignore */ }
+    setMessages([
+      {
+        id: `welcome-${visa.id}-${Date.now()}`,
+        text: `Chat cleared. Ask me anything about ${visa.name}.`,
+        sender: "ai",
+        timestamp: new Date(),
+      },
+    ]);
+  };
 
   const sendToAI = async (currentInput: string, highlightedText?: string) => {
+    if (rateLimit && Date.now() < rateLimit.retryAt) return;
     const userMessage: Message = {
       id: Date.now().toString(),
       text: highlightedText ? `“${highlightedText}” — ${currentInput}` : currentInput,
@@ -150,6 +215,13 @@ export default function AISidebar({ visa, universities = [], activeSection }: AI
         body: { question: currentInput, highlightedText, visaContext, history },
       });
 
+      // Detect rate limit (functions.invoke surfaces non-2xx as error)
+      const errStatus = (error as unknown as { context?: { status?: number } } | null)?.context?.status;
+      if (errStatus === 429 || data?.code === "rate_limited") {
+        const retrySec = (data?.retryAfter as number | undefined) ?? 30;
+        setRateLimit({ retryAt: Date.now() + retrySec * 1000, lastQuestion: currentInput });
+        return;
+      }
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
 
@@ -158,6 +230,7 @@ export default function AISidebar({ visa, universities = [], activeSection }: AI
         text: data?.answer ?? "Sorry, I couldn't generate a response.",
         sender: "ai",
         timestamp: new Date(),
+        refs: Array.isArray(data?.refs) ? data.refs : [],
       };
       setMessages((prev) => [...prev, aiMessage]);
     } catch (e) {
@@ -295,6 +368,18 @@ export default function AISidebar({ visa, universities = [], activeSection }: AI
             </div>
           </div>
         )}
+        <div className="flex items-center gap-1">
+        {!isMinimized && messages.length > 1 && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={clearChat}
+            className="h-8 w-8 p-0"
+            title="Clear chat history"
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        )}
         <Button
           variant="ghost"
           size="sm"
@@ -305,6 +390,7 @@ export default function AISidebar({ visa, universities = [], activeSection }: AI
           {!isMobile && isMinimized && <Maximize2 className="h-4 w-4" />}
           {!isMobile && !isMinimized && <Minimize2 className="h-4 w-4" />}
         </Button>
+        </div>
       </div>
 
       {!isMinimized && (
@@ -351,7 +437,28 @@ export default function AISidebar({ visa, universities = [], activeSection }: AI
                   </div>
                 )}
                 <Card className={`max-w-[80%] p-3 ${message.sender === "user" ? "bg-primary text-primary-foreground" : "bg-muted"}`}>
-                  <p className="text-sm">{message.text}</p>
+                  <p className="text-sm whitespace-pre-wrap">{message.text}</p>
+                  {message.sender === "ai" && message.refs && message.refs.length > 0 && (
+                    <div className="mt-2 flex flex-wrap gap-1">
+                      {message.refs.map((ref) => (
+                        <button
+                          key={ref}
+                          type="button"
+                          onClick={() => {
+                            const el = document.querySelector(`[data-ai-section="${ref}"]`);
+                            if (el) {
+                              el.scrollIntoView({ behavior: "smooth", block: "start" });
+                              if (isMobile) setIsMobileDrawerOpen(false);
+                            }
+                          }}
+                          className="text-[10px] font-medium uppercase tracking-wide px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-colors"
+                          title={`Jump to ${SECTION_LABELS[ref] ?? ref}`}
+                        >
+                          § {SECTION_LABELS[ref] ?? ref}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                   <p className="text-xs opacity-70 mt-1">
                     {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </p>
@@ -388,6 +495,55 @@ export default function AISidebar({ visa, universities = [], activeSection }: AI
 
           {/* Input Area */}
           <div className="p-4 border-t border-border flex-shrink-0 sticky bottom-0 bg-background">
+            {rateLimit && (() => {
+              const secondsLeft = Math.max(0, Math.ceil((rateLimit.retryAt - now) / 1000));
+              const ready = secondsLeft === 0;
+              return (
+                <div className="mb-3 rounded-lg border border-amber-500/30 bg-amber-500/5 p-3 space-y-2">
+                  <div className="flex items-start gap-2">
+                    <Clock className="h-4 w-4 text-amber-600 mt-0.5 flex-shrink-0" />
+                    <div className="text-xs">
+                      <p className="font-semibold text-foreground">
+                        {ready ? "Ready to retry" : `Slow down — too many questions`}
+                      </p>
+                      <p className="text-muted-foreground mt-0.5">
+                        {ready
+                          ? "You can send your question again now."
+                          : `Try again in ${secondsLeft}s. Meanwhile, a clearer question often gets a better answer.`}
+                      </p>
+                    </div>
+                  </div>
+                  {!ready && (
+                    <ul className="text-[11px] text-muted-foreground space-y-0.5 pl-6 list-disc">
+                      {REPHRASE_TIPS.slice(0, 3).map((t) => <li key={t}>{t}</li>)}
+                    </ul>
+                  )}
+                  <div className="flex items-center gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      disabled={!ready}
+                      onClick={() => {
+                        const q = rateLimit.lastQuestion;
+                        setRateLimit(null);
+                        void sendToAI(q);
+                      }}
+                      className="h-7 text-xs gap-1"
+                    >
+                      <RefreshCw className="h-3 w-3" /> Retry{ready ? "" : ` (${secondsLeft}s)`}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => setRateLimit(null)}
+                      className="h-7 text-xs"
+                    >
+                      Dismiss
+                    </Button>
+                  </div>
+                </div>
+              );
+            })()}
             <div className="relative">
               <div className="flex gap-2 mb-3 overflow-x-auto scrollbar-hide w-full">
                 {promptCapsules.map((prompt) => (

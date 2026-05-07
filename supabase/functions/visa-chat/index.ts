@@ -27,10 +27,20 @@ serve(async (req) => {
       });
     }
 
+    const SECTION_KEYS = [
+      "overview", "eligibility", "steps", "documents",
+      "fees", "universities", "faqs",
+    ];
+
     const systemPrompt = `You are a friendly, expert UK visa assistant helping users understand a specific visa route.
 Always answer concisely (2-5 sentences) and ground answers in the provided visa context.
 If a question is outside the scope of UK immigration / the given visa, say so politely and steer the user back.
 Use plain language. Use bullet points only when listing 3+ items.
+
+IMPORTANT — INLINE SECTION REFERENCES:
+After your answer, append on a NEW line the literal token "REFS:" followed by a comma-separated list
+of the page sections you primarily drew from. Use only these keys: ${SECTION_KEYS.join(", ")}.
+Example: "REFS: fees, documents". If none apply, write "REFS:".
 
 VISA CONTEXT (JSON):
 ${JSON.stringify(visaContext ?? {}, null, 2)}`;
@@ -56,14 +66,22 @@ ${JSON.stringify(visaContext ?? {}, null, 2)}`;
 
     if (!response.ok) {
       if (response.status === 429) {
-        return new Response(JSON.stringify({ error: "Rate limit reached. Please try again shortly." }), {
-          status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
+        const retryHeader = response.headers.get("retry-after");
+        const retryAfter = retryHeader ? parseInt(retryHeader, 10) : 30;
+        return new Response(
+          JSON.stringify({
+            error: "Rate limit reached. Please try again shortly.",
+            code: "rate_limited",
+            retryAfter: Number.isFinite(retryAfter) ? retryAfter : 30,
+          }),
+          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        );
       }
       if (response.status === 402) {
-        return new Response(JSON.stringify({ error: "AI credits exhausted. Add funds in workspace settings." }), {
-          status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
+        return new Response(
+          JSON.stringify({ error: "AI credits exhausted. Add funds in workspace settings.", code: "credits_exhausted" }),
+          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        );
       }
       const t = await response.text();
       console.error("visa-chat AI error:", response.status, t);
@@ -73,9 +91,21 @@ ${JSON.stringify(visaContext ?? {}, null, 2)}`;
     }
 
     const data = await response.json();
-    const answer = data.choices?.[0]?.message?.content ?? "I'm not sure — try rephrasing your question.";
+    const raw: string = data.choices?.[0]?.message?.content ?? "I'm not sure — try rephrasing your question.";
 
-    return new Response(JSON.stringify({ answer }), {
+    // Extract REFS line
+    const refsMatch = raw.match(/REFS:\s*([a-zA-Z, ]*)\s*$/m);
+    let answer = raw;
+    let refs: string[] = [];
+    if (refsMatch) {
+      answer = raw.slice(0, refsMatch.index).trim();
+      refs = refsMatch[1]
+        .split(",")
+        .map((s) => s.trim().toLowerCase())
+        .filter((s) => SECTION_KEYS.includes(s));
+    }
+
+    return new Response(JSON.stringify({ answer, refs }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {

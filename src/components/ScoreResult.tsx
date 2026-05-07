@@ -2,12 +2,12 @@ import { motion } from "framer-motion";
 import { ArrowLeft, CheckCircle, AlertTriangle, XCircle, Lightbulb, RotateCcw, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import type { EligibilityResult } from "@/lib/eligibility";
+import type { TravelReadinessResult } from "@/lib/eligibility";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 interface Props {
-  result: EligibilityResult;
+  result: TravelReadinessResult;
   country: { name: string; flag: string };
   onReset: () => void;
 }

@@ -34,22 +34,30 @@ export default function Header() {
             Book Consultation
           </Link>
 
-          {/* Phase 1: No authentication required
           {isAuthenticated ? (
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 ml-2">
               <span className={`text-sm flex items-center gap-1.5 ${isHome ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
                 <User className="h-3.5 w-3.5" /> {user?.name}
               </span>
-              <button onClick={logout} className={`text-sm font-medium flex items-center gap-1.5 transition-colors ${isHome ? "text-primary-foreground/70 hover:text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}>
+              <button
+                onClick={() => logout()}
+                className={`text-sm font-medium flex items-center gap-1.5 transition-colors ${isHome ? "text-primary-foreground/70 hover:text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+              >
                 <LogOut className="h-3.5 w-3.5" /> Sign Out
               </button>
             </div>
           ) : (
-            <Link to="/auth" className={`text-sm font-medium flex items-center gap-1.5 transition-colors ${isHome ? "text-primary-foreground/70 hover:text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}>
+            <Link
+              to="/auth"
+              className={`ml-2 inline-flex items-center gap-1.5 rounded-md px-3.5 py-1.5 text-sm font-semibold transition-colors ${
+                isHome
+                  ? "bg-accent text-accent-foreground hover:bg-accent/90"
+                  : "bg-primary text-primary-foreground hover:bg-primary/90"
+              }`}
+            >
               <LogIn className="h-3.5 w-3.5" /> Sign In
             </Link>
           )}
-        */}
         </nav>
 
         <button className="md:hidden p-2" onClick={() => setMobileOpen(!mobileOpen)}>
@@ -69,18 +77,20 @@ export default function Header() {
           <a href="/#countries" onClick={() => setMobileOpen(false)} className="block text-sm font-medium text-foreground py-2">Countries</a>
           <Link to="/tracker" onClick={() => setMobileOpen(false)} className="block text-sm font-medium text-foreground py-2">My Journey</Link>
           <Link to="/consultation" onClick={() => setMobileOpen(false)} className="block text-sm font-medium text-foreground py-2">Book Consultation</Link>
-          {/* Phase 1: No authentication required
-            {isAuthenticated ? (
-              <>
-                <div className="text-sm text-muted-foreground py-2 flex items-center gap-1.5">
-                  <User className="h-3.5 w-3.5" /> {user?.name}
-                </div>
-                <button onClick={() => { logout(); setMobileOpen(false); }} className="block text-sm font-medium text-foreground py-2">Sign Out</button>
-              </>
-            ) : (
-              <Link to="/auth" onClick={() => setMobileOpen(false)} className="block text-sm font-medium text-foreground py-2">Sign In</Link>
-            )}
-          */}
+          {isAuthenticated ? (
+            <>
+              <div className="text-sm text-muted-foreground py-2 flex items-center gap-1.5">
+                <User className="h-3.5 w-3.5" /> {user?.name}
+              </div>
+              <button onClick={() => { logout(); setMobileOpen(false); }} className="block text-sm font-medium text-foreground py-2 flex items-center gap-1.5">
+                <LogOut className="h-3.5 w-3.5" /> Sign Out
+              </button>
+            </>
+          ) : (
+            <Link to="/auth" onClick={() => setMobileOpen(false)} className="block text-sm font-medium text-foreground py-2 flex items-center gap-1.5">
+              <LogIn className="h-3.5 w-3.5" /> Sign In
+            </Link>
+          )}
         </motion.div>
       )}
     </header>

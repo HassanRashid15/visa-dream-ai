@@ -88,7 +88,7 @@ export default function EligibilityCheckPage() {
               <h1 className="text-3xl md:text-4xl font-display font-bold text-primary-foreground">
                 {countryInfo.name}
               </h1>
-              <div className="flex items-center gap-2 mt-1">
+              <div className="flex items-center gap-2 mt-10 !flex-wrap">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent/20 text-accent text-sm font-medium">
                   <Target className="h-3.5 w-3.5" /> {visaLabel}
                 </span>

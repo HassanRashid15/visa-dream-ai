@@ -387,6 +387,9 @@ export default function VisaDetail() {
       {/* Hero */}
       <div className="hero-gradient pt-28 pb-20 px-4 relative overflow-hidden">
         <div className="absolute inset-0 overflow-hidden">
+          {/* UK Background Image */}
+          <div className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20" 
+               style={{ backgroundImage: "url('data:image/svg+xml,%3Csvg width=\"100\" height=\"100\" viewBox=\"0 0 100 100\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cpath d=\"M50 10 L60 25 L75 20 L80 35 L95 40 L90 55 L95 70 L80 75 L75 90 L60 85 L50 100 L40 85 L25 90 L20 75 L5 70 L10 55 L5 40 L20 35 L25 20 L40 25 Z\" fill=\"%2300247D\" opacity=\"0.1\"/%3E%3Cpath d=\"M50 20 L55 30 L65 28 L68 38 L78 42 L75 52 L78 62 L68 66 L65 76 L55 74 L50 84 L45 74 L35 76 L32 66 L22 62 L25 52 L22 42 L32 38 L35 28 L45 30 Z\" fill=\"%23CF142B\" opacity=\"0.1\"/%3E%3C/svg%3E')" }}></div>
           {[...Array(3)].map((_, i) => (
             <motion.div key={i} className="absolute rounded-full bg-primary-foreground/5"
               style={{ width: 120 + i * 80, height: 120 + i * 80, right: -30 + i * 40, top: -30 + i * 50 }}
@@ -395,17 +398,17 @@ export default function VisaDetail() {
             />
           ))}
         </div>
-        <div className="relative z-10 container max-w-4xl mx-auto">
+        <div className="relative z-10 max-w-5xl mx-auto">
           <button onClick={() => navigate(`/country/${country}`)} className="flex items-center gap-2 text-primary-foreground/60 hover:text-primary-foreground mb-6 transition-colors text-sm">
             <ArrowLeft className="h-4 w-4" /> Back to {country === "uk" ? "United Kingdom" : country}
           </button>
-          <div className="flex items-center gap-4 mb-3">
+          <div className="flex items-center gap-4 mb-3 flex-wrap">
             <span className="text-5xl">{visa.icon}</span>
             <div>
               <h1 className="text-3xl md:text-4xl font-display font-bold text-primary-foreground">
                 {visa.name}
               </h1>
-              <div className="flex items-center gap-2 mt-1">
+              <div className="flex items-center gap-2 mt-1 flex-wrap">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary-foreground/10 text-primary-foreground/80 text-xs backdrop-blur-sm">
                   <Clock className="h-3 w-3" /> {visa.processingTime}
                 </span>
@@ -419,9 +422,9 @@ export default function VisaDetail() {
       </div>
 
       {/* Main Content with Sidebar */}
-      <div className="flex">
+      <div className="flex flex-col lg:flex-row">
         <div className="flex-1">
-          <div ref={contentRef} className="container max-w-4xl mx-auto px-4 py-10 space-y-14">
+          <div ref={contentRef} className="max-w-5xl mx-auto px-4 py-10 space-y-14">
 
             {/* Comprehensive Overview */}
             {visa.comprehensiveOverview && (
@@ -780,9 +783,11 @@ export default function VisaDetail() {
               <p className="text-muted-foreground mb-6 text-sm max-w-xl mx-auto">
                 Our AI assessment evaluates your profile against {visa.name} requirements in under 60 seconds.
               </p>
-              <Button variant="hero" size="xl" onClick={() => navigate(`/pre-check/uk?visa=${visa.id}`)}>
-                Check Eligibility for {visa.name} <ArrowRight className="h-5 w-5" />
-              </Button>
+              <div className="flex justify-center px-4">
+                <Button className="max-w-md w-full"  variant="hero" size="xl" onClick={() => navigate(`/pre-check/uk?visa=${visa.id}`)}>
+                  Check Eligibility <ArrowRight className="h-5 w-5" />
+                </Button>
+              </div>
             </motion.section>
           </div>
         </div>

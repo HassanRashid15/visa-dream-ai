@@ -13,7 +13,7 @@ export default function AuthPage() {
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [form, setForm] = useState({ name: "", email: "", password: "" });
+  const [form, setForm] = useState({ firstName: "", lastName: "", email: "", password: "" });
   const { login, signup } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -41,7 +41,8 @@ export default function AuthPage() {
         toast({ title: "Welcome back!", description: "You're now signed in." });
         navigate(redirect);
       } else {
-        await signup(form.name, form.email, form.password);
+        const fullName = `${form.firstName} ${form.lastName}`;
+        await signup(fullName, form.email, form.password);
         toast({ title: "Account created!", description: "You're now signed in." });
         navigate(redirect);
       }
@@ -112,12 +113,21 @@ export default function AuthPage() {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             {mode === "signup" && (
-              <div className="space-y-2">
-                <Label htmlFor="name" className="flex items-center gap-2 text-sm font-medium">
-                  <User className="h-4 w-4 text-muted-foreground" /> Full Name
-                </Label>
-                <Input id="name" placeholder="John Doe" required className="h-12"
-                  value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-2">
+                  <Label htmlFor="firstName" className="flex items-center gap-2 text-sm font-medium">
+                    <User className="h-4 w-4 text-muted-foreground" /> First Name
+                  </Label>
+                  <Input id="firstName" placeholder="John" required className="h-12"
+                    value={form.firstName} onChange={(e) => setForm({ ...form, firstName: e.target.value })} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="lastName" className="flex items-center gap-2 text-sm font-medium">
+                    <User className="h-4 w-4 text-muted-foreground" /> Last Name
+                  </Label>
+                  <Input id="lastName" placeholder="Doe" required className="h-12"
+                    value={form.lastName} onChange={(e) => setForm({ ...form, lastName: e.target.value })} />
+                </div>
               </div>
             )}
             <div className="space-y-2">

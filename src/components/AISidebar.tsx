@@ -81,7 +81,7 @@ export default function AISidebar({ visa, universities = [], activeSection }: AI
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
-  const [isMinimized, setIsMinimized] = useState(true); // Closed by default
+  const [isMinimized, setIsMinimized] = useState(false); // Open by default
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [showSignInPrompt, setShowSignInPrompt] = useState(false);
@@ -97,8 +97,8 @@ export default function AISidebar({ visa, universities = [], activeSection }: AI
   // Check if mobile
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-      if (window.innerWidth >= 768) {
+      setIsMobile(window.innerWidth < 992);
+      if (window.innerWidth >= 992) {
         setIsMobileDrawerOpen(false);
       }
     };
@@ -271,7 +271,7 @@ export default function AISidebar({ visa, universities = [], activeSection }: AI
       if (!detail?.text) return;
       if (!canSendGuestMessage()) return;
       setIsMinimized(false);
-      if (window.innerWidth < 768) setIsMobileDrawerOpen(true);
+      if (window.innerWidth < 992) setIsMobileDrawerOpen(true);
       void sendToAI(detail.question ?? `Explain this: "${detail.text}"`, detail.text);
     };
     window.addEventListener(ASK_AI_EVENT, handler);
@@ -346,14 +346,19 @@ export default function AISidebar({ visa, universities = [], activeSection }: AI
             : `flex-shrink-0 bg-background border-l border-border shadow-2xl z-40 flex flex-col sticky top-20 self-start h-[calc(100vh-5rem)]`
         }`}
         initial={{ 
-          width: isMinimized ? 60 : 400,
-          x: isMobile ? (isMobileDrawerOpen ? 0 : 400) : 0
+          width: isMinimized ? 60 : 320,
+          x: isMobile ? 320 : 0
         }}
         animate={{ 
-          width: isMinimized ? 60 : 400,
+          width: isMinimized ? 60 : 320,
           x: isMobile ? (isMobileDrawerOpen ? 0 : 400) : 0
         }}
-        transition={{ type: "spring", damping: 25, stiffness: 200 }}
+        transition={{ 
+          type: "spring", 
+          damping: 25, 
+          stiffness: 200,
+          duration: 0.3
+        }}
       >
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-border bg-muted/50 flex-shrink-0 sticky top-0 z-20">

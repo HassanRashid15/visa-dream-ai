@@ -240,7 +240,7 @@ export default function CountryDetail() {
                   </div>
                 ))}
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
                 <div className="rounded-xl border border-border bg-muted/40 p-4">
                   <p className="text-xs text-muted-foreground">Tuition (per year)</p>
                   <p className="text-sm font-semibold mt-1">{detail.costs.tuitionPerYear}</p>
@@ -268,7 +268,7 @@ export default function CountryDetail() {
                   : "Get a glimpse of student life, campus experiences, and the beautiful landscapes that await you."}
               </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {detail.galleryImages.map((image, i) => (
                 <motion.div
                   key={i}
@@ -300,7 +300,7 @@ export default function CountryDetail() {
                   These are the institutions shaping the next generation of global leaders. Your name could be on their admission list.
                 </p>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {detail.universities.map((uni, i) => (
                   <motion.div
                     key={uni.name}
@@ -339,7 +339,7 @@ export default function CountryDetail() {
                   The UK offers one of the clearest immigration pathways in the world. See how your journey could unfold step by step.
                 </p>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {[
                   {
                     title: "Study Route",
@@ -399,7 +399,7 @@ export default function CountryDetail() {
                   : "Select the visa that matches your goals. Each includes requirements, costs, and a full document checklist."}
               </p>
             </motion.div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {detail.visaTypes.map((visa, i) => (
                 <VisaCard key={visa.id} visa={visa} index={i} countryId={detail.id} />
               ))}
@@ -440,7 +440,7 @@ export default function CountryDetail() {
                   These companies actively sponsor Skilled Worker visas. Your next job — and your path to settlement — could start here.
                 </p>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
                 {[
                   { name: "NHS", sector: "Healthcare", icon: HeartPulse },
                   { name: "Deloitte", sector: "Consulting", icon: Briefcase },

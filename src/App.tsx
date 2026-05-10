@@ -10,7 +10,7 @@ const Index = lazy(() => import("./pages/Index"));
 const CountryDetail = lazy(() => import("./pages/CountryDetail"));
 const VisaDetail = lazy(() => import("./pages/VisaDetail"));
 const EligibilityCheck = lazy(() => import("./pages/EligibilityCheck"));
-const ApplicationTracker = lazy(() => import("./pages/ApplicationTracker"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
 const ConsultationBooking = lazy(() => import("./pages/ConsultationBooking"));
 const PreEligibility = lazy(() => import("./pages/PreEligibility"));
 const IELTSPrep = lazy(() => import("./pages/IELTSPrep"));
@@ -35,7 +35,7 @@ const App = () => (
               <Route path="/pre-check/:country" element={<PreEligibility />} />
               <Route path="/check/:country" element={<EligibilityCheck />} />
               <Route path="/ielts-prep" element={<IELTSPrep />} />
-              <Route path="/tracker" element={<ApplicationTracker />} />
+              <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/consultation" element={<ConsultationBooking />} />
               <Route path="*" element={<NotFound />} />
             </Routes>

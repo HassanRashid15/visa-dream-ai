@@ -1,337 +1,361 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import {
-  ArrowLeft, FileText, CheckCircle, Clock, Upload, AlertCircle,
-  ChevronRight, Shield, Plane, BookOpen, Briefcase, CreditCard,
-  Globe, Heart, Users, Download, Sparkles, Award, FileWarning
+  LayoutDashboard, FileText, Users, Clock, Search, Bell,
+  Menu, X, LogOut, Settings, ChevronDown, ArrowUpRight, ArrowDownRight
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import {
-  AnimatedCounter, GradientText, PulseDot, TiltCard,
-  StaggerContainer, StaggerItem, SparkleBorder
-} from "@/components/ui/animated-bits";
-import { useSEO } from "@/hooks/useSEO";
+import { useAuth } from "@/lib/authContext";
 
-interface ApplicationStep {
+// --- Types ---
+interface SidebarItem {
   id: string;
-  title: string;
-  description: string;
+  label: string;
   icon: React.ElementType;
-  status: "completed" | "in-progress" | "pending" | "blocked";
-  documents: DocumentItem[];
 }
 
-interface DocumentItem {
-  name: string;
-  status: "uploaded" | "pending" | "rejected" | "not-required" | "ai-verified" | "consultant-approved" | "needs-review";
-  note?: string;
+interface StatCardProps {
+  title: string;
+  value: string;
+  change: string;
+  changeType: "up" | "down";
 }
 
-const DEMO_STEPS: ApplicationStep[] = [
-  {
-    id: "1",
-    title: "Profile Setup",
-    description: "Complete your personal information and preferences",
-    icon: Users,
-    status: "completed",
-    documents: [
-      { name: "Passport Copy", status: "uploaded" },
-      { name: "Passport Photos (2x)", status: "uploaded" },
-      { name: "Birth Certificate", status: "uploaded" },
-    ],
-  },
-  {
-    id: "2",
-    title: "Eligibility Assessment",
-    description: "AI-powered profile evaluation and scoring",
-    icon: Shield,
-    status: "completed",
-    documents: [
-      { name: "Eligibility Report", status: "uploaded", note: "Score: 78/100" },
-    ],
-  },
-  {
-    id: "3",
-    title: "Document Collection",
-    description: "Gather and upload all required documents",
-    icon: FileText,
-    status: "in-progress",
-    documents: [
-      { name: "Passport", status: "ai-verified", note: "AI Score: 95/100 — Valid 14 months" },
-      { name: "CAS Letter", status: "consultant-approved", note: "Advisor approved — Valid CAS ref" },
-      { name: "Bank Statements", status: "ai-verified", note: "AI Score: 88/100 — 28-day rule met" },
-      { name: "IELTS Certificate", status: "needs-review", note: "AI Flagged — Check UKVI centre list" },
-      { name: "Academic Transcripts", status: "pending" },
-      { name: "TB Test Certificate", status: "not-required" },
-    ],
-  },
-  {
-    id: "4",
-    title: "Financial Proof",
-    description: "Submit financial documents and proof of funds",
-    icon: CreditCard,
-    status: "pending",
-    documents: [
-      { name: "Bank Statements (6 months)", status: "pending" },
-      { name: "Sponsorship Letter", status: "not-required" },
-      { name: "GIC/Financial Guarantee", status: "pending" },
-    ],
-  },
-  {
-    id: "5",
-    title: "Application Submission",
-    description: "Review and submit your visa application",
-    icon: Upload,
-    status: "pending",
-    documents: [
-      { name: "Application Form", status: "pending" },
-      { name: "Statement of Purpose", status: "pending" },
-      { name: "Cover Letter", status: "pending" },
-    ],
-  },
-  {
-    id: "6",
-    title: "Visa Decision",
-    description: "Wait for embassy processing and decision",
-    icon: Plane,
-    status: "pending",
-    documents: [],
-  },
-];
+// --- Components ---
 
-const statusConfig = {
-  completed: { color: "text-emerald-600", bg: "bg-emerald-100", border: "border-emerald-200", label: "Completed", icon: CheckCircle },
-  "in-progress": { color: "text-primary", bg: "bg-primary/10", border: "border-primary/20", label: "In Progress", icon: Clock },
-  pending: { color: "text-muted-foreground", bg: "bg-muted", border: "border-border", label: "Pending", icon: Clock },
-  blocked: { color: "text-destructive", bg: "bg-destructive/10", border: "border-destructive/20", label: "Blocked", icon: AlertCircle },
-};
-
-const docStatusConfig = {
-  uploaded: { color: "text-emerald-600", bg: "bg-emerald-50", icon: CheckCircle, label: "Uploaded" },
-  pending: { color: "text-amber-600", bg: "bg-amber-50", icon: Clock, label: "Pending" },
-  rejected: { color: "text-destructive", bg: "bg-destructive/10", icon: AlertCircle, label: "Rejected" },
-  "not-required": { color: "text-muted-foreground", bg: "bg-muted/50", icon: CheckCircle, label: "Not Required" },
-  "ai-verified": { color: "text-blue-600", bg: "bg-blue-50", icon: Sparkles, label: "AI Verified" },
-  "consultant-approved": { color: "text-violet-600", bg: "bg-violet-50", icon: Award, label: "Advisor Approved" },
-  "needs-review": { color: "text-amber-600", bg: "bg-amber-50", icon: FileWarning, label: "Needs Review" },
-};
-
-export default function ApplicationTracker() {
+function Sidebar({ activeItem, onNavigate, mobileOpen, onClose }: {
+  activeItem: string;
+  onNavigate: (id: string) => void;
+  mobileOpen: boolean;
+  onClose: () => void;
+}) {
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const [steps] = useState<ApplicationStep[]>(DEMO_STEPS);
-  const [expandedStep, setExpandedStep] = useState<string | null>("3");
 
-  // Set SEO metadata for travel journey tracker
-  useSEO({
-    title: 'UK Visa Application Tracker | Real-time Status Updates | VisaDreams',
-    description: 'Track your UK visa application progress in real-time. Monitor document stages, biometrics appointments, and get timely updates on your immigration journey.',
-    keywords: 'UK visa tracker, visa application status, UK immigration tracking, document preparation status, visa timeline updates, AI visa assistance'
-  });
+  const mainItems: SidebarItem[] = [
+    { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
+    { id: "documents", label: "Documents", icon: FileText },
+    { id: "timeline", label: "Timeline", icon: Clock },
+    { id: "consultation", label: "Consultation", icon: Users },
+  ];
 
-  const completedSteps = steps.filter(s => s.status === "completed").length;
-  const totalSteps = steps.length;
-  const progressPercent = Math.round((completedSteps / totalSteps) * 100);
-
-  const totalDocs = steps.flatMap(s => s.documents).filter(d => d.status !== "not-required").length;
-  const uploadedDocs = steps.flatMap(s => s.documents).filter(d => d.status === "uploaded").length;
+  const otherItems: SidebarItem[] = [
+    { id: "settings", label: "Settings", icon: Settings },
+  ];
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <Header />
+    <>
+      {/* Mobile Overlay */}
+      {mobileOpen && (
+        <div
+          className="fixed inset-0 bg-black/30 z-40 lg:hidden"
+          onClick={onClose}
+        />
+      )}
 
-      {/* Hero */}
-      <div className="hero-gradient pt-28 pb-20 px-4 relative overflow-hidden">
-        <div className="absolute inset-0 overflow-hidden">
-          {[...Array(6)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute rounded-full bg-primary-foreground/5"
-              style={{
-                width: 40 + i * 30,
-                height: 40 + i * 30,
-                left: `${10 + i * 16}%`,
-                top: `${30 + (i % 3) * 20}%`,
-              }}
-              animate={{ y: [0, -10, 0], opacity: [0.3, 0.6, 0.3] }}
-              transition={{ duration: 3 + i * 0.5, repeat: Infinity, ease: "easeInOut" }}
-            />
-          ))}
+      <aside className={`fixed inset-y-0 left-0 z-50 w-[250px] bg-[#f8f9fb] border-r border-gray-200 transform transition-transform duration-300 ease-in-out lg:translate-x-0 ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}>
+        {/* Logo */}
+        <div className="flex items-center gap-3 h-16 px-6 border-b border-gray-200">
+          <div className="h-9 w-9 rounded-lg bg-[#4e73df] flex items-center justify-center">
+            <LayoutDashboard className="h-5 w-5 text-white" />
+          </div>
+          <div>
+            <h1 className="font-bold text-lg text-gray-900 tracking-tight">VisaDreams</h1>
+          </div>
         </div>
-        <div className="container max-w-4xl mx-auto relative z-10">
-          <button onClick={() => navigate("/")} className="flex items-center gap-2 text-primary-foreground/60 hover:text-primary-foreground mb-6 transition-colors text-sm">
-            <ArrowLeft className="h-4 w-4" /> Back to Home
-          </button>
-          <h1 className="text-3xl md:text-4xl font-display font-bold text-primary-foreground mb-2">
-            Application <GradientText from="hsl(38, 92%, 55%)" to="hsl(38, 92%, 75%)">Tracker</GradientText>
-          </h1>
-          <p className="text-primary-foreground/60 text-sm">Track your visa application progress and document status in real-time</p>
-        </div>
-      </div>
 
-      <div className="flex-1">
-        <div className="container max-w-4xl mx-auto px-4 -mt-8 pb-16 space-y-6">
-          {/* Stats Cards */}
-          <StaggerContainer className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <StaggerItem>
-              <TiltCard className="rounded-xl border border-border bg-card p-5 card-elevated">
-                <div className="text-xs text-muted-foreground mb-1 uppercase tracking-wider">Progress</div>
-                <div className="text-3xl font-display font-bold text-primary mb-2">
-                  <AnimatedCounter value={progressPercent} />%
-                </div>
-                <Progress value={progressPercent} className="h-2" />
-              </TiltCard>
-            </StaggerItem>
-            <StaggerItem>
-              <TiltCard className="rounded-xl border border-border bg-card p-5 card-elevated">
-                <div className="text-xs text-muted-foreground mb-1 uppercase tracking-wider">Documents</div>
-                <div className="text-3xl font-display font-bold">
-                  <span className="text-emerald-600"><AnimatedCounter value={uploadedDocs} /></span>
-                  <span className="text-muted-foreground text-lg"> / {totalDocs}</span>
-                </div>
-                <p className="text-xs text-muted-foreground mt-1">uploaded</p>
-              </TiltCard>
-            </StaggerItem>
-            <StaggerItem>
-              <TiltCard className="rounded-xl border border-border bg-card p-5 card-elevated">
-                <div className="text-xs text-muted-foreground mb-1 uppercase tracking-wider">Current Step</div>
-                <div className="flex items-center gap-2 mt-1">
-                  <PulseDot color="bg-primary" />
-                  <span className="text-sm font-semibold">Document Collection</span>
-                </div>
-                <p className="text-xs text-muted-foreground mt-2">Step 3 of 6</p>
-              </TiltCard>
-            </StaggerItem>
-          </StaggerContainer>
-
-          {/* Timeline */}
-          <div className="space-y-0">
-            {steps.map((step, i) => {
-              const config = statusConfig[step.status];
-              const StepIcon = step.icon;
-              const StatusIcon = config.icon;
-              const isExpanded = expandedStep === step.id;
-
-              return (
-                <motion.div
-                  key={step.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.08 }}
-                >
+        {/* Navigation */}
+        <nav className="flex-1 p-4 space-y-6 overflow-y-auto">
+          <div>
+            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2 px-3">Main Menu</p>
+            <div className="space-y-1">
+              {mainItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = activeItem === item.id;
+                return (
                   <button
-                    onClick={() => setExpandedStep(isExpanded ? null : step.id)}
-                    className="w-full text-left"
+                    key={item.id}
+                    onClick={() => onNavigate(item.id)}
+                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                      isActive
+                        ? "bg-white text-[#4e73df] shadow-sm border border-gray-100"
+                        : "text-gray-500 hover:text-gray-700 hover:bg-white/50"
+                    }`}
                   >
-                    <div className="flex gap-4 py-4">
-                      {/* Timeline line */}
-                      <div className="flex flex-col items-center">
-                        <div className={`h-12 w-12 rounded-xl ${config.bg} border ${config.border} flex items-center justify-center flex-shrink-0`}>
-                          <StepIcon className={`h-5 w-5 ${config.color}`} />
-                        </div>
-                        {i < steps.length - 1 && (
-                          <div className={`w-0.5 flex-1 mt-2 ${step.status === "completed" ? "bg-emerald-300" : "bg-border"}`} />
-                        )}
-                      </div>
-
-                      {/* Content */}
-                      <div className="flex-1 pb-4">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <h3 className="font-semibold text-sm flex items-center gap-2">
-                              {step.title}
-                              <span className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full ${config.bg} ${config.color}`}>
-                                <StatusIcon className="h-3 w-3" />
-                                {config.label}
-                              </span>
-                            </h3>
-                            <p className="text-xs text-muted-foreground mt-0.5">{step.description}</p>
-                          </div>
-                          {step.documents.length > 0 && (
-                            <ChevronRight className={`h-4 w-4 text-muted-foreground transition-transform ${isExpanded ? "rotate-90" : ""}`} />
-                          )}
-                        </div>
-                      </div>
-                    </div>
+                    <Icon className="h-4 w-4" />
+                    {item.label}
                   </button>
-
-                  {/* Expanded documents */}
-                  {isExpanded && step.documents.length > 0 && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: "auto" }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className="ml-16 mb-4 space-y-2"
-                    >
-                      {step.documents.map((doc, di) => {
-                        const docConfig = docStatusConfig[doc.status];
-                        const DocIcon = docConfig.icon;
-                        return (
-                          <motion.div
-                            key={di}
-                            className={`flex items-center justify-between rounded-lg border border-border ${docConfig.bg} p-3`}
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: di * 0.05 }}
-                          >
-                            <div className="flex items-center gap-3">
-                              <FileText className="h-4 w-4 text-muted-foreground" />
-                              <div>
-                                <span className="text-sm font-medium">{doc.name}</span>
-                                {doc.note && <span className="text-xs text-muted-foreground ml-2">({doc.note})</span>}
-                              </div>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <span className={`inline-flex items-center gap-1 text-xs ${docConfig.color}`}>
-                                <DocIcon className="h-3.5 w-3.5" />
-                                {docConfig.label}
-                              </span>
-                              {doc.status === "pending" && (
-                                <Button variant="outline" size="sm" className="h-7 text-xs gap-1">
-                                  <Upload className="h-3 w-3" /> Upload
-                                </Button>
-                              )}
-                            </div>
-                          </motion.div>
-                        );
-                      })}
-                    </motion.div>
-                  )}
-                </motion.div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
 
-          {/* Action cards */}
-          <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <StaggerItem>
-              <SparkleBorder>
-                <div className="p-6">
-                  <h3 className="font-display font-bold mb-2">Need Help?</h3>
-                  <p className="text-sm text-muted-foreground mb-4">Book a consultation with an immigration advisor for personalized guidance.</p>
-                  <Button onClick={() => navigate("/consultation")} className="gap-2">
-                    <Heart className="h-4 w-4" /> Book Consultation
-                  </Button>
-                </div>
-              </SparkleBorder>
-            </StaggerItem>
-            <StaggerItem>
-              <div className="rounded-2xl border border-border bg-card p-6 card-elevated">
-                <h3 className="font-display font-bold mb-2">Download Checklist</h3>
-                <p className="text-sm text-muted-foreground mb-4">Get a printable PDF checklist of all required documents for your application.</p>
-                <Button variant="outline" className="gap-2">
-                  <Download className="h-4 w-4" /> Download PDF
-                </Button>
-              </div>
-            </StaggerItem>
-          </StaggerContainer>
+          <div>
+            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2 px-3">Other</p>
+            <div className="space-y-1">
+              {otherItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = activeItem === item.id;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => onNavigate(item.id)}
+                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                      isActive
+                        ? "bg-white text-[#4e73df] shadow-sm border border-gray-100"
+                        : "text-gray-500 hover:text-gray-700 hover:bg-white/50"
+                    }`}
+                  >
+                    <Icon className="h-4 w-4" />
+                    {item.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </nav>
+
+        {/* User */}
+        <div className="p-4 border-t border-gray-200">
+          <button
+            onClick={() => {
+              logout();
+              navigate("/");
+            }}
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-red-500 hover:bg-red-50 transition-colors"
+          >
+            <LogOut className="h-4 w-4" />
+            Sign Out
+          </button>
+        </div>
+      </aside>
+    </>
+  );
+}
+
+function TopNavbar({ onMenuClick, userName }: { onMenuClick: () => void; userName: string }) {
+  return (
+    <header className="h-16 bg-white border-b border-gray-200 fixed top-0 left-0 right-0 z-30 lg:left-[250px]">
+      <div className="flex items-center justify-between h-full px-4 lg:px-8">
+        {/* Left */}
+        <div className="flex items-center gap-4">
+          <button
+            onClick={onMenuClick}
+            className="lg:hidden p-2 -ml-2 rounded-lg hover:bg-gray-100"
+          >
+            <Menu className="h-5 w-5 text-gray-600" />
+          </button>
+          <div>
+            <h2 className="text-xl font-semibold text-gray-800">Good Morning, {userName}</h2>
+            <p className="text-sm text-gray-400">Your performance summary this week</p>
+          </div>
+        </div>
+
+        {/* Right */}
+        <div className="flex items-center gap-3">
+          <button className="p-2 rounded-lg hover:bg-gray-100 relative">
+            <Search className="h-5 w-5 text-gray-500" />
+          </button>
+          <button className="p-2 rounded-lg hover:bg-gray-100 relative">
+            <Bell className="h-5 w-5 text-gray-500" />
+            <span className="absolute top-1.5 right-1.5 h-2 w-2 bg-red-500 rounded-full border-2 border-white"></span>
+          </button>
+          <div className="flex items-center gap-3 pl-3 border-l border-gray-200">
+            <div className="h-9 w-9 rounded-full bg-gradient-to-br from-[#4e73df] to-[#224abe] flex items-center justify-center text-white text-sm font-semibold">
+              {userName.charAt(0)}
+            </div>
+          </div>
         </div>
       </div>
+    </header>
+  );
+}
 
-      <Footer />
+function StatCard({ title, value, change, changeType }: StatCardProps) {
+  return (
+    <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+      <p className="text-sm text-gray-400 mb-1">{title}</p>
+      <div className="flex items-end justify-between">
+        <h3 className="text-2xl font-bold text-gray-800">{value}</h3>
+        <span className={`flex items-center gap-1 text-xs font-medium ${changeType === "up" ? "text-green-500" : "text-red-500"}`}>
+          {changeType === "up" ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
+          {change}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function ChartPlaceholder() {
+  return (
+    <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h3 className="text-lg font-semibold text-gray-800">Performance Line Chart</h3>
+          <p className="text-sm text-gray-400 mt-1">Lorem ipsum is simply dummy text of the printing</p>
+        </div>
+        <div className="flex items-center gap-4 text-xs">
+          <span className="flex items-center gap-1.5">
+            <span className="h-2 w-2 rounded-full bg-[#4e73df]"></span>
+            This week
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="h-2 w-2 rounded-full bg-[#36b9cc]"></span>
+            Last week
+          </span>
+        </div>
+      </div>
+      {/* Chart Placeholder */}
+      <div className="h-64 flex items-end justify-between gap-2 px-4">
+        {[40, 55, 45, 70, 60, 80, 65, 75, 55, 70, 85, 75].map((h, i) => (
+          <div key={i} className="flex-1 flex flex-col items-center gap-2">
+            <div className="w-full bg-gradient-to-t from-[#4e73df]/20 to-[#4e73df]/50 rounded-t" style={{ height: `${h}%` }}></div>
+            <span className="text-[10px] text-gray-400">{['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'][i % 7]}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function SummaryWidget() {
+  return (
+    <div className="bg-gradient-to-br from-[#4e73df] to-[#224abe] rounded-2xl p-6 text-white shadow-lg">
+      <h3 className="text-lg font-semibold mb-4">Status Summary</h3>
+      <div className="space-y-4">
+        <div>
+          <p className="text-blue-100 text-sm">Closed</p>
+          <p className="text-blue-100 text-xs">Value</p>
+          <p className="text-3xl font-bold mt-1">357</p>
+        </div>
+        {/* Mini chart placeholder */}
+        <div className="h-16 flex items-end gap-1">
+          {[30, 50, 40, 60, 45, 70, 55, 80, 65, 90].map((h, i) => (
+            <div key={i} className="flex-1 bg-white/20 rounded-t" style={{ height: `${h}%` }}></div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CircularProgress({ value, label, sublabel }: { value: number; label: string; sublabel: string }) {
+  return (
+    <div className="flex items-center gap-4">
+      <div className="relative h-14 w-14">
+        <svg className="h-14 w-14 -rotate-90" viewBox="0 0 36 36">
+          <path className="text-gray-100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeWidth="3" />
+          <path className="text-[#4e73df]" strokeDasharray={`${value}, 100`} d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeWidth="3" />
+        </svg>
+        <span className="absolute inset-0 flex items-center justify-center text-xs font-semibold text-gray-700">{value}%</span>
+      </div>
+      <div>
+        <p className="text-sm font-medium text-gray-600">{label}</p>
+        <p className="text-lg font-bold text-gray-800">{sublabel}</p>
+      </div>
+    </div>
+  );
+}
+
+// --- Main Page Component ---
+export default function ApplicationTracker() {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [activeItem, setActiveItem] = useState("dashboard");
+
+  const userName = user?.name?.split(" ")[0] || "John";
+
+  const handleNavigate = (id: string) => {
+    setActiveItem(id);
+    setSidebarOpen(false);
+  };
+
+  return (
+    <div className="min-h-screen bg-[#f5f7fb] flex">
+      {/* Sidebar */}
+      <Sidebar
+        activeItem={activeItem}
+        onNavigate={handleNavigate}
+        mobileOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+      />
+
+      {/* Main Content */}
+      <div className="flex-1 lg:ml-[250px]">
+        {/* Top Navbar */}
+        <TopNavbar onMenuClick={() => setSidebarOpen(!sidebarOpen)} userName={userName} />
+
+        {/* Dashboard Content */}
+        <main className="pt-16 px-4 lg:px-8 py-8">
+          <div className="max-w-7xl mx-auto space-y-8">
+
+            {/* Stats Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+              <StatCard title="Bounce Rate" value="32.53%" change="-0.5%" changeType="down" />
+              <StatCard title="Page Views" value="7,682" change="+0.1%" changeType="up" />
+              <StatCard title="New Sessions" value="68.8" change="-68.8" changeType="down" />
+              <StatCard title="Avg. Time on Site" value="2m:35s" change="+0.8%" changeType="up" />
+              <StatCard title="New Sessions" value="68.8" change="-68.8" changeType="down" />
+              <StatCard title="Avg. Time on Site" value="2m:35s" change="+0.8%" changeType="up" />
+            </div>
+
+            {/* Chart + Summary Row */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-2">
+                <ChartPlaceholder />
+              </div>
+              <div className="space-y-6">
+                <SummaryWidget />
+                <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm space-y-4">
+                  <CircularProgress value={26.8} label="Total Visitors" sublabel="26.80%" />
+                  <div className="border-t border-gray-100 pt-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm text-gray-500">Visits per day</p>
+                        <p className="text-2xl font-bold text-gray-800">9065</p>
+                      </div>
+                      <div className="h-12 w-12 rounded-full border-4 border-[#36b9cc] flex items-center justify-center">
+                        <span className="text-xs font-semibold text-gray-600">visits</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom Cards */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-2 bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-lg font-semibold text-gray-800">Market Overview</h3>
+                  <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-gray-200 text-sm text-gray-600 hover:bg-gray-50">
+                    This month <ChevronDown className="h-4 w-4" />
+                  </button>
+                </div>
+                <div className="h-48 bg-gray-50 rounded-xl flex items-center justify-center">
+                  <p className="text-gray-400 text-sm">Market Overview Content Placeholder</p>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+                <h3 className="text-lg font-semibold text-gray-800 mb-6">Todo List</h3>
+                <div className="space-y-3">
+                  {["Review Documents", "Schedule Consultation", "Upload IELTS", "Check Financials"].map((item, i) => (
+                    <div key={i} className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                      <div className="h-5 w-5 rounded border-2 border-gray-300"></div>
+                      <span className="text-sm text-gray-600">{item}</span>
+                    </div>
+                  ))}
+                </div>
+                <button className="mt-4 w-full py-2.5 rounded-lg border border-dashed border-gray-300 text-gray-400 hover:border-[#4e73df] hover:text-[#4e73df] transition-colors text-sm">
+                  + Add new task
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </main>
+      </div>
     </div>
   );
 }

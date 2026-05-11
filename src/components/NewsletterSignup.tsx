@@ -36,10 +36,10 @@ export default function NewsletterSignup() {
               <Mail className="h-6 w-6 text-accent" />
             </div>
             <h2 className="text-2xl md:text-3xl font-display font-bold mb-3">
-              Stay Ahead of UK Visa Changes
+              Stay Ahead of Visa Changes
             </h2>
             <p className="text-muted-foreground max-w-lg mx-auto mb-8">
-              Get timely updates on UK immigration policy changes, fee updates, and new visa routes delivered to your inbox.
+              Get timely updates on immigration policy changes, fee updates, and new visa routes delivered to your inbox.
             </p>
 
             <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">

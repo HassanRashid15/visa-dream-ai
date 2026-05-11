@@ -1,4 +1,5 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "@/lib/authContext";
 import {
   LayoutDashboard,
   CheckSquare,
@@ -38,6 +39,32 @@ const generalItems: NavItem[] = [
 
 export default function Sidebar({ activeItem, onNavigate, mobileOpen, onClose }: SidebarProps) {
   const navigate = useNavigate();
+  const location = useLocation();
+  const currentPath = location.pathname;
+  const { user, role } = useAuth();
+
+  // Get initials from first and last name
+  const getInitials = (name: string) => {
+    const parts = name.trim().split(' ');
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
+  };
+
+  const userInitials = user?.name ? getInitials(user.name) : "U";
+  const userRole = role || "User";
+
+  // Determine active item from current path
+  const getActiveItem = () => {
+    if (currentPath === "/dashboard") return "dashboard";
+    if (currentPath === "/consultation") return "consultation";
+    if (currentPath === "/check" || currentPath.startsWith("/check/")) return "check";
+    if (currentPath === "/ielts-prep") return "ielts-prep";
+    return activeItem;
+  };
+
+  const active = getActiveItem();
 
   return (
     <>
@@ -50,13 +77,13 @@ export default function Sidebar({ activeItem, onNavigate, mobileOpen, onClose }:
       )}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-[240px] bg-[#f5f5f5] transform transition-transform duration-300 ease-in-out lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 w-[240px] bg-[#f5f5f5] transform transition-transform duration-300 ease-in-out lg:translate-x-0 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent ${
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         <div className="flex flex-col h-full px-5 py-6">
           {/* Logo */}
-          <div className="flex items-center gap-3 mb-10 px-1">
+          <div className="flex items-center gap-3 mb-6 px-1">
             <div className="h-10 w-10 rounded-xl bg-[#0f8b5f] flex items-center justify-center shadow-sm shadow-[#0f8b5f]/20">
               <LayoutDashboard className="h-5 w-5 text-white" />
             </div>
@@ -64,6 +91,9 @@ export default function Sidebar({ activeItem, onNavigate, mobileOpen, onClose }:
               <h1 className="font-bold text-lg text-[#111827] tracking-tight">ProManage</h1>
             </div>
           </div>
+
+          {/* User Profile */}
+         
 
           {/* Menu Section */}
           <div className="mb-8">
@@ -73,7 +103,7 @@ export default function Sidebar({ activeItem, onNavigate, mobileOpen, onClose }:
             <nav className="space-y-1">
               {menuItems.map((item) => {
                 const Icon = item.icon;
-                const isActive = activeItem === item.id;
+                const isActive = active === item.id;
                 return (
                   <button
                     key={item.id}
@@ -100,7 +130,7 @@ export default function Sidebar({ activeItem, onNavigate, mobileOpen, onClose }:
             <nav className="space-y-1">
               {generalItems.map((item) => {
                 const Icon = item.icon;
-                const isActive = activeItem === item.id;
+                const isActive = active === item.id;
                 return (
                   <button
                     key={item.id}
@@ -141,6 +171,19 @@ export default function Sidebar({ activeItem, onNavigate, mobileOpen, onClose }:
           </div>
 
           {/* Logout */}
+           <div className="flex items-center gap-1.5 mb-4 px-1 py-12">
+            <div className="h-6 w-6 rounded bg-[#e5e7eb] flex items-center justify-center text-[#6b7280] text-[10px] font-medium">
+              {userInitials}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-[10px] text-[#6b7280] truncate">{user?.name || "User"}</p>
+              <div className="flex items-center gap-0.5 mt-0.5">
+                <span className="inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-[#f3f4f6] text-[#6b7280] capitalize">
+                  {userRole}
+                </span>
+              </div>
+            </div>
+          </div>
           <button
             onClick={() => navigate("/")}
             className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-red-500 hover:bg-red-50 transition-colors"

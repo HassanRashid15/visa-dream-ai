@@ -4,13 +4,13 @@ import { Shield, Eye, Ban, AlertTriangle } from "lucide-react";
 const items = [
   {
     icon: Shield,
-    title: "Official GOV.UK Links",
-    description: "All visa information is cross-checked with official UK government sources. We never provide outdated or misleading guidance.",
+    title: "Official GOV Links",
+    description: "All visa information is cross-checked with official government sources. We never provide outdated or misleading guidance.",
   },
   {
     icon: Eye,
     title: "Transparent Pricing",
-    description: "No hidden fees. See exact visa costs, IHS fees, and living expenses upfront with our UK Cost Calculator.",
+    description: "No hidden fees. See exact visa costs, IHS fees, and living expenses upfront with our Cost Calculator.",
   },
   {
     icon: Ban,
@@ -35,9 +35,9 @@ export default function TrustSection() {
           viewport={{ once: true }}
         >
           <span className="text-sm font-semibold text-accent uppercase tracking-wider">Trust & Transparency</span>
-          <h2 className="text-3xl md:text-4xl font-display font-bold mt-2">Why Trust VisaDreams</h2>
+          <h2 className="text-3xl md:text-4xl font-display font-bold mt-2">Why Trust Visa Dreams</h2>
           <p className="text-muted-foreground mt-3 max-w-lg mx-auto">
-            Accurate, up-to-date, and honest UK immigration guidance powered by official sources and AI.
+            Accurate, up-to-date, and honest immigration guidance powered by official sources and AI.
           </p>
         </motion.div>
 

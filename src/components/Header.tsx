@@ -10,8 +10,18 @@ export default function Header() {
   const isHome = location.pathname === "/";
   const [mobileOpen, setMobileOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { isAuthenticated, user, logout } = useAuth();
+
+  // Handle scroll to shrink header
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -25,30 +35,39 @@ export default function Header() {
   }, []);
 
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${isHome ? "bg-transparent" : "bg-card/80 backdrop-blur-md border-b border-border"}`}>
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+<header
+  className={`fixed left-0 right-0 z-50 h-16 transition-all duration-300 ease-in-out
+  ${
+    scrolled
+      ? "w-[55%] mx-auto top-3 px-6 rounded-full shadow-2xl bg-white/20 backdrop-blur-2xl backdrop-saturate-150 border border-white/30"
+      : "w-full top-0 py-4 px-4 bg-transparent"
+  }`}
+>
+      <div className="container mx-auto h-full flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2.5 group">
-        <motion.div 
+        {/* <motion.div 
           className="w-11 h-full"
           animate={{ rotate: 360 }}
           transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-        >
+        > */}
+        <div  className="w-11 h-full" >
          <img className="w-full h-full" src="/images/navlogo.png" alt="VisaDreams" />
-         </motion.div>
-          <span className={`font-display text-xl font-semibold tracking-tight ${isHome ? "text-primary-foreground" : "text-foreground"}`}>
+         </div>
+         {/* </motion.div> */}
+          <span className={`font-display text-xl font-semibold tracking-tight ${isHome ? (scrolled ? "text-black" : "text-white") : "text-foreground"}`}>
             Visa<span className="text-accent font-bold">Dreams</span>
           </span>
         </Link>
 
         {/* Desktop nav */}
         <nav className="hidden md:flex items-center gap-6">
-          <a href="/#countries" className={`text-sm font-normal transition-colors ${isHome ? "text-primary-foreground/70 hover:text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}>
+          <a href="/#countries" className={`text-sm font-normal transition-colors ${isHome ? (scrolled ? "text-black" : "text-white") : "text-muted-foreground hover:text-foreground"}`}>
             Countries
           </a>
-          <Link to="/tracker" className={`text-sm font-normal transition-colors ${isHome ? "text-primary-foreground/70 hover:text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}>
+          <Link to="/tracker" className={`text-sm font-normal transition-colors ${isHome ? (scrolled ? "text-black" : "text-white") : "text-muted-foreground hover:text-foreground"}`}>
             My Journey
           </Link>
-          <Link to="/consultation" className={`text-sm font-normal transition-colors ${isHome ? "text-primary-foreground/70 hover:text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}>
+          <Link to="/consultation" className={`text-sm font-normal transition-colors ${isHome ? (scrolled ? "text-black" : "text-white") : "text-muted-foreground hover:text-foreground"}`}>
             Book Consultation
           </Link>
 
@@ -57,7 +76,7 @@ export default function Header() {
               <button
                 onClick={() => setUserDropdownOpen(!userDropdownOpen)}
                 className={`flex items-center gap-2 px-3 py-1.5 rounded-lg transition-colors ${
-                  isHome ? "text-primary-foreground/70 hover:text-primary-foreground hover:bg-primary-foreground/10" : "text-muted-foreground hover:text-foreground hover:bg-accent/10"
+                  isHome ? (scrolled ? "text-muted-foreground hover:text-muted-foreground hover:bg-accent/10" : "text-black hover:text-black hover:bg-black/10") : "text-muted-foreground hover:text-foreground hover:bg-accent/10"
                 }`}
               >
                 <User className="h-4 w-4" />

@@ -22,13 +22,11 @@ export default function Dashboard() {
         {/* Top Navbar */}
         <TopNavbar
           onMenuClick={() => setSidebarOpen(!sidebarOpen)}
-          userName="John Doe"
-          userEmail="john@example.com"
         />
 
         {/* Dashboard Content */}
-        <main className="pt-20 px-4 sm:px-6 lg:px-8 pb-8">
-          <div className="max-w-7xl mx-auto space-y-8">
+        <main className="pt-24 px-4 sm:px-6 lg:px-8 pb-8">
+          <div className="space-y-8">
 
             {/* Header Section */}
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">

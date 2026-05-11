@@ -4,24 +4,24 @@ import { ChevronDown, HelpCircle } from "lucide-react";
 
 const faqs = [
   {
-    question: "How long does a UK visa application take?",
-    answer: "Processing times vary by visa type. Standard Visitor visas typically take 3 weeks, Student visas 3 weeks, and Skilled Worker visas 3-8 weeks from outside the UK. Priority and super-priority services are available for faster decisions.",
+    question: "How long does a visa application take?",
+    answer: "Processing times vary by visa type. Standard Visitor visas typically take 3 weeks, Student visas 3 weeks, and Skilled Worker visas 3-8 weeks from outside the destination country. Priority and super-priority services are available for faster decisions.",
   },
   {
-    question: "What is the Immigration Health Surcharge (IHS)?",
-    answer: "The IHS is a fee you pay as part of your visa application to access the UK's National Health Service (NHS). For most visas, it costs £776 per year for students and £1,035 per year for work visas. You pay the full amount upfront for the visa duration.",
+    question: "What is Immigration Health Surcharge (IHS)?",
+    answer: "The IHS is a fee you pay as part of your visa application to access the destination country's National Health Service. For most visas, it costs £776 per year for students and £1,035 per year for work visas. You pay the full amount upfront for the visa duration.",
   },
   {
-    question: "How much money do I need to show for a UK Student Visa?",
-    answer: "You must show you have enough money to pay for your course (1 year or the full course if less than 1 year) plus living costs. Living costs are £1,136 per month for courses in London (up to 9 months) or £913 per month outside London.",
+    question: "How much money do I need to show for a Student Visa?",
+    answer: "You must show you have enough money to pay for your course (1 year or full course if less than 1 year) plus living costs. Living costs are £1,136 per month for courses in the capital city (up to 9 months) or £913 per month outside the capital.",
   },
   {
-    question: "Can I work in the UK on a Student Visa?",
+    question: "Can I work on a Student Visa?",
     answer: "Yes, most Student Visa holders can work up to 20 hours per week during term time and full-time during holidays. However, you cannot be self-employed, engage in business activity, or fill a permanent full-time vacancy.",
   },
   {
-    question: "What English test do I need for a UK visa?",
-    answer: "Most UK visa categories require a SELT (Secure English Language Test) from an approved provider like IELTS for UKVI, Pearson PTE Academic UKVI, or LanguageCert. The required level varies: B1 for Skilled Worker, B2 for Student, and B1 for some ILR routes.",
+    question: "What English test do I need for a visa?",
+    answer: "Most visa categories require a SELT (Secure English Language Test) from an approved provider like IELTS, Pearson PTE Academic, or LanguageCert. The required level varies: B1 for Skilled Worker, B2 for Student, and B1 for some permanent residency routes.",
   },
 ];
 
@@ -38,9 +38,9 @@ export default function FAQSection() {
           viewport={{ once: true }}
         >
           <span className="text-sm font-semibold text-accent uppercase tracking-wider">Got Questions?</span>
-          <h2 className="text-3xl md:text-4xl font-display font-bold mt-2">UK Visa FAQs</h2>
+          <h2 className="text-3xl md:text-4xl font-display font-bold mt-2">Common Visa FAQs</h2>
           <p className="text-muted-foreground mt-3 max-w-lg mx-auto">
-            Quick answers to the most common UK visa and immigration questions.
+            Quick answers to the most common visa and immigration questions.
           </p>
         </motion.div>
 

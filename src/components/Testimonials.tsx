@@ -36,9 +36,9 @@ export default function Testimonials() {
           viewport={{ once: true }}
         >
           <span className="text-sm font-semibold text-accent uppercase tracking-wider">Success Stories</span>
-          <h2 className="text-3xl md:text-4xl font-display font-bold mt-2">Trusted by UK Visa Applicants</h2>
+          <h2 className="text-3xl md:text-4xl font-display font-bold mt-2">Trusted by Visa Applicants</h2>
           <p className="text-muted-foreground mt-3 max-w-lg mx-auto">
-            Real stories from people who navigated their UK visa journey with VisaDreams.
+            Real stories from people who navigated their visa journey with VisaDreams.
           </p>
         </motion.div>
 

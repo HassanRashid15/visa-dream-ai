@@ -23,7 +23,7 @@ export default function AuthPage() {
   // Phase 2 Feature: User Authentication
 // Set SEO metadata for authentication page
   useSEO({
-    title: mode === "login" ? "Sign In to VisaDreams | Access Your UK Visa Dashboard" : "Sign Up for VisaDreams | Start Your UK Visa Journey",
+    title: mode === "login" ? "Sign In to VisaDreams | Access Your UK Visa Dashboard" : "Sign Up for VisaDreams | Start Your Visa Journey",
     description: mode === "login" 
       ? "Sign in to your VisaDreams account to track your UK visa applications, access document checklists, and manage your immigration journey."
       : "Create your free VisaDreams account to get UK visa eligibility checks, document guidance, and expert immigration assistance.",

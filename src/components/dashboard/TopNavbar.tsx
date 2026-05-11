@@ -1,14 +1,27 @@
 import { Search, Bell, Mail, ChevronDown, User, Settings, LogOut } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/lib/authContext";
 
 interface TopNavbarProps {
   onMenuClick: () => void;
-  userName: string;
-  userEmail: string;
 }
 
-export default function TopNavbar({ onMenuClick, userName, userEmail }: TopNavbarProps) {
+export default function TopNavbar({ onMenuClick }: TopNavbarProps) {
+  const { user } = useAuth();
+  const userName = user?.name || "User";
+  const userEmail = user?.email || "";
+  
+  // Get initials from first and last name
+  const getInitials = (name: string) => {
+    const parts = name.trim().split(' ');
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
+  };
+  
+  const userInitials = getInitials(userName);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -61,8 +74,8 @@ export default function TopNavbar({ onMenuClick, userName, userEmail }: TopNavba
                 <p className="text-xs text-[#9ca3af]">{userEmail}</p>
               </div>
               <div className="relative">
-                <div className="h-11 w-11 rounded-2xl bg-gradient-to-br from-[#0f8b5f] to-[#27ae60] flex items-center justify-center text-white text-sm font-bold shadow-md shadow-[#0f8b5f]/20">
-                  {userName.charAt(0)}
+                <div className="h-11 w-11 rounded-2xl bg-[#e5e7eb] flex items-center justify-center text-[#6b7280] text-sm font-bold">
+                  {userInitials}
                 </div>
                 <span className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 bg-[#22c55e] rounded-full border-2 border-white"></span>
               </div>

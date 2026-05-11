@@ -50,13 +50,13 @@ export default function VisaTypesPreview() {
           viewport={{ once: true }}
         >
           <span className="text-sm font-semibold text-accent uppercase tracking-wider">Visa Categories</span>
-          <h2 className="text-3xl md:text-4xl font-display font-bold mt-2">UK Visas We Cover</h2>
+          <h2 className="text-3xl md:text-4xl font-display font-bold mt-2">Visa's We Cover</h2>
           <p className="text-muted-foreground mt-3 max-w-lg mx-auto">
             Comprehensive AI-powered guidance for the four most popular UK visa pathways.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
           {visaTypes.map((visa, i) => (
             <motion.button
               key={visa.id}

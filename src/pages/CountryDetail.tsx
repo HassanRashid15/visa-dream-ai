@@ -29,7 +29,7 @@ function VisaCard({ visa, index, countryId }: { visa: VisaTypeInfo; index: numbe
             <span className="text-4xl">{visa.icon}</span>
             <div>
               <h3 className="text-lg font-display font-bold">{visa.name}</h3>
-              <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
+              <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground flex-wrap">
                 <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {visa.processingTime}</span>
                 <span className="flex items-center gap-1"><DollarSign className="h-3 w-3" /> {visa.cost}</span>
               </div>
@@ -339,24 +339,24 @@ export default function CountryDetail() {
                   The UK offers one of the clearest immigration pathways in the world. See how your journey could unfold step by step.
                 </p>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 {[
                   {
                     title: "Study Route",
                     icon: BookOpen,
-                    color: "bg-blue-500/10 text-blue-600 border-blue-500/20",
+                    color: "text-[#f6a823]",
                     steps: ["Get admission & CAS from a UK university", "Apply for Student Visa (3–6 weeks)", "Arrive, study, work part-time", "Graduate & switch to Graduate Route (2 years)", "Find a sponsored job & switch to Skilled Worker"],
                   },
                   {
                     title: "Work Route",
                     icon: Briefcase,
-                    color: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20",
+                    color: "text-[#f6a823]",
                     steps: ["Secure a job offer from a licensed sponsor", "Receive Certificate of Sponsorship (CoS)", "Apply for Skilled Worker Visa (3–8 weeks)", "Move to the UK & start your career", "After 5 years → apply for Indefinite Leave to Remain"],
                   },
                   {
                     title: "Settlement Route",
                     icon: Landmark,
-                    color: "bg-violet-500/10 text-violet-600 border-violet-500/20",
+                    color: "text-[#f6a823] ",
                     steps: ["Complete 5 years on a qualifying visa", "Pass the Life in the UK test", "Prove English at B1 level or higher", "Apply for ILR (Indefinite Leave to Remain)", "After 1 year of ILR → apply for British Citizenship"],
                   },
                 ].map((path, i) => (
@@ -369,16 +369,16 @@ export default function CountryDetail() {
                     transition={{ delay: i * 0.12 }}
                   >
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="h-10 w-10 rounded-lg bg-white/60 flex items-center justify-center">
+                      <div className="h-10 w-10 rounded-lg bg-[#fef6e8] flex items-center justify-center">
                         <path.icon className="h-5 w-5" />
                       </div>
-                      <h3 className="font-display font-bold">{path.title}</h3>
+                      <h3 className="font-display font-bold text-lg text-black">{path.title}</h3>
                     </div>
                     <ol className="space-y-3">
                       {path.steps.map((step, j) => (
                         <li key={j} className="flex items-start gap-2.5 text-sm">
-                          <span className="flex-shrink-0 h-5 w-5 rounded-full bg-current/10 flex items-center justify-center text-xs font-bold mt-0.5">{j + 1}</span>
-                          <span className="text-foreground/90">{step}</span>
+                          <span className="flex-shrink-0 h-5 w-5 rounded-full bg-current/10 flex items-center justify-center text-[24px] font-bold mt-0.5">.</span>
+                          <span className="text-foreground/90 ">{step}</span>
                         </li>
                       ))}
                     </ol>
@@ -526,11 +526,11 @@ export default function CountryDetail() {
                 : "Check your eligibility now or explore visa options above. Our AI-powered assessment takes less than 60 seconds."}
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button variant="hero" size="xl" onClick={() => navigate(`/pre-check/${detail.id}`)}>
+              <Button variant="hero" className="!rounded-full h-14 px-8 flex items-center justify-center" onClick={() => navigate(`/pre-check/${detail.id}`)}>
                 Check My Eligibility <ArrowRight className="h-5 w-5" />
               </Button>
               {detail.id === "uk" && (
-                <Button variant="hero-outline" size="lg" onClick={() => navigate(`/country/uk/visa/student`)}>
+                <Button variant="hero-outline" className="!rounded-full h-14 px-8 flex items-center justify-center" onClick={() => navigate(`/country/uk/visa/student`)}>
                   Explore Student Visa <ChevronRight className="h-5 w-5" />
                 </Button>
               )}

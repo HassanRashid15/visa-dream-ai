@@ -6,7 +6,7 @@ const steps = [
     icon: ClipboardCheck,
     step: "01",
     title: "Check Eligibility",
-    description: "Answer a few questions and get an instant AI-powered assessment for your UK visa category.",
+    description: "Answer a few questions and get an instant AI-powered assessment for your visa category.",
   },
   {
     icon: BarChart3,
@@ -43,9 +43,9 @@ export default function HowItWorks() {
           viewport={{ once: true }}
         >
           <span className="text-sm font-semibold text-accent uppercase tracking-wider">Simple Process</span>
-          <h2 className="text-3xl md:text-4xl font-display font-bold mt-2">How VisaDreams Works</h2>
+          <h2 className="text-3xl md:text-4xl font-display font-bold mt-2">How Visa Dreams Works</h2>
           <p className="text-muted-foreground mt-3 max-w-lg mx-auto">
-            Three simple steps to navigate your UK visa journey with AI-powered immigration guidance.
+            Three simple steps to navigate your visa journey with AI-powered immigration guidance.
           </p>
         </motion.div>
 

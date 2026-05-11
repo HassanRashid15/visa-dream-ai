@@ -343,7 +343,7 @@ export default function AISidebar({ visa, universities = [], activeSection }: AI
         className={`${
           isMobile 
             ? `fixed inset-y-0 right-0 w-80 bg-background border-l border-border shadow-2xl z-50 flex flex-col`
-            : `flex-shrink-0 bg-background border-l border-border shadow-2xl z-40 flex flex-col sticky top-20 self-start h-[calc(100vh-5rem)]`
+            : `flex-shrink-0 bg-background border-l border-border shadow-2xl z-40 flex flex-col sticky top-0 self-start h-[calc(120vh-5rem)]`
         }`}
         initial={{ 
           width: isMinimized ? 60 : 320,

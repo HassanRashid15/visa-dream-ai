@@ -404,7 +404,7 @@ export default function DocumentUpload({ visaType, onDocumentsChange, maxFiles =
             onDragLeave={handleDragLeave}
           >
             <Upload className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Upload Your UK Visa Documents</h3>
+            <h3 className="text-lg font-semibold mb-2">Upload Your Visa Documents</h3>
             {!isAuthenticated && (
               <p className="text-sm text-amber-600 font-medium mb-3">Please sign in first to start uploading files.</p>
             )}

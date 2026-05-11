@@ -24,7 +24,7 @@ export default function CountrySelector() {
           viewport={{ once: true }}
         >
           <span className="text-sm font-semibold text-accent uppercase tracking-wider">Choose Your Country</span>
-          <h2 className="text-3xl md:text-4xl font-display font-bold mt-2">Start Your UK Visa Journey</h2>
+          <h2 className="text-3xl md:text-4xl font-display font-bold mt-2">Start Your Visa Journey</h2>
           <p className="text-muted-foreground mt-3 max-w-lg mx-auto">
             Select your destination country to explore visa types, check eligibility, and plan your application.
           </p>

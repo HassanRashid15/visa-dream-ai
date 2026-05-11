@@ -43,16 +43,15 @@ export default function HeroSection() {
           transition={{ duration: 0.7 }}
         >
           <span className="inline-flex items-center gap-2 mb-6 rounded-full border border-primary-foreground/20 bg-primary-foreground/10 px-5 py-2 text-sm text-primary-foreground/80 backdrop-blur-sm">
-            <CheckCircle className="h-3.5 w-3.5" />
-            Free UK Visa Eligibility Check — No Sign Up Required
+            Free Visa Eligibility Check — No Sign Up Required
           </span>
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-extrabold text-primary-foreground leading-[1.1] mb-6">
-            Your UK Visa
+            Your Visa Dream 
             <br />
-            <span className="text-accent">Dream Starts Here</span>
+            <span className="text-accent">Starts Here</span>
           </h1>
           <p className="text-lg md:text-xl text-primary-foreground/75 mb-10 max-w-2xl mx-auto leading-relaxed">
-            Get AI-powered UK visa guidance, eligibility assessments, document checklists, and cost calculators. Navigate Student, Work, ILR, and Tourist visas with confidence.
+            Get AI-powered visa guidance, eligibility assessments, document checklists, and cost calculators. Navigate Student, Work, ILR, and Tourist visas with confidence.
           </p>
         </motion.div>
 
@@ -63,13 +62,12 @@ export default function HeroSection() {
           transition={{ delay: 0.4 }}
         >
           <Button variant="hero" size="xl" asChild>
-            <a href="#countries">
+            <a className="!rounded-full text-slate-800" href="#countries">
               Check Your Eligibility
-              <ArrowDown className="h-5 w-5" />
             </a>
           </Button>
           <Button variant="hero-outline" size="lg" asChild>
-            <a href="#how-it-works">How It Works</a>
+            <a className="!rounded-full text-white" href="#how-it-works">How It Works</a>
           </Button>
         </motion.div>
 

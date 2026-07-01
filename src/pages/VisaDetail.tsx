@@ -650,6 +650,23 @@ export default function VisaDetail() {
                   <Button type="button" size="sm" variant="ghost" onClick={() => setShareOpen((v) => !v)}>
                     {shareOpen ? "Hide link" : "Show link"}
                   </Button>
+                  <span className="ml-auto text-[11px] text-muted-foreground flex items-center gap-1">
+                    {checklistMeta.isCloud ? (
+                      <>
+                        {checklistMeta.syncing ? (
+                          <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />
+                        ) : (
+                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                        )}
+                        {checklistMeta.syncing ? "Syncing…" : "Synced to your account"}
+                      </>
+                    ) : (
+                      <>
+                        <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/60" />
+                        Saved on this device — sign in to sync
+                      </>
+                    )}
+                  </span>
                 </div>
                 {shareOpen && (
                   <div className="mt-3 flex items-center gap-2">

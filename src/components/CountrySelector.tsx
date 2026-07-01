@@ -30,9 +30,18 @@ export default function CountrySelector() {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {Object.entries(COUNTRY_INFO).map(
-            ([id, info], i) => (
+        {(() => {
+          const entries = Object.entries(COUNTRY_INFO);
+          const count = entries.length;
+          const gridClass =
+            count === 1
+              ? "grid grid-cols-1 gap-8 max-w-2xl mx-auto"
+              : count === 2
+              ? "grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto"
+              : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto";
+          return (
+            <div className={gridClass}>
+              {entries.map(([id, info], i) => (
               <motion.button
                 key={id}
                 onClick={() => navigate(`/country/${id}`)}
@@ -51,9 +60,10 @@ export default function CountrySelector() {
                   Explore Visa Options <ArrowRight className="h-4 w-4" />
                 </span>
               </motion.button>
-            )
-          )}
-        </div>
+              ))}
+            </div>
+          );
+        })()}
 
         {/* Phase 2: Eligibility check (Coming Soon)
         <div className="grid grid-cols-1 md:grid-cols-1 gap-8 max-w-md mx-auto">

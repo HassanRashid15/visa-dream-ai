@@ -101,7 +101,7 @@ export function useCloudProgress<T>(params: {
         await supabase
           .from("user_progress")
           .upsert(
-            { user_id: user.id, kind, key, data: value as unknown as object },
+            [{ user_id: user.id, kind, key, data: value as unknown as object }],
             { onConflict: "user_id,kind,key" },
           );
       } finally {

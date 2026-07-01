@@ -22,7 +22,6 @@ import { useViewport } from "@/hooks/use-mobile";
 import { usePerformanceOptimization } from "@/hooks/usePerformanceOptimization";
 import { useSEO } from "@/hooks/useSEO";
 import { useCloudProgress } from "@/hooks/useCloudProgress";
-import { useAuth } from "@/lib/authContext";
 
 function SectionHeading({ icon, label, title }: { icon: React.ReactNode; label: string; title: string }) {
   return (
@@ -38,7 +37,6 @@ export default function VisaDetail() {
   const navigate = useNavigate();
   const { isMobile, isTablet } = useViewport();
   const { optimizedApiCall } = usePerformanceOptimization();
-  const { isAuthenticated } = useAuth();
   
   const [visa, setVisa] = useState<VisaDetailData | null>(null);
   const [loading, setLoading] = useState(true);

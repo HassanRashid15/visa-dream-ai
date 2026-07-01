@@ -21,6 +21,7 @@ import { toast } from "sonner";
 import { useViewport } from "@/hooks/use-mobile";
 import { usePerformanceOptimization } from "@/hooks/usePerformanceOptimization";
 import { useSEO } from "@/hooks/useSEO";
+import { useCloudProgress } from "@/hooks/useCloudProgress";
 
 function SectionHeading({ icon, label, title }: { icon: React.ReactNode; label: string; title: string }) {
   return (
@@ -171,7 +172,12 @@ export default function VisaDetail() {
   // Document checklist state — persisted per visa, also shareable via ?c=
   const currentVisaId = visa?.id ?? "";
   const storageKey = `visa-checklist:${currentVisaId}`;
-  const [checked, setChecked] = useState<Record<number, boolean>>({});
+  const [checked, setChecked, checklistMeta] = useCloudProgress<Record<number, boolean>>({
+    kind: "visa-checklist",
+    key: currentVisaId || "unknown",
+    localKey: storageKey,
+    defaultValue: {},
+  });
   const [shareOpen, setShareOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -202,7 +208,7 @@ export default function VisaDetail() {
   }, [currentVisaId]);
 
   useEffect(() => {
-    // Priority: URL param > localStorage
+    // Shared-link import wins over local/cloud state
     const cParam = searchParams.get("c");
     if (cParam) {
       try {
@@ -211,19 +217,10 @@ export default function VisaDetail() {
         const next: Record<number, boolean> = {};
         for (let i = 0; i < decoded.length; i++) next[i] = decoded[i] === "1";
         setChecked(next);
-        return;
       } catch { /* fall through */ }
     }
-    try {
-      const raw = localStorage.getItem(storageKey);
-      if (raw) setChecked(JSON.parse(raw));
-    } catch { /* ignore */ }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storageKey]);
-
-  useEffect(() => {
-    try { localStorage.setItem(storageKey, JSON.stringify(checked)); } catch { /* ignore */ }
-  }, [checked, storageKey]);
 
   const visaDocuments = visa?.documents ?? [];
   const requiredDocs = useMemo(
@@ -651,6 +648,23 @@ export default function VisaDetail() {
                   <Button type="button" size="sm" variant="ghost" onClick={() => setShareOpen((v) => !v)}>
                     {shareOpen ? "Hide link" : "Show link"}
                   </Button>
+                  <span className="ml-auto text-[11px] text-muted-foreground flex items-center gap-1">
+                    {checklistMeta.isCloud ? (
+                      <>
+                        {checklistMeta.syncing ? (
+                          <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />
+                        ) : (
+                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                        )}
+                        {checklistMeta.syncing ? "Syncing…" : "Synced to your account"}
+                      </>
+                    ) : (
+                      <>
+                        <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/60" />
+                        Saved on this device — sign in to sync
+                      </>
+                    )}
+                  </span>
                 </div>
                 {shareOpen && (
                   <div className="mt-3 flex items-center gap-2">

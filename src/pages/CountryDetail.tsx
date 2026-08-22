@@ -7,9 +7,16 @@ import {
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { COUNTRY_DETAILS, type VisaTypeInfo } from "@/lib/countryData";
-import { useState } from "react";
+import { COUNTRY_DETAILS, type VisaTypeInfo, type CountryDetail } from "@/lib/countryData";
+import { useState, useEffect } from "react";
 import { useSEO } from "@/hooks/useSEO";
+import { fetchAICountryDetail } from "@/lib/aiCountryService";
+
+interface SectionTab {
+  id: string;
+  label: string;
+  icon: any;
+}
 
 function VisaCard({ visa, index, countryId }: { visa: VisaTypeInfo; index: number; countryId: string }) {
   const [expanded, setExpanded] = useState(false);
@@ -92,7 +99,99 @@ function VisaCard({ visa, index, countryId }: { visa: VisaTypeInfo; index: numbe
 export default function CountryDetail() {
   const { country } = useParams<{ country: string }>();
   const navigate = useNavigate();
-  const detail = country ? COUNTRY_DETAILS[country] : null;
+  const [detail, setDetail] = useState<CountryDetail | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [activeSection, setActiveSection] = useState<string>("");
+
+  useEffect(() => {
+    const loadCountryDetail = async () => {
+      if (!country) return;
+
+      try {
+        setLoading(true);
+        // Try to fetch from AI first
+        const aiDetail = await fetchAICountryDetail(country);
+        
+        if (aiDetail) {
+          setDetail(aiDetail);
+        } else {
+          // Fallback to hardcoded data
+          const hardcodedDetail = COUNTRY_DETAILS[country];
+          if (hardcodedDetail) {
+            setDetail(hardcodedDetail);
+          } else {
+            setError("Country not found");
+            setTimeout(() => navigate("/"), 2000);
+          }
+        }
+      } catch (err) {
+        console.error("Error loading country detail:", err);
+        // Fallback to hardcoded data on error
+        const hardcodedDetail = COUNTRY_DETAILS[country];
+        if (hardcodedDetail) {
+          setDetail(hardcodedDetail);
+        } else {
+          setError("Failed to load country data");
+          setTimeout(() => navigate("/"), 2000);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadCountryDetail();
+  }, [country, navigate]);
+
+  // Generate section tabs based on country
+  const sectionTabs: SectionTab[] = detail ? [
+    ...(detail.id === "uk" ? [{ id: "stats", label: "Why UK?", icon: Users }] : []),
+    { id: "gallery", label: "Life & Study", icon: Plane },
+    ...(detail.id === "uk" && detail.universities?.length ? [{ id: "universities", label: "Universities", icon: GraduationCap }] : []),
+    ...(detail.id === "uk" ? [{ id: "pathway", label: "Your Pathway", icon: BookOpen }] : []),
+    { id: "visas", label: "Visa Types", icon: FileText },
+    { id: "highlights", label: "Why " + detail.name + "?", icon: Star },
+    ...(detail.id === "uk" ? [{ id: "employers", label: "Employers", icon: Briefcase }] : []),
+    { id: "costs", label: "Costs", icon: DollarSign },
+  ] : [];
+
+  // Scroll spy to highlight active section
+  useEffect(() => {
+    if (!detail || sectionTabs.length === 0) return;
+
+    const handleScroll = () => {
+      const sections = sectionTabs.map(tab => document.getElementById(tab.id)).filter(Boolean);
+      
+      for (const section of sections) {
+        const rect = section?.getBoundingClientRect();
+        if (rect && rect.top <= 150 && rect.bottom >= 150) {
+          const tabId = section.id;
+          if (activeSection !== tabId) {
+            setActiveSection(tabId);
+          }
+          break;
+        }
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    handleScroll(); // Initial check
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [detail, sectionTabs, activeSection]);
+
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      const offset = 80; // Account for sticky header
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - offset;
+      
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth"
+      });
+    }
+  };
 
   // Set SEO metadata based on country
   useSEO({
@@ -110,9 +209,34 @@ export default function CountryDetail() {
     console.log('Country detail:', detail.name, 'Hero image:', detail.heroImage);
   }
 
-  if (!detail) {
-    navigate("/");
-    return null;
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col">
+        <Header />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" />
+            <p className="mt-4 text-sm text-muted-foreground">Loading country details...</p>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (error || !detail) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col">
+        <Header />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-lg font-semibold text-muted-foreground">{error || "Country not found"}</p>
+            <p className="text-sm text-muted-foreground mt-2">Redirecting to home...</p>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
   }
 
   return (
@@ -183,10 +307,34 @@ export default function CountryDetail() {
       </div>
 
       <div className="flex-1">
+        {/* Sticky Navigation Tabs */}
+        {detail && sectionTabs.length > 0 && (
+          <div className="sticky top-16 z-40 bg-background/95 backdrop-blur-sm border-b border-border">
+            <div className="container max-w-5xl mx-auto px-4">
+              <div className="flex items-center gap-1 overflow-x-auto py-3 scrollbar-hide">
+                {sectionTabs.map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => scrollToSection(tab.id)}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
+                      activeSection === tab.id
+                        ? "bg-primary text-primary-foreground shadow-md"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                    }`}
+                  >
+                    <tab.icon className="h-4 w-4" />
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="container max-w-5xl mx-auto px-4 py-12 space-y-16">
           {/* Aspirational Stats — Why the UK */}
           {detail.id === "uk" && (
-            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+            <motion.section id="stats" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
               <div className="mb-8">
                 <span className="text-sm font-semibold text-accent uppercase tracking-wider">Why the UK?</span>
                 <h2 className="text-2xl md:text-3xl font-display font-bold mt-1">The Numbers That Make the UK Irresistible</h2>
@@ -216,7 +364,7 @@ export default function CountryDetail() {
 
           {/* Generic Country Snapshot for non-UK */}
           {detail.id !== "uk" && (
-            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+            <motion.section id="stats" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
               <div className="mb-8">
                 <span className="text-sm font-semibold text-accent uppercase tracking-wider">Country Snapshot</span>
                 <h2 className="text-2xl md:text-3xl font-display font-bold mt-1">{detail.name} at a Glance</h2>
@@ -258,7 +406,7 @@ export default function CountryDetail() {
           )}
 
           {/* Image Gallery */}
-          <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+          <motion.section id="gallery" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
             <div className="mb-8">
               <span className="text-sm font-semibold text-accent uppercase tracking-wider">Experience {detail.name}</span>
               <h2 className="text-2xl md:text-3xl font-display font-bold mt-1">Life & Study</h2>
@@ -292,7 +440,7 @@ export default function CountryDetail() {
 
           {/* Top Universities — UK only */}
           {detail.id === "uk" && detail.universities && detail.universities.length > 0 && (
-            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+            <motion.section id="universities" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
               <div className="mb-8">
                 <span className="text-sm font-semibold text-accent uppercase tracking-wider">World-Class Institutions</span>
                 <h2 className="text-2xl md:text-3xl font-display font-bold mt-1">Top UK Universities</h2>
@@ -331,7 +479,7 @@ export default function CountryDetail() {
 
           {/* Your UK Visa Journey */}
           {detail.id === "uk" && (
-            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+            <motion.section id="pathway" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
               <div className="mb-8">
                 <span className="text-sm font-semibold text-accent uppercase tracking-wider">Your Pathway</span>
                 <h2 className="text-2xl md:text-3xl font-display font-bold mt-1">From Application to Settlement</h2>
@@ -389,7 +537,7 @@ export default function CountryDetail() {
           )}
 
           {/* Visa Types */}
-          <section>
+          <section id="visas">
             <motion.div className="mb-8" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
               <span className="text-sm font-semibold text-accent uppercase tracking-wider">Visa Options</span>
               <h2 className="text-2xl md:text-3xl font-display font-bold mt-1">Choose Your Visa Type</h2>
@@ -407,7 +555,7 @@ export default function CountryDetail() {
           </section>
 
           {/* About & Highlights */}
-          <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+          <motion.section id="highlights" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
             <div className="mb-6">
               <span className="text-sm font-semibold text-accent uppercase tracking-wider">Why {detail.name}?</span>
               <h2 className="text-2xl md:text-3xl font-display font-bold mt-1">A Destination That Invests in You</h2>

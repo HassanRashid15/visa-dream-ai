@@ -39,11 +39,11 @@ export default function Header() {
   className={`fixed left-0 right-0 z-50 h-16 transition-all duration-300 ease-in-out
   ${
     scrolled
-      ? "w-[55%] mx-auto top-3 px-6 rounded-full shadow-2xl bg-white/20 backdrop-blur-2xl backdrop-saturate-150 border border-white/30"
+      ? "w-full lg:w-[62 %] mx-auto top-3 px-4 sm:px-6 rounded-full shadow-2xl bg-white/20 backdrop-blur-2xl backdrop-saturate-150 border border-white/30"
       : "w-full top-0 py-4 px-4 bg-transparent"
   }`}
 >
-      <div className="container mx-auto h-full flex items-center justify-between">
+      <div className="lg:w-container mx-auto h-full flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2.5 group">
         {/* <motion.div 
           className="w-11 h-full"

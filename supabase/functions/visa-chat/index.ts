@@ -10,8 +10,43 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { question, visaContext, highlightedText, history } = await req.json();
+    const { action, question, visaContext, highlightedText, history, countryId, visaType } = await req.json();
 
+    // Handle AI-powered country data generation
+    if (action === "fetch_countries") {
+      const countries = [
+        { id: "uk", name: "United Kingdom", flag: "🇬🇧", description: "Rich history & vibrant culture" },
+        { id: "canada", name: "Canada", flag: "🇨🇦", description: "Amazing nature & multicultural cities" },
+        { id: "australia", name: "Australia", flag: "🇦🇺", description: "Beautiful beaches & unique wildlife" },
+        { id: "usa", name: "United States", flag: "🇺🇸", description: "Land of opportunity & innovation" },
+        { id: "germany", name: "Germany", flag: "🇩🇪", description: "Engineering excellence & rich culture" },
+      ];
+      return new Response(JSON.stringify({ countries }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    if (action === "fetch_country_detail") {
+      // For now, return null to trigger fallback to hardcoded data
+      // In production, this would call AI to generate comprehensive country details
+      return new Response(JSON.stringify({ countryDetail: null }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    if (action === "fetch_visa_type") {
+      return new Response(JSON.stringify({ visaInfo: null }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    if (action === "fetch_universities") {
+      return new Response(JSON.stringify({ universities: [] }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Original chat functionality
     if (!question || typeof question !== "string") {
       return new Response(JSON.stringify({ error: "Question is required." }), {
         status: 400,

@@ -166,22 +166,22 @@ export default function ConsultationBooking() {
       <div className="flex-1">
         <div className="container max-w-4xl mx-auto px-4 -mt-8 pb-16 space-y-6">
           {/* Progress Steps */}
-          <div className="rounded-xl border border-border bg-card p-4 card-elevated">
-            <div className="flex items-center justify-between">
+          <div className="rounded-xl border border-border bg-card p-3 sm:p-4 card-elevated relative z-[20px]">
+            <div className="flex items-center justify-between overflow-x-auto">
               {steps.map((s, i) => (
-                <div key={s.id} className="flex items-center gap-2 flex-1">
-                  <div className={`h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 transition-colors ${
+                <div key={s.id} className="flex items-center gap-1 sm:gap-2 flex-1 min-w-0">
+                  <div className={`h-6 w-6 sm:h-8 sm:w-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 transition-colors ${
                     i < currentStepIndex ? "bg-emerald-100 text-emerald-600" :
                     i === currentStepIndex ? "bg-primary text-primary-foreground" :
                     "bg-muted text-muted-foreground"
                   }`}>
-                    {i < currentStepIndex ? <CheckCircle className="h-4 w-4" /> : i + 1}
+                    {i < currentStepIndex ? <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4" /> : i + 1}
                   </div>
-                  <span className={`text-xs font-medium hidden sm:block ${i === currentStepIndex ? "text-foreground" : "text-muted-foreground"}`}>
+                  <span className={`text-[10px] sm:text-xs font-medium truncate ${i === currentStepIndex ? "text-foreground" : "text-muted-foreground"} ${i === 0 ? "block" : "hidden sm:block"}`}>
                     {s.label}
                   </span>
                   {i < steps.length - 1 && (
-                    <div className={`flex-1 h-0.5 mx-2 ${i < currentStepIndex ? "bg-emerald-300" : "bg-border"}`} />
+                    <div className={`flex-1 h-0.5 mx-1 sm:mx-2 ${i < currentStepIndex ? "bg-emerald-300" : "bg-border"}`} />
                   )}
                 </div>
               ))}
